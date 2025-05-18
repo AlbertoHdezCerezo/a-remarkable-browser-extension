@@ -1,0 +1,13 @@
+/*! tailwindcss v4.1.7 | MIT License | https://tailwindcss.com */
+.flex {
+  display: flex;
+}
+.h-full {
+  height: 100%;
+}
+.w-full {
+  width: 100%;
+}
+.flex-col {
+  flex-direction: column;
+}
