@@ -8,7 +8,8 @@ export default {
     // being used by the application (when JIT mode is enabled)
     // https://tailwindcss.com/docs/content-configuration
     content: [
-        "./src/**/*.{js,jsx,ts,tsx}"
+        "./**/*.{js,jsx,ts,tsx}",
+        "../**/*.{js,jsx,ts,tsx}"
     ],
     theme: {
         extend: {},
