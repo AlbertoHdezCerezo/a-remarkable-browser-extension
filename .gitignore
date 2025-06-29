@@ -12,3 +12,5 @@ node_modules
 
 # TailwindCSS stylesheet - Compiled via JIT during project build (so no need to add it to the repo)
 ./assets/style.css
+*storybook.log
+storybook-static

@@ -1,4 +1,7 @@
-/*! tailwindcss v4.1.7 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
+.contents {
+  display: contents;
+}
 .flex {
   display: flex;
 }
