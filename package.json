@@ -17,7 +17,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.7",
+    "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "plasmo": "0.90.5",
     "postcss": "^8.5.3",
@@ -26,8 +26,8 @@
     "postcss-nested": "^7.0.2",
     "postcss-preset-env": "^10.1.6",
     "postcss-scss": "^4.0.9",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
