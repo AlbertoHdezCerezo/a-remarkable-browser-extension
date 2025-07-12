@@ -28,9 +28,7 @@ jobs:
         run: yarn install --pure-lockfile
 
       - name: Run Jest tests and generate coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          test-script: yarn test --coverage
+        run: yarn test --coverage
   lint:
     environment: test
     runs-on: ubuntu-latest
