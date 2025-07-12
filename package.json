@@ -17,7 +17,7 @@
     "dev": "npx concurrently --kill-others \"yarn run dev:tailwind\" \"yarn run dev:plasmo\" \"yarn run dev:storybook\"",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "jest --config=test/jest.config.js"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --config=test/jest.config.js --verbose"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.11",
@@ -54,5 +54,9 @@
       "https://*/*"
     ]
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "type": "module",
+  "jest": {
+    "transform": {}
+  }
 }
