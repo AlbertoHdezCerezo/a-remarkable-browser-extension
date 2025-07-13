@@ -1,4 +1,3 @@
-import * as https from 'https'
 import Request from './request.js'
 
 /**
@@ -15,6 +14,14 @@ import Request from './request.js'
  * @class
  */
 export default class HttpsBasedHttpClient {
+  /**
+   * The Node.js `https` module, lazily loaded to allow mocking in tests.
+   *
+   * @private
+   * @type {Object}
+   */
+  static #https
+
   /**
    * Executes an HTTP request using the Node.js `https` module.
    *
@@ -76,8 +83,14 @@ export default class HttpsBasedHttpClient {
   static async #executeRequest (url, method, body, headers) {
     const request = new Request(url, method, headers, body)
 
+    /**
+     * This is a lazy-load of the Node.js `https` module. It is done to
+     * allow Polly.JS to mock the `https` module during tests.
+     */
+    if (!this.#https) { this.#https = await import('https') }
+
     return await new Promise((resolve, reject) => {
-      const httpsRequest = https.request(
+      const httpsRequest = this.#https.request(
         this.#httpsRequestPayload(request),
         (response) => {
           let responseData = ''

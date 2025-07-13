@@ -2,10 +2,11 @@ import { Polly } from '@pollyjs/core'
 
 const DEFAULT_RECORDS_DIR = './test/fixtures/http-records'
 const DEFAULT_POLLY_CONFIGURATION = {
+	recordIfMissing: true,
 	recordFailedRequests: true,
 	adapters: ['node-http'],
 	persister: 'fs',
-	logLevel: 'info'
+	logLevel: 'debug'
 }
 
 /**
