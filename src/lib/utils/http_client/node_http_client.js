@@ -12,7 +12,7 @@
  * @class
  */
 export default class NodeHttpClient {
-	static async get() {
+  static async get () {
 
-	}
+  }
 }
