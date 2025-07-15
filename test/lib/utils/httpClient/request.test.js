@@ -4,8 +4,8 @@ describe('Request', () => {
   describe('#construct', () => {
     it('returns a Request instance', () => {
       const request = new Request(
-        "http://arbe.com/faq",
-        "GET",
+        'http://arbe.com/faq',
+        'GET',
         { option: 'value' },
         { option: 'value' }
       )
@@ -15,7 +15,7 @@ describe('Request', () => {
 
     it('coerces URL string to an URL compatible format', () => {
       expect(() => {
-        new Request("arbe.com/faq")
+        new Request('arbe.com/faq')
       }).not.toThrow()
     })
   })
@@ -23,34 +23,34 @@ describe('Request', () => {
   describe('#url', () => {
     it('returns the URL of the request', () => {
       const request = new Request(
-        "http://arbe.com/faq",
-        "GET",
+        'http://arbe.com/faq',
+        'GET',
         { option: 'value' },
         { option: 'value' }
       )
 
-      expect(request.url.href).toBe("http://arbe.com/faq")
+      expect(request.url.href).toBe('http://arbe.com/faq')
     })
   })
 
   describe('#method', () => {
     it('returns the HTTP method of the request', () => {
       const request = new Request(
-        "http://arbe.com/faq",
-        "GET",
+        'http://arbe.com/faq',
+        'GET',
         { option: 'value' },
         { option: 'value' }
       )
 
-      expect(request.method).toBe("GET")
+      expect(request.method).toBe('GET')
     })
   })
 
   describe('#headers', () => {
     it('returns the headers of the request', () => {
       const request = new Request(
-        "http://arbe.com/faq",
-        "GET",
+        'http://arbe.com/faq',
+        'GET',
         { option: 'value' },
         { option: 'value' }
       )
@@ -62,8 +62,8 @@ describe('Request', () => {
   describe('#rawBody', () => {
     it('returns the raw body of the request', () => {
       const request = new Request(
-        "http://arbe.com/faq",
-        "GET",
+        'http://arbe.com/faq',
+        'GET',
         { option: 'value' },
         { option: 'value' }
       )
@@ -75,8 +75,8 @@ describe('Request', () => {
   describe('#body', () => {
     it('returns the body of the request in a serializer format', () => {
       const request = new Request(
-        "http://arbe.com/faq",
-        "GET",
+        'http://arbe.com/faq',
+        'GET',
         { option: 'value' },
         { option: 'value' }
       )

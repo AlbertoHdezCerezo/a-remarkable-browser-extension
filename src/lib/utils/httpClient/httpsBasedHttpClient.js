@@ -99,7 +99,7 @@ export default class HttpsBasedHttpClient {
         }
       )
 
-      httpsRequest.on('error', (error) => {reject(error)})
+      httpsRequest.on('error', (error) => { reject(error) })
 
       if (request.body != null) httpsRequest.write(request.body)
 
