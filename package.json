@@ -31,7 +31,8 @@
     "postcss-scss": "^4.0.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "tailwindcss": "^4.1.7"
+    "tailwindcss": "^4.1.7",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@pollyjs/core": "^6.0.6",
