@@ -1,4 +1,4 @@
-import Body from '../../../../src/lib/utils/http_client/body'
+import Body from '../../../../src/lib/utils/httpClient/body'
 
 describe('Body', () => {
   describe('#raw_payload', () => {
