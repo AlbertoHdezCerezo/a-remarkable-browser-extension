@@ -3,6 +3,8 @@ import FetchBasedHttpClient from '../utils/httpClient/fetchBasedHttpClient.js'
 
 export const SESSION_URL = 'https://webapp-prod.cloud.remarkable.engineering/token/json/2/user/new'
 
+export class UnsuccessfulSessionAuthenticationError extends Error {}
+
 /**
  * Represents an active device connection session.
  * This is a temporary token used to authenticate
@@ -19,17 +21,19 @@ export default class Session {
 	 * @returns {Session}
 	 */
 	static async from(deviceConnection) {
-		const sessionResponse = await FetchBasedHttpClient.post(
-			SESSION_URL,
-			null,
-			{Authorization: `Bearer ${deviceConnection.token}`}
-		)
+		try {
+			const sessionResponse = await FetchBasedHttpClient.post(
+				SESSION_URL,
+				null,
+				{Authorization: `Bearer ${deviceConnection.token}`}
+			)
 
-		if (sessionResponse.status !== 200) {
-			throw new Error(`Failed to create session with Remarkable API: ${sessionResponse.statusText}`)
+			return new Session(await sessionResponse.text())
+		} catch (error) {
+			throw new UnsuccessfulSessionAuthenticationError(
+				`Failed to authenticate session: ${error.message}`
+			)
 		}
-
-		return new Session(await sessionResponse.text())
 	}
 
 	/**

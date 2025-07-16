@@ -4,10 +4,7 @@ import FetchBasedHttpClient from '../utils/httpClient/fetchBasedHttpClient.js'
 
 export const AUTHENTICATION_URL = 'https://webapp-prod.cloud.remarkable.engineering/token/json/2/device/new'
 
-export const REMARKABLE_JWT_MAPPING = {
-	id: 'device-id',
-	description: 'device-desc',
-}
+export class UnsuccessfulDeviceConnectionPairingError extends Error {}
 
 /**
  * Represents a device connection to the reMarkable API.
@@ -41,20 +38,22 @@ export default class DeviceConnection {
 		description = 'browser-chrome',
 		httpClient = FetchBasedHttpClient
 	) {
-		const pairResponse = await httpClient.post(
-			AUTHENTICATION_URL,
-			{
-				code: oneTimeCode,
-				deviceID: deviceConnectionId,
-				deviceDesc: description
-			}
-		)
+		try {
+			const pairResponse = await httpClient.post(
+				AUTHENTICATION_URL,
+				{
+					code: oneTimeCode,
+					deviceID: deviceConnectionId,
+					deviceDesc: description
+				}
+			)
 
-		if (pairResponse.status !== 200) {
-			throw new Error(`Failed to pair with Remarkable API: ${pairResponse.statusText}`)
+			return new DeviceConnection(await pairResponse.text())
+		} catch (error) {
+			throw new UnsuccessfulDeviceConnectionPairingError(
+				`Failed to pair device connection: ${error.message}`
+			)
 		}
-
-		return new DeviceConnection(await pairResponse.text())
 	}
 
 	/**
@@ -89,8 +88,8 @@ export default class DeviceConnection {
 
 		const decodedToken = jwtDecode(token)
 
-		this.#id = decodedToken[REMARKABLE_JWT_MAPPING.id]
-		this.#description = decodedToken[REMARKABLE_JWT_MAPPING.description]
+		this.#id = decodedToken['device-id']
+		this.#description = decodedToken['device-desc']
 		this.#issuedAt = new Date(decodedToken.iat * 1000)
 	}
 

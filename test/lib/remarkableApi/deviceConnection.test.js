@@ -1,7 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
 import {jwtDecode} from 'jwt-decode'
-import DeviceConnection, {REMARKABLE_JWT_MAPPING} from '../../../src/lib/remarkableApi/deviceConnection'
-import {mockSuccessfulFetchBasedHttpRequest} from '../../helpers/fetchBasedHttpClientHelper.js'
+import DeviceConnection, {
+	UnsuccessfulDeviceConnectionPairingError
+} from '../../../src/lib/remarkableApi/deviceConnection'
+import {
+	mockFailedFetchBasedHttpRequest,
+	mockSuccessfulFetchBasedHttpRequest
+} from '../../helpers/fetchBasedHttpClientHelper.js'
 
 describe('DeviceConnection', () => {
 	describe('.from', () => {
@@ -28,7 +33,23 @@ describe('DeviceConnection', () => {
 			expect(deviceConnection).toBeInstanceOf(DeviceConnection)
 			expect(deviceConnection.token.replace(/^"(.*)"$/, '$1'))
 				.toBe(global.remarkableDeviceConnectionToken)
-		}, 50000)
+		})
+
+		it('if pairing fails, throws error', async () => {
+			const oneTimeCode = 'rsxirjhy'
+			const uuid = uuidv4()
+			const description = 'browser-chrome'
+
+			const originalFetch = mockFailedFetchBasedHttpRequest(
+				`https://my.remarkable.com/api/v1/connection/${oneTimeCode}`,
+			)
+
+			await expect(DeviceConnection.from(oneTimeCode, uuid, description))
+				.rejects
+				.toThrow(UnsuccessfulDeviceConnectionPairingError)
+
+			global.fetch = originalFetch
+		})
 	})
 
 	describe('.constructor', () => {
@@ -36,8 +57,8 @@ describe('DeviceConnection', () => {
 			const decodedToken = jwtDecode(global.remarkableDeviceConnectionToken)
 
 			const expectedTokenFields = {
-				id: decodedToken[REMARKABLE_JWT_MAPPING.id],
-				description: decodedToken[REMARKABLE_JWT_MAPPING.description],
+				id: decodedToken['device-id'],
+				description: decodedToken['device-desc'],
 				issuedAt: new Date(decodedToken.iat * 1000)
 			}
 
