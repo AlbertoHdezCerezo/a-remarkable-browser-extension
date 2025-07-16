@@ -9,6 +9,17 @@ export const REMARKABLE_JWT_MAPPING = {
 	description: 'device-desc',
 }
 
+/**
+ * Represents a device connection to the reMarkable API.
+ *
+ * A device connection is a one-time binding between a reMarkable
+ * account and a device, such as a browser or desktop application
+ * (like this web browser extension).
+ *
+ * Once created, the device connection token is used to issue
+ * session tokens, which can then be used to authenticate
+ * requests to the reMarkable API endpoints.
+ */
 export default class DeviceConnection {
 	/**
 	 * Creates a new DeviceConnection instance.
@@ -66,12 +77,6 @@ export default class DeviceConnection {
 	#issuedAt
 
 	/**
-	 * Time device connection expires
-	 * @type {Date}
-	 */
-	#expiredAt
-
-	/**
 	 * One-Time Token returned by the remarkable API
 	 * after pairing the device with the application.
 	 * It is used to authenticate the device against
@@ -89,27 +94,36 @@ export default class DeviceConnection {
 		this.#issuedAt = new Date(decodedToken.iat * 1000)
 	}
 
+	/**
+	 * Returns the device connection token.
+	 * @returns {string}
+	 */
 	get token() {
 		return this.#token
 	}
 
+	/**
+	 * Returns the device connection ID.
+	 * @returns {string}
+	 */
 	get id() {
 		return this.#id
 	}
 
+	/**
+	 * Returns the device description.
+	 * This is a human-readable description of the device type.
+	 * @returns {string}
+	 */
 	get description() {
 		return this.#description
 	}
 
+	/**
+	 * Returns the time when the device connection was created.
+	 * @returns {Date}
+	 */
 	get issuedAt() {
 		return this.#issuedAt
-	}
-
-	get expiredAt() {
-		return this.#expiredAt
-	}
-
-	get expired() {
-		return this.#expiredAt < new Date()
 	}
 }

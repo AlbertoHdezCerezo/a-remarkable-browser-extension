@@ -4,7 +4,7 @@ const DEFAULT_RECORDS_DIR = './test/fixtures/http-records'
 const DEFAULT_POLLY_CONFIGURATION = {
   recordIfMissing: true,
   recordFailedRequests: true,
-  adapters: ['node-http'],
+  adapters: ['node-http', 'fetch'],
   persister: 'fs',
   logLevel: 'debug'
 }

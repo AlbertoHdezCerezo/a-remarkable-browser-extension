@@ -12,9 +12,11 @@
  */
 import { Polly } from '@pollyjs/core'
 import FSPersister from '@pollyjs/persister-fs'
+import FetchAdapter from '@pollyjs/adapter-fetch'
 import NodeHttpAdapter from '@pollyjs/adapter-node-http'
 
 Polly.register(NodeHttpAdapter)
+Polly.register(FetchAdapter)
 Polly.register(FSPersister)
 
 /**
@@ -24,4 +26,5 @@ import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.test' })
 
-global.remarkableToken = process.env.REMARKABLE_TOKEN
+global.remarkableDeviceConnectionToken = process.env.REMARKABLE_DEVICE_CONNECTION_TOKEN
+global.remarkableSessionToken = process.env.REMARKABLE_SESSION_TOKEN

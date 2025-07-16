@@ -1,6 +1,8 @@
 import { jest } from '@jest/globals'
 
 export function mockSuccessfulFetchBasedHttpRequest(url, responseBody = {}, status = 200) {
+	const originalFetch = global.fetch
+
 	global.fetch = jest.fn().mockResolvedValue({
 		ok: status >= 200 && status < 300,
 		status,
@@ -16,6 +18,8 @@ export function mockSuccessfulFetchBasedHttpRequest(url, responseBody = {}, stat
 			}
 		}
 	})
+
+	return originalFetch
 }
 
 export function mockFailedFetchBasedHttpRequest(url, status = 500, statusText = 'Internal Server Error') {

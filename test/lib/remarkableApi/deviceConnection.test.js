@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
+import {jwtDecode} from 'jwt-decode'
 import DeviceConnection, {REMARKABLE_JWT_MAPPING} from '../../../src/lib/remarkableApi/deviceConnection'
-import {mockSuccessfulFetchBasedHttpRequest} from '../../helpers/fetchBasedHttpClientHelper.js';
-import {jwtDecode} from "jwt-decode";
+import {mockSuccessfulFetchBasedHttpRequest} from '../../helpers/fetchBasedHttpClientHelper.js'
 
 describe('DeviceConnection', () => {
 	describe('.from', () => {
@@ -14,24 +14,26 @@ describe('DeviceConnection', () => {
 			const uuid = uuidv4()
 			const description = 'browser-chrome'
 
-			mockSuccessfulFetchBasedHttpRequest(
+			const originalFetch = mockSuccessfulFetchBasedHttpRequest(
 				`https://my.remarkable.com/api/v1/connection/${oneTimeCode}`,
-				global.remarkableToken,
+				global.remarkableDeviceConnectionToken,
 				200
 			)
 
 			const deviceConnection =
 				await DeviceConnection.from(oneTimeCode, uuid, description)
 
+			global.fetch = originalFetch
+
 			expect(deviceConnection).toBeInstanceOf(DeviceConnection)
 			expect(deviceConnection.token.replace(/^"(.*)"$/, '$1'))
-				.toBe(global.remarkableToken)
+				.toBe(global.remarkableDeviceConnectionToken)
 		}, 50000)
 	})
 
 	describe('.constructor', () => {
 		it('initializes device connection with token data', () => {
-			const decodedToken = jwtDecode(global.remarkableToken)
+			const decodedToken = jwtDecode(global.remarkableDeviceConnectionToken)
 
 			const expectedTokenFields = {
 				id: decodedToken[REMARKABLE_JWT_MAPPING.id],
@@ -39,7 +41,7 @@ describe('DeviceConnection', () => {
 				issuedAt: new Date(decodedToken.iat * 1000)
 			}
 
-			const deviceConnection = new DeviceConnection(global.remarkableToken)
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
 
 			const actualTokenFields = {
 				id: deviceConnection.id,

@@ -72,7 +72,7 @@ export default class FetchBasedHttpClient {
     return await new Promise(async (resolve, reject) => {
       const response = await fetch(request.url.toString(), {
         method: request.method,
-        headers: request.headers.entries,
+        headers: request.headers,
         body: request.body
       })
 
