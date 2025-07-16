@@ -1,7 +1,13 @@
 import { v4 as uuidv4 } from 'uuid'
+import { jwtDecode } from 'jwt-decode'
 import FetchBasedHttpClient from '../utils/httpClient/fetchBasedHttpClient.js'
 
-const AUTHENTICATION_URL = 'https://webapp-prod.cloud.remarkable.engineering/token/json/2/device/new'
+export const AUTHENTICATION_URL = 'https://webapp-prod.cloud.remarkable.engineering/token/json/2/device/new'
+
+export const REMARKABLE_JWT_MAPPING = {
+	id: 'device-id',
+	description: 'device-desc',
+}
 
 export default class DeviceConnection {
 	/**
@@ -54,6 +60,18 @@ export default class DeviceConnection {
 	#description
 
 	/**
+	 * Time device connection was created
+	 * @type {Date}
+	 */
+	#issuedAt
+
+	/**
+	 * Time device connection expires
+	 * @type {Date}
+	 */
+	#expiredAt
+
+	/**
 	 * One-Time Token returned by the remarkable API
 	 * after pairing the device with the application.
 	 * It is used to authenticate the device against
@@ -62,11 +80,36 @@ export default class DeviceConnection {
 	#token
 
 	constructor(token) {
-		console.log(token)
 		this.#token = token
+
+		const decodedToken = jwtDecode(token)
+
+		this.#id = decodedToken[REMARKABLE_JWT_MAPPING.id]
+		this.#description = decodedToken[REMARKABLE_JWT_MAPPING.description]
+		this.#issuedAt = new Date(decodedToken.iat * 1000)
 	}
 
 	get token() {
 		return this.#token
+	}
+
+	get id() {
+		return this.#id
+	}
+
+	get description() {
+		return this.#description
+	}
+
+	get issuedAt() {
+		return this.#issuedAt
+	}
+
+	get expiredAt() {
+		return this.#expiredAt
+	}
+
+	get expired() {
+		return this.#expiredAt < new Date()
 	}
 }

@@ -16,3 +16,12 @@ import NodeHttpAdapter from '@pollyjs/adapter-node-http'
 
 Polly.register(NodeHttpAdapter)
 Polly.register(FSPersister)
+
+/**
+ * Load environment variables from .env.test file
+ */
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '.env.test' })
+
+global.remarkableToken = process.env.REMARKABLE_TOKEN

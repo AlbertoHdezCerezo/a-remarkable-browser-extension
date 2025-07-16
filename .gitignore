@@ -16,3 +16,4 @@ node_modules
 # Storybook specific files to be ignored
 *storybook.log
 storybook-static
+/.env
