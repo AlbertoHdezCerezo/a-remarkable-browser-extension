@@ -1,4 +1,5 @@
 import Request from './request.js'
+import HttpClientError from "./httpClientError.js";
 
 /**
  * HTTP client for JS web-browser environments.
@@ -81,7 +82,14 @@ export default class FetchBasedHttpClient {
       if (response.ok) {
         resolve(new Response(responseData, { status: response.status, statusText: response.statusText }))
       } else {
-        reject(new Error(`HTTP error: ${response.status} - ${responseData}`))
+				reject(
+					new HttpClientError(
+						`HTTP error: ${response.status} - ${responseData}`,
+						response.status,
+						request,
+						response
+					)
+				)
       }
     })
   }
