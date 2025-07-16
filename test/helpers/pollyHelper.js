@@ -6,7 +6,7 @@ const DEFAULT_POLLY_CONFIGURATION = {
   recordFailedRequests: true,
   adapters: ['node-http', 'fetch'],
   persister: 'fs',
-  logLevel: 'debug'
+  // logLevel: 'debug'
 }
 
 /**
