@@ -19,7 +19,18 @@ export class UnreachableServiceError extends Error {
 	}
 }
 
+/**
+ * Service to fetch dynamic reMarkable API service URLs
+ */
 export default class ServiceUrlManager {
+	/**
+	 * Fetches the remarkable API URL for a given service name.
+	 *
+	 * @param {string} serviceName - The name of the service to fetch the URL for.
+	 * @returns {Promise<string>} - The URL of the requested service.
+	 * @throws {InvalidServiceError} - If the service name is invalid.
+	 * @throws {UnreachableServiceError} - If the service is unreachable.
+	 */
 	static async urlForService(serviceName) {
 		const service = SERVICE_DIRECTORY[serviceName]
 

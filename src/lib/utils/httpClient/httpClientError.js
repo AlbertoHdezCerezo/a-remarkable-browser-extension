@@ -25,7 +25,7 @@ export default class HttpClientError extends Error {
 
 		this.#statusCode = statusCode
 		this.#request = request
-		this.#response
+		this.#response = response
 	}
 
 	/**

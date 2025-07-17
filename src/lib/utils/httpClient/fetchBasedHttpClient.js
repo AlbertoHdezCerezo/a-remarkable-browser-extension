@@ -70,15 +70,15 @@ export default class FetchBasedHttpClient {
   static async #executeRequest (url, method, body, headers) {
     const request = new Request(url, method, headers, body)
 
-    return await new Promise(async (resolve, reject) => {
-      const response = await fetch(request.url.toString(), {
-        method: request.method,
-        headers: request.headers,
-        body: request.body
-      })
+		const response = await fetch(request.url.toString(), {
+			method: request.method,
+			headers: request.headers,
+			body: request.body
+		})
 
-      const responseData = await response.text()
+		const responseData = await response.text()
 
+    return await new Promise( (resolve, reject) => {
       if (response.ok) {
         resolve(new Response(responseData, { status: response.status, statusText: response.statusText }))
       } else {

@@ -63,6 +63,14 @@ export default class Session {
 	}
 
 	/**
+	 * Returns the session token used to authenticate requests.
+	 * @returns {string}
+	 */
+	get token() {
+		return this.#token
+	}
+
+	/**
 	 * Returns the device connection ID associated to the session.
 	 * @returns {string}
 	 */
