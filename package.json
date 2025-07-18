@@ -10,7 +10,7 @@
     "build:plasmo": "plasmo build",
     "build:tailwind": "npx @tailwindcss/cli --postcss ./config/postcss.config.cjs -i ./assets/css/tailwind.css -o ./assets/css/style.css -c ./config/tailwind.config.mjs --minify",
     "dev:standard": "standard",
-    "dev:lint": "yarn dev:standard",
+    "dev:lint": "npx eslint --config config/eslint.config.js src",
     "dev:plasmo": "plasmo dev",
     "dev:storybook": "storybook dev -p 6006",
     "dev:tailwind": "npx @tailwindcss/cli --postcss ./config/postcss.config.js -i ./assets/css/tailwind.css -o ./assets/css/style.css -c ./config/tailwind.config.js --watch",
