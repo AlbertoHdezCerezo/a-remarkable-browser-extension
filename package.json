@@ -20,8 +20,10 @@
     "test": "node --experimental-vm-modules node_modules/.bin/jest --config=test/jest.config.js --verbose"
   },
   "dependencies": {
+    "@polkadot/x-textencoder": "^13.5.3",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
+    "base64-js": "^1.5.1",
     "jwt-decode": "^4.0.0",
     "plasmo": "0.90.5",
     "postcss": "^8.5.3",
