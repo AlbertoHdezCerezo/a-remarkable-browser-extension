@@ -5,7 +5,7 @@ import Uploader from '../../../../src/lib/remarkableApi/internal/uploader'
 import FileBuffer from '../../../../src/lib/remarkableApi/utils/fileBuffer'
 import DeviceConnection from '../../../../src/lib/remarkableApi/deviceConnection'
 
-describe('Session', () => {
+describe('Uploader', () => {
 	setupHttpRecording()
 
 	describe('.upload', () => {
