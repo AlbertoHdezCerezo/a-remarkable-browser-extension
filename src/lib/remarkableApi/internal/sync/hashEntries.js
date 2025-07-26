@@ -42,7 +42,10 @@ export default class HashEntries {
 	constructor(hashEntriesPayload) {
 		this.#payload = hashEntriesPayload
 
-		const hashEntriesLines = hashEntriesPayload.split('\n')
+		const hashEntriesLines =
+			hashEntriesPayload
+				.split('\n')
+				.filter((line) => line.trim() !== '')
 
 		const [
 			schemaVersionString,
