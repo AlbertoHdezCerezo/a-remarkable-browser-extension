@@ -1,3 +1,6 @@
+import {CONFIGURATION} from "../../configuration.js";
+import FetchBasedHttpClient from "../../../utils/httpClient/fetchBasedHttpClient.js";
+
 export default class HashEntry {
 	/**
 	 * Hash entry payload. Returned by the reMarkable API
@@ -13,10 +16,10 @@ export default class HashEntry {
 	#hash
 
 	/**
-	 * File type associated with the hash entries.
+	 * Number of sub-hash entries within file represented by hash entry
 	 * @type {number}
 	 */
-	#typeNumber
+	#nestedHashEntriesCount
 
 	/**
 	 * Size of the file in bytes.
@@ -39,12 +42,12 @@ export default class HashEntry {
 	constructor(hashEntryPayload) {
 		this.#payload = hashEntryPayload
 
-		const [hash, _zero, subFileHash, typeNumber, sizeInBytes] = hashEntryPayload.split(':')
+		const [hash, _zero, subFileHash, nestedHashEntriesCount, sizeInBytes] = hashEntryPayload.split(':')
 
 		const [fileId, fileExtension] = subFileHash.split('.')
 
 		this.#hash = hash
-		this.#typeNumber = Number(typeNumber)
+		this.#nestedHashEntriesCount = Number(nestedHashEntriesCount)
 		this.#sizeInBytes = Number(sizeInBytes)
 		this.#fileId = fileId
 		this.#fileExtension = fileExtension
@@ -67,11 +70,11 @@ export default class HashEntry {
 	}
 
 	/**
-	 * Returns the file type number.
+	 * Returns the number of sub-hash entries within the file represented by this hash entry.
 	 * @returns {number}
 	 */
-	get typeNumber() {
-		return this.#typeNumber
+	get nestedHashEntriesCount() {
+		return this.#nestedHashEntriesCount
 	}
 
 	/**
@@ -104,5 +107,37 @@ export default class HashEntry {
 	 */
 	get rootHashEntry() {
 		return this.fileExtension === null || this.fileExtension === undefined
+	}
+
+	/**
+	 * Returns the URL to fetch the content of the file represented by this hash entry.
+	 * @returns {string}
+	 */
+	get url() {
+		return CONFIGURATION.endpoints.sync.v3.endpoints.files + this.hash
+	}
+
+	/**
+	 * Fetches the content of the file represented by this hash entry.
+	 * @param {Session} session - The session object containing the authentication token.
+	 * @returns {Promise<object|string>}
+	 */
+	async content(session) {
+		const contentResponse =
+			await FetchBasedHttpClient
+				.get(this.url, {'Authorization': `Bearer ${session.token}`})
+
+		const contentRawPayload = await contentResponse.text()
+
+		/**
+		 * A response can either contain a plain text resembling
+		 * a set of hash entries, or a JSON. Hence, we try to parse
+		 * the response as JSON, and if it fails, we return the raw payload.
+ 		 */
+		try {
+			return JSON.parse(contentRawPayload)
+		} catch (error) {
+			return contentRawPayload
+		}
 	}
 }
