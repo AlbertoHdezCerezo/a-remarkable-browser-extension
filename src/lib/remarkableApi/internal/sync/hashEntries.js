@@ -22,10 +22,10 @@ export default class HashEntries {
 	#schemaVersion
 
 	/**
-	 * File type associated with the hash entries.
+	 * Number of nested hash entries within the file represented by the hash entries.
 	 * @type {number}
 	 */
-	#typeNumber
+	#nestedHashEntriesCount
 
 	/**
 	 * Unique UUID identifier for the file.
@@ -52,10 +52,10 @@ export default class HashEntries {
 
 		this.#schemaVersion = Number(schemaVersionString)
 
-		const [_zero, fileId, typeNumber, sizeInBytes] = fileDataString.split(':')
+		const [_zero, fileId, nestedHashEntriesCount, sizeInBytes] = fileDataString.split(':')
 
 		this.#fileId = fileId
-		this.#typeNumber = Number(typeNumber)
+		this.#nestedHashEntriesCount = Number(nestedHashEntriesCount)
 		this.#sizeInBytes = Number(sizeInBytes)
 		this.#hashEntriesList = fileNestedHashEntriesStrings.map((line) => new HashEntry(line))
 	}
@@ -88,8 +88,8 @@ export default class HashEntries {
 	 * Returns the type number of the file.
 	 * @returns {number}
 	 */
-	get typeNumber() {
-		return this.#typeNumber
+	get nestedHashEntriesCount() {
+		return this.#nestedHashEntriesCount
 	}
 
 	/**
@@ -114,5 +114,30 @@ export default class HashEntries {
 	 */
 	get rootHashEntries() {
 		return this.#fileId === '.'
+	}
+
+	/**
+	 * Returns true if the hash entries resemble a folder.
+	 * @returns {boolean}
+	 */
+	get resemblesAFolder() {
+		return !this.#hashEntriesList.some((entry) => entry.fileExtension === 'pagedata')
+	}
+
+	/**
+	 * Returns true if the hash entries resemble a PDF file.
+	 * @returns {boolean}
+	 */
+	get resemblesAPdf() {
+		return this.#hashEntriesList.some((entry) => entry.fileExtension === 'pdf') &&
+			!this.#hashEntriesList.some((entry) => entry.fileExtension === 'epub')
+	}
+
+	/**
+	 * Returns true if the hash entries resemble an EPUB file.
+	 * @returns {boolean}
+	 */
+	get resemblesAnEpub() {
+		return this.#hashEntriesList.some((entry) => entry.fileExtension === 'epub')
 	}
 }
