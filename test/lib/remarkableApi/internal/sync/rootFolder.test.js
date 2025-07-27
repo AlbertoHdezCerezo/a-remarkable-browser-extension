@@ -21,4 +21,19 @@ describe('RootFolder', () => {
 			expect(rootFolder.session).toBe(session)
 		})
 	})
+
+	describe('#files', () => {
+		it('returns all files within the root folder', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const rootFolder = await RootFolder.fromRootEndpoint(session)
+
+			const files = await rootFolder.files()
+
+			expect(files).toBeDefined()
+			expect(files).toBeInstanceOf(Array)
+			expect(files.length).toBeGreaterThan(0)
+		})
+	})
 })

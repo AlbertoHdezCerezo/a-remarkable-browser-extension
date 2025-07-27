@@ -1,4 +1,8 @@
+import CRC32 from 'crc-32'
+import {fromByteArray} from 'base64-js'
 import HashEntries from './hashEntries'
+import FetchBasedHttpClient from "../../../utils/httpClient/fetchBasedHttpClient.js";
+import {CONFIGURATION} from "../../configuration.js";
 
 export class PdfIncompatibleHashEntriesError extends Error {}
 
@@ -105,5 +109,35 @@ export default class PdfDocument {
 	 */
 	get name() {
 		return this.#metadata.visibleName
+	}
+
+	async rename(newName, session) {
+		const pdfMetadataAfterRename = Object.assign(this.#metadata, {visibleName: newName})
+
+		const serializedMetadata = JSON.stringify(pdfMetadataAfterRename)
+		const encodedMetadata = new TextEncoder().encode(serializedMetadata)
+		const crc = CRC32.buf(encodedMetadata, 0)
+		const buff = new ArrayBuffer(4)
+		new DataView(buff).setInt32(0, crc, false)
+		const crcHash = fromByteArray(new Uint8Array(buff))
+		const hash = await this.digest(encodedMetadata)
+
+		console.log(encodedMetadata)
+		const renameResponse = await FetchBasedHttpClient.put(
+			CONFIGURATION.endpoints.sync.v3.endpoints.files + hash,
+			encodedMetadata,
+			{
+				'Authorization': `Bearer ${session.token}`,
+				'rm-filename': newName,
+				'x-goog-hash': `crc32c=${crcHash}`
+			}
+		)
+	}
+
+	async digest(buff) {
+		const digest = await crypto.subtle.digest("SHA-256", buff);
+		return [...new Uint8Array(digest)]
+			.map((x) => x.toString(16).padStart(2, "0"))
+			.join("")
 	}
 }

@@ -42,6 +42,11 @@ export default class RootFolder {
 	#hashEntries
 
 	/**
+	 * Collection of all files within client's cloud account.
+	 */
+	#files
+
+	/**
 	 * @param {Session} session - The reMarkable API session.
 	 * @param {HashEntries} hashEntries - The hash entries handling of the root hash payload.
 	 */
@@ -64,5 +69,28 @@ export default class RootFolder {
 	 */
 	get hashEntries() {
 		return this.#hashEntries
+	}
+
+	async files(){
+		if (this.#files) return this.#files
+
+		const filesEndpoint = CONFIGURATION.endpoints.sync.v3.endpoints.files
+
+		const hashEntriesResponses = await Promise.all(
+			this.#hashEntries.hashEntriesList.map(hashEntry => {
+				return FetchBasedHttpClient.get(
+					filesEndpoint + hashEntry.hash,
+					{'Authorization': `Bearer ${this.session.token}`}
+				)
+			})
+		)
+
+		const hashEntriesPayloads = await Promise.all(
+			hashEntriesResponses.map(response => response.text())
+		)
+
+		this.#files = hashEntriesPayloads.map(payload => new HashEntries(payload.trim()))
+
+		return this.#files
 	}
 }

@@ -106,4 +106,8 @@ export default class EpubDocument {
 	get name() {
 		return this.#metadata.visibleName
 	}
+
+	async rename(newName, session) {
+
+	}
 }

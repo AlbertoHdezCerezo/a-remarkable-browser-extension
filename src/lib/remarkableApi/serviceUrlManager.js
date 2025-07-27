@@ -1,8 +1,8 @@
 import FetchBasedHttpClient from "../utils/httpClient/fetchBasedHttpClient.js";
 
 export const SERVICE_DIRECTORY = {
-	storage: "https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/document-storage?environment=production&group=auth0%7C5a68dc51cb30df1234567890&apiVer=2\n",
-	notifications: "https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/notifications?environment=production&group=auth0%7C5a68dc51cb30df1234567890&apiVer=1\n"
+	storage: "https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/document-storage?environment=production&group=auth0|5a68dc51cb30df3877a1d7c4&apiVer=2",
+	notifications: "https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/notifications?environment=production&group=auth0%7C5a68dc51cb30df1234567890&apiVer=1"
 }
 
 export class InvalidServiceError extends Error {
