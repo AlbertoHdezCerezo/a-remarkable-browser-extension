@@ -44,13 +44,21 @@ export default class RequestBuffer {
 	}
 
 	/**
+	 * Returns the payload as a Uint8Array.
+	 *
+	 * @returns {Uint8Array}
+	 */
+	get payloadUint8Array() {
+		return (new TextEncoder()).encode(this.#payload)
+	}
+
+	/**
 	 * Generates a SHA-256 hash of the payload.
 	 *
 	 * @returns {Promise<string>}
 	 */
 	async hash() {
-		const payloadUint8Array = (new TextEncoder()).encode(this.payload)
-		const payloadDigest = await crypto.subtle.digest("SHA-256", payloadUint8Array)
+		const payloadDigest = await crypto.subtle.digest("SHA-256", this.payloadUint8Array)
 		return Array.from(new Uint8Array(payloadDigest))
 			.map(b => b.toString(16).padStart(2, '0'))
 			.join('')
