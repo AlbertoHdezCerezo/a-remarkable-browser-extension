@@ -1,6 +1,6 @@
 import {CONFIGURATION} from '../../../../../configuration'
-import RequestBuffer from '../../utils/requestBuffer'
 import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import RequestBuffer from '../../utils/requestBuffer'
 
 /**
  * Class representing the metadata of a PDF file.
@@ -82,27 +82,29 @@ export default class PdfMetadata {
 	 * @returns {Promise<RequestBuffer>}
 	 */
 	async update(updatedMetadataPayload, session) {
-		const metadataPayload = {
+		const updateRequestBody = {
 			...this.#payload,
 			...updatedMetadataPayload
 		}
 
-		const metadataRequestBuffer = new RequestBuffer(metadataPayload)
+		const updateRequestBuffer = new RequestBuffer(updateRequestBody)
 
 		const updateRequestHeaders = {
 			'authorization': `Bearer ${session.token}`,
 			'content-type': 'application/octet-stream',
-			'rm-filename': `${pdfFileHashEntry.fileId}.${pdfFileHashEntry.fileExtension}`,
-			'rm-parent-hash': pdfFile.hash,
-			'x-goog-hash': metadataRequestBuffer.crc32Hash,
+			'rm-filename': `${this.pdfFileHashEntry.fileId}.metadata`,
+			'rm-parent-hash': this.pdfFileHashEntry.hash,
+			'x-goog-hash': `crc32c=${updateRequestBuffer.crc32Hash}`,
 		}
 
-		const updateResponse = await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + (await metadataRequestBuffer.hash()),
-			metadataRequestBuffer.payload,
+		const newPdfMetadataHash = await updateRequestBuffer.hash()
+
+		await FetchBasedHttpClient.put(
+			CONFIGURATION.endpoints.sync.v3.endpoints.files + newPdfMetadataHash,
+			updateRequestBuffer.payload,
 			updateRequestHeaders,
 		)
 
-		return metadataRequestBuffer
+		return newPdfMetadataHash
 	}
 }
