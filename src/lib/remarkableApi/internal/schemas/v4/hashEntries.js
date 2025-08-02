@@ -147,6 +147,19 @@ export default class HashEntries {
 	}
 
 	/**
+	 * Returns the total size in bytes of all hash entries,
+	 * based on their individual sizes, instead of relying
+	 * on the hash entry used to load the hash entries.
+	 *
+	 * @returns {number}
+	 */
+	get sizeInBytesFromHashEntries() {
+		return this.hashEntriesList.reduce((total, hashEntry) => {
+			return total + hashEntry.sizeInBytes
+		}, 0)
+	}
+
+	/**
 	 * Returns a new instance of HashEntries where a given
 	 * hash entry is replaced with a new hash entry. If
 	 * the current hash entry is not found,
