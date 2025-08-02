@@ -1,5 +1,7 @@
 import HashEntry from './hashEntry.js'
 
+class MissingHashEntryError extends Error {}
+
 export default class HashEntries {
 	/**
 	 * Hash entries payload. Is what the reMarkable API
@@ -142,5 +144,29 @@ export default class HashEntries {
 	 */
 	get resemblesAnEpub() {
 		return this.#hashEntriesList.some((entry) => entry.fileExtension === 'epub')
+	}
+
+	/**
+	 * Returns a new instance of HashEntries where a given
+	 * hash entry is replaced with a new hash entry. If
+	 * the current hash entry is not found,
+	 *
+	 * @param {HashEntry} currentHashEntry
+	 * @param {HashEntry} newHashEntry
+	 * @returns {HashEntries}
+	 */
+	replace(currentHashEntry, newHashEntry) {
+		const index = this.#hashEntriesList.findIndex(
+			(entry) => entry.hash === currentHashEntry.hash
+		)
+
+		if (index === -1) throw new MissingHashEntryError()
+
+		return new HashEntries(
+			this.#payload.replace(
+				this.hashEntriesList[index].payload,
+				newHashEntry.payload
+			)
+		)
 	}
 }
