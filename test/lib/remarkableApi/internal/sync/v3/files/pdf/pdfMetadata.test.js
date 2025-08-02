@@ -1,5 +1,5 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import HashEntry from '../../../../../../../../src/lib/remarkableApi/internal/sync/hashEntry'
+import HashEntry from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry.js'
 import PdfMetadata from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfMetadata'
 import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
 import Session from '../../../../../../../../src/lib/remarkableApi/session'
@@ -65,15 +65,18 @@ describe('PdfMetadata', () => {
 
 			const pdfMetadata = new PdfMetadata(pdfFileRootHashEntry, pdfMetadataPayload)
 
-			const newPdfMetadataHash = await pdfMetadata.update({ visibleName: 'Updated-File.pdf' }, session)
+			const newPdfMetadataHasEntry = await pdfMetadata.update({ visibleName: 'Updated-File.pdf' }, session)
 
 			const expectedPdfMetadataPayload = { ...pdfMetadataPayload, "visibleName": "Updated-File.pdf" }
 			const expectedRequestBuffer = new RequestBuffer(expectedPdfMetadataPayload)
 			const expectedPdfMetadataHash = await expectedRequestBuffer.hash()
 
-			expect(newPdfMetadataHash).toBe(expectedPdfMetadataHash)
+			expect(newPdfMetadataHasEntry.fileId).toBe('d4da3a60-8afb-4db6-82b4-de9154c26355')
+			expect(newPdfMetadataHasEntry.sizeInBytes).toBe(expectedRequestBuffer.sizeInBytes)
+			expect(newPdfMetadataHasEntry.fileExtension).toBe('metadata')
+			expect(newPdfMetadataHasEntry.hash).toBe(expectedPdfMetadataHash)
 
-			const resultingPdfMetadata = await (new HashEntry(`${newPdfMetadataHash}::::`)).content(session)
+			const resultingPdfMetadata = await newPdfMetadataHasEntry.content(session)
 
 			expect(resultingPdfMetadata.visibleName).toBe('Updated-File.pdf')
 		})

@@ -1,5 +1,6 @@
 import {CONFIGURATION} from '../../../../../configuration'
 import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import HashEntry from '../../../../schemas/v4/hashEntry'
 import RequestBuffer from '../../utils/requestBuffer'
 
 /**
@@ -79,7 +80,7 @@ export default class PdfMetadata {
 	 *
 	 * @param {Object} updatedMetadataPayload - The updated metadata payload
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<RequestBuffer>}
+	 * @returns {Promise<HashEntry>}
 	 */
 	async update(updatedMetadataPayload, session) {
 		const updateRequestBody = {
@@ -105,6 +106,6 @@ export default class PdfMetadata {
 			updateRequestHeaders,
 		)
 
-		return newPdfMetadataHash
+		return new HashEntry(`${newPdfMetadataHash}:0:${this.pdfFileHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }
