@@ -1,7 +1,7 @@
-import {CONFIGURATION} from '../../../../../src/lib/remarkableApi/configuration'
-import HashEntry from '../../../../../src/lib/remarkableApi/internal/sync/hashEntry'
-import DeviceConnection from '../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../src/lib/remarkableApi/session'
+import {CONFIGURATION} from '../../../../../../src/lib/remarkableApi/configuration.js'
+import HashEntry from '../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry.js'
+import DeviceConnection from '../../../../../../src/lib/remarkableApi/deviceConnection.js'
+import Session from '../../../../../../src/lib/remarkableApi/session.js'
 
 describe('HashEntry', () => {
 	describe('.construct', () => {

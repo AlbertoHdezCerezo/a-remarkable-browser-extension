@@ -1,5 +1,5 @@
-import {CONFIGURATION} from '../../configuration'
-import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient'
+import {CONFIGURATION} from '../../../configuration.js'
+import FetchBasedHttpClient from '../../../../utils/httpClient/fetchBasedHttpClient.js'
 
 export default class HashEntry {
 	/**

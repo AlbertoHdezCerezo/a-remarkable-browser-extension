@@ -1,4 +1,4 @@
-import HashEntry from './hashEntry'
+import HashEntry from './hashEntry.js'
 
 export default class HashEntries {
 	/**

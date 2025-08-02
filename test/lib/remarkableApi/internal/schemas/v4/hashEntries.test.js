@@ -1,4 +1,4 @@
-import HashEntries from '../../../../../src/lib/remarkableApi/internal/sync/hashEntries'
+import HashEntries from '../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntries.js'
 
 describe('HashEntries', () => {
 	describe('.construct', () => {
