@@ -34,7 +34,7 @@ export class UnreachableHashEntryContentError extends Error {
  * Represents a reMarkable cloud API hash entry.
  *
  * A hash entry is a string composed by a set of
- * fields separated by a colon (:):
+ * fields separated by a colon (:).
  *
  * Example: cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
  *
@@ -60,7 +60,10 @@ export class HashEntry {
 	/**
 	 * Payload of the hash entry.
 	 *
-	 * Example: cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
+	 * Example:
+	 * ```
+	 * cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
+	 * ```
 	 *
 	 * @typedef {string}
 	 */
