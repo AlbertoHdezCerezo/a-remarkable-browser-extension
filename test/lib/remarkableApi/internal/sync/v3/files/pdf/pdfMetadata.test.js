@@ -1,9 +1,9 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import HashEntry from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry.js'
+import {HashEntry} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
+import RequestBuffer from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
 import PdfMetadata from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfMetadata'
 import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
 import Session from '../../../../../../../../src/lib/remarkableApi/session'
-import RequestBuffer from "../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer.js";
 
 describe('PdfMetadata', () => {
 	const pdfFileRootHashEntry = new HashEntry('e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00f9663d-3d4a-4640-a755-3a0e66b44f1d:4:3943357')
@@ -67,14 +67,14 @@ describe('PdfMetadata', () => {
 
 			const newPdfMetadataHasEntry = await pdfMetadata.update({ visibleName: 'Updated-File.pdf' }, session)
 
-			const expectedPdfMetadataPayload = { ...pdfMetadataPayload, "visibleName": "Updated-File.pdf" }
+			const expectedPdfMetadataPayload = JSON.stringify({ ...pdfMetadataPayload, "visibleName": "Updated-File.pdf" })
 			const expectedRequestBuffer = new RequestBuffer(expectedPdfMetadataPayload)
-			const expectedPdfMetadataHash = await expectedRequestBuffer.hash()
+			const expectedPdfMetadataHash = await expectedRequestBuffer.checksum()
 
 			expect(newPdfMetadataHasEntry.fileId).toBe('d4da3a60-8afb-4db6-82b4-de9154c26355')
 			expect(newPdfMetadataHasEntry.sizeInBytes).toBe(expectedRequestBuffer.sizeInBytes)
 			expect(newPdfMetadataHasEntry.fileExtension).toBe('metadata')
-			expect(newPdfMetadataHasEntry.hash).toBe(expectedPdfMetadataHash)
+			expect(newPdfMetadataHasEntry.checksum).toBe(expectedPdfMetadataHash)
 
 			const resultingPdfMetadata = await newPdfMetadataHasEntry.content(session)
 
