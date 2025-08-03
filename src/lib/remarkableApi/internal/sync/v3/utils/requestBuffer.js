@@ -53,6 +53,15 @@ export default class RequestBuffer {
 	}
 
 	/**
+	 * Returns the payload as a base64 encoded string.
+	 *
+	 * @returns {number}
+	 */
+	get sizeInBytes() {
+		return this.payloadUint8Array.length
+	}
+
+	/**
 	 * Generates a SHA-256 hash of the payload.
 	 *
 	 * @returns {Promise<string>}

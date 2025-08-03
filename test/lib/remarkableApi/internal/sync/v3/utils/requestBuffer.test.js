@@ -42,4 +42,12 @@ describe('RequestBuffer', () => {
 			expect(crc32Hash).toBe('hqBywA==')
 		})
 	})
+
+	describe('#sizeInBytes', () => {
+		it('returns buffer payload size in bytes', () => {
+			const sizeInBytes = new RequestBuffer('test').sizeInBytes
+
+			expect(sizeInBytes).toBe(4)
+		})
+	})
 })
