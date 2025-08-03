@@ -1,7 +1,23 @@
 import RequestBuffer from '../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
 
 describe('RequestBuffer', () => {
-	describe('#hash', () => {
+	describe('payloadUint8Array', () => {
+		it('returns buffer payload as Uint8Array', () => {
+			const payloadUint8Array = new RequestBuffer('test').payloadUint8Array
+
+			expect(payloadUint8Array).toEqual(new Uint8Array([116, 101, 115, 116]))
+		})
+	})
+
+	describe('#sizeInBytes', () => {
+		it('returns buffer payload size in bytes', () => {
+			const sizeInBytes = new RequestBuffer('test').sizeInBytes
+
+			expect(sizeInBytes).toBe(4)
+		})
+	})
+
+	describe('#checksum', () => {
 		const sample_payload = {
 			"createdTime": "1752956004000",
 			"deleted": false,
@@ -21,17 +37,9 @@ describe('RequestBuffer', () => {
 		}
 
 		it('returns buffer payload checksum', async () => {
-			const hash = await new RequestBuffer(sample_payload).hash()
+			const hash = await new RequestBuffer(sample_payload).checksum()
 
-			expect(hash).toBe('c6910c078adcff29c105865dc505cd933110337aaa5a41d4e056b227f216ad1c')
-		})
-	})
-
-	describe('payloadUint8Array', () => {
-		it('returns buffer payload as Uint8Array', () => {
-			const payloadUint8Array = new RequestBuffer('test').payloadUint8Array
-
-			expect(payloadUint8Array).toEqual(new Uint8Array([116, 101, 115, 116]))
+			expect(hash).toBe('b28c94b2195c8ed259f0b415aaee3f39b0b2920a4537611499fa044956917a21')
 		})
 	})
 
@@ -40,14 +48,6 @@ describe('RequestBuffer', () => {
 			const crc32Hash = new RequestBuffer('test').crc32Hash
 
 			expect(crc32Hash).toBe('hqBywA==')
-		})
-	})
-
-	describe('#sizeInBytes', () => {
-		it('returns buffer payload size in bytes', () => {
-			const sizeInBytes = new RequestBuffer('test').sizeInBytes
-
-			expect(sizeInBytes).toBe(4)
 		})
 	})
 })
