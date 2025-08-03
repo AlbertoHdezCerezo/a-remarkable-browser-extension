@@ -1,6 +1,9 @@
-import HashEntry from './hashEntry.js'
+import HashEntry from './hashEntry'
+import RequestBuffer from '../../sync/v3/utils/requestBuffer'
 
-class MissingHashEntryError extends Error {}
+export class IncompatibleSchemaVersionError extends Error {}
+
+export class MissingHashEntryError extends Error {}
 
 export default class HashEntries {
 	/**
@@ -54,6 +57,8 @@ export default class HashEntries {
 			fileDataString,
 			...fileNestedHashEntriesStrings
 		] = hashEntriesLines
+
+		if (schemaVersionString !== '4') throw new IncompatibleSchemaVersionError()
 
 		this.#schemaVersion = Number(schemaVersionString)
 
@@ -169,17 +174,32 @@ export default class HashEntries {
 	 * @returns {HashEntries}
 	 */
 	replace(currentHashEntry, newHashEntry) {
-		const index = this.#hashEntriesList.findIndex(
+		const index = this.hashEntriesList.findIndex(
 			(entry) => entry.hash === currentHashEntry.hash
 		)
 
 		if (index === -1) throw new MissingHashEntryError()
 
-		return new HashEntries(
-			this.#payload.replace(
-				this.hashEntriesList[index].payload,
-				newHashEntry.payload
+		const hashEntryToReplace = this.hashEntriesList[index]
+		const newHashEntriesSizeInBytes = this.sizeInBytes - hashEntryToReplace.sizeInBytes + newHashEntry.sizeInBytes
+
+		let newHashEntriesPayload = this.payload
+			.replace(hashEntryToReplace.payload, newHashEntry.payload)
+			.replace(
+				this.payload.split('\n')[1], // The second line contains the file data
+				`0:${this.fileId}:${this.nestedHashEntriesCount}:${newHashEntriesSizeInBytes}`
 			)
-		)
+
+		return new HashEntries(newHashEntriesPayload)
+	}
+
+	/**
+	 * Returns a new RequestBuffer instance
+	 * containing the hash entries payload.
+	 *
+	 * @returns {RequestBuffer}
+	 */
+	asRequestBuffer() {
+		return new RequestBuffer(this.payload)
 	}
 }
