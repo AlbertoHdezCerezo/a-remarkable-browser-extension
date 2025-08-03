@@ -37,7 +37,7 @@ export default class Root {
 
 		const rootPayload = await rootResponse.json()
 		const rootHash = rootPayload.hash
-		const rootGeneration = rootPayload.generation
+		const rootGeneration = Number(rootPayload.generation)
 		const filesEndpoint = CONFIGURATION.endpoints.sync.v3.endpoints.files
 
 		const rootHashResponse = await FetchBasedHttpClient.get(
