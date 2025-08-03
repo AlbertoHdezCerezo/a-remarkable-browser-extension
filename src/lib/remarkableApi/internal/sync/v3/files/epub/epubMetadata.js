@@ -4,23 +4,25 @@ import {V4HashEntry} from '../../../../schemas/index'
 import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
 
 /**
- * Represents a reMarkable cloud API PDF file metadata.
+ * Represents a reMarkable cloud API ePub file metadata.
  *
  * The PDF file metadata is a JSON which contains certain
- * information about the PDF file document.
+ * information about the ePub file document.
  *
  * Example:
  *
  * ```
  * {
- *     "createdTime": "0",
- *     "lastModified": "1702268352386",
- *     "lastOpened": "1702267131426",
- *     "lastOpenedPage": 206,
- *     "parent": "81213c35-e5a9-4b39-9813-452ccb394dcd",
+ *     "createdTime": "1738999062399",
+ *     "lastModified": "1739390477710",
+ *     "lastOpened": "1739390402818",
+ *     "lastOpenedPage": 5,
+ *     "new": false,
+ *     "parent": "4c6b5473-f424-4f18-88b3-e94051b7457b",
  *     "pinned": false,
+ *     "source": "",
  *     "type": "DocumentType",
- *     "visibleName": "A PDF Document.pdf"
+ *     "visibleName": "An ePub Document.epub"
  * }
  * ```
  *
@@ -29,13 +31,13 @@ import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedH
  * to access the metadata attributes; to persist
  * changes back to the reMarkable cloud API.
  */
-export default class PdfMetadata {
+export default class EpubMetadata {
 	/**
-	 * The PDF file root hash entry the metadata belongs to.
+	 * The ePub file root hash entry the metadata belongs to.
 	 *
 	 * @type {HashEntry}
 	 */
-	#pdfFileRootHashEntry
+	#epubFileRootHashEntry
 
 	/**
 	 * The PDF File metadata payload. Represents the
@@ -45,22 +47,22 @@ export default class PdfMetadata {
 	 */
 	#payload
 
-	constructor(pdfFileRootHashEntry, metadataPayload) {
-		this.#pdfFileRootHashEntry = pdfFileRootHashEntry
+	constructor(epubFileRootHashEntry, metadataPayload) {
+		this.#epubFileRootHashEntry = epubFileRootHashEntry
 		this.#payload = metadataPayload
 	}
 
 	/**
-	 * Returns the PDF file root hash entry.
+	 * Returns the ePub file root hash entry.
 	 *
 	 * @returns {HashEntry}
 	 */
-	get pdfFileHashEntry() {
-		return this.#pdfFileRootHashEntry
+	get epubFileRootHashEntry() {
+		return this.#epubFileRootHashEntry
 	}
 
 	/**
-	 * Returns the metadata payload of the PDF file.
+	 * Returns the metadata payload of the ePub file.
 	 *
 	 * @returns {Object}
 	 */
@@ -69,7 +71,7 @@ export default class PdfMetadata {
 	}
 
 	/**
-	 * Returns PDF file name
+	 * Returns ePub file name
 	 *
 	 * @returns {String}
 	 */
@@ -78,7 +80,7 @@ export default class PdfMetadata {
 	}
 
 	/**
-	 * Returns the ID of the folder containing the PDF file.
+	 * Returns the ID of the folder containing the ePub file.
 	 * If the returned value is `""` (blank string), it means
 	 * the PDF file is in the root folder.
 	 *
@@ -89,7 +91,7 @@ export default class PdfMetadata {
 	}
 
 	/**
-	 * Updates the PDF file metadata via the reMarkable API.
+	 * Updates the ePub file metadata via the reMarkable API.
 	 * Returns a new hash entry representing the updated metadata entry.
 	 *
 	 * @param {Object} updatedMetadataPayload - The updated metadata payload
@@ -103,19 +105,19 @@ export default class PdfMetadata {
 		const updateRequestHeaders = {
 			'authorization': `Bearer ${session.token}`,
 			'content-type': 'application/octet-stream',
-			'rm-filename': `${this.pdfFileHashEntry.fileId}.metadata`,
-			'rm-parent-hash': this.pdfFileHashEntry.checksum,
+			'rm-filename': `${this.epubFileRootHashEntry.fileId}.metadata`,
+			'rm-parent-hash': this.epubFileRootHashEntry.checksum,
 			'x-goog-hash': `crc32c=${updateRequestBuffer.crc32Hash}`,
 		}
 
-		const newPdfMetadataChecksum = await updateRequestBuffer.checksum()
+		const newEpubMetadataChecksum = await updateRequestBuffer.checksum()
 
 		await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + newPdfMetadataChecksum,
+			CONFIGURATION.endpoints.sync.v3.endpoints.files + newEpubMetadataChecksum,
 			updateRequestBuffer.payload,
 			updateRequestHeaders,
 		)
 
-		return new V4HashEntry(`${newPdfMetadataChecksum}:0:${this.pdfFileHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return new V4HashEntry(`${newEpubMetadataChecksum}:0:${this.epubFileRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

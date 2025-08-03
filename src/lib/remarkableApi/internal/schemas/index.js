@@ -1,5 +1,5 @@
-import { HashEntry as V3HashEntry } from './v3/hashEntry.js'
-import { HashEntries as V4HashEntries } from './v4/hashEntries'
-import {HashEntriesFactory} from './hashEntriesFactory'
-
-export { V3HashEntry, V4HashEntries, HashEntriesFactory }
+export {HashEntry as V3HashEntry} from './v3/hashEntry.js'
+export {HashEntries as V3HashEntries} from './v3/hashEntries.js'
+export {HashEntry as V4HashEntry} from './v4/hashEntry'
+export {HashEntries as V4HashEntries} from './v4/hashEntries'
+export {HashEntriesFactory} from './hashEntriesFactory'
