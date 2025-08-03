@@ -5,7 +5,7 @@ import DeviceConnection from '../../../../../../src/lib/remarkableApi/deviceConn
 import {
 	HashEntry,
 	IncompatibleHashEntrySchemaError, UnreachableHashEntryContentError
-} from '../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
+} from '../../../../../../src/lib/remarkableApi/internal/schemas/v3/hashEntry'
 
 describe('HashEntry', () => {
 	setupHttpRecording()
