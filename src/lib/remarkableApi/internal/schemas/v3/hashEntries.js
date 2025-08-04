@@ -47,11 +47,13 @@ export class IncompatibleHashEntriesSchemaError extends Error {
  *
  * Example:
  *
+ * ```
  * 3
  * cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
  * cf0603f27e347959822926d78430c77e4264f014a9c816fe33029befb4a80f12:0:008302bc-c5ba-41be-925b-8567166246e4.epub:0:2583509
  * 69ae298325a1a1d3f2dc4f6d6daa1db9b52ac523a1c455f19de4348184ce53e6:0:008302bc-c5ba-41be-925b-8567166246e4.metadata:0:327
  * ...
+ * ```
  *
  * - Hash entries schema version: schema version of the hash entries payload
  * - Hash entries: list of hash entries representing the content behind the file
