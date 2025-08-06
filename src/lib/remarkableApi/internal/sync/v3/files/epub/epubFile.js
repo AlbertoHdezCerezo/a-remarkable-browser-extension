@@ -1,33 +1,33 @@
 import {CONFIGURATION} from '../../../../../configuration'
-import PdfMetadata from './pdfMetadata'
+import EpubMetadata from './epubMetadata'
 import RequestBuffer from '../../utils/requestBuffer'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'
 import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
 
-export class PdfIncompatibleHashEntriesError extends Error {
-	constructor(message = 'The provided hash entries are not compatible with a reMarkable PDF file.') {
+export class EpubIncompatibleHashEntriesError extends Error {
+	constructor(message = 'The provided hash entries are not compatible with a reMarkable ePub file.') {
 		super(message)
-		this.name = 'PdfIncompatibleHashEntriesError'
+		this.name = 'EpubIncompatibleHashEntriesError'
 	}
 }
 
 /**
- * Class representing a reMarkable PDF file.
+ * Class representing a reMarkable ePub file.
  *
- * Abstracts the logic for manipulating PDF files
+ * Abstracts the logic for manipulating ePub files
  * on the reMarkable API, allowing us to download,
- * rename, or move PDF files in the reMarkable cloud.
+ * rename, or move ePub files in the reMarkable cloud.
  */
-export default class PdfFile {
+export default class EpubFile {
 	/**
-	 * Fetches PDF hash entries from PDF root hash entry
-	 * and returns its equivalent PdfFile instance.
+	 * Fetches ePub hash entries from ePub root hash entry
+	 * and returns its equivalent EpubFile instance.
 	 *
 	 * @param {root} root - reMarkable Cloud root snapshot.
-	 * @param {HashEntry} rootHashEntry - The root hash entry representing the PDF file.
+	 * @param {HashEntry} rootHashEntry - The root hash entry representing the ePub file.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<PdfFile>}
+	 * @returns {Promise<EpubFile>}
 	 */
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
@@ -36,27 +36,27 @@ export default class PdfFile {
 	}
 
 	/**
-	 * Returns a PdfFile instance from the provided
-	 * hash entries representing the PDF file content.
+	 * Returns an EpubFile instance from the provided
+	 * hash entries representing the ePub file content.
 	 *
 	 * @param {Root} root - reMarkable Cloud root snapshot.
-	 * @param {HashEntry} rootHashEntry - The root hash entry representing the PDF file.
-	 * @param {HashEntries} hashEntries - The hash entries representing the PDF file content.
+	 * @param {HashEntry} rootHashEntry - The root hash entry representing the ePub file.
+	 * @param {HashEntries} hashEntries - The hash entries representing the ePub file content.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<PdfFile>}
+	 * @returns {Promise<EpubFile>}
 	 */
 	static async fromHashEntries(root, rootHashEntry, hashEntries, session) {
 		if (!this.compatibleWithHashEntries(hashEntries))
-			throw new PdfIncompatibleHashEntriesError()
+			throw new EpubIncompatibleHashEntriesError()
 
-		const pdfMetadataPayload =
+		const epubMetadataPayload =
 			await hashEntries.hashEntriesList
 				.find(hashEntry => hashEntry.fileExtension === 'metadata')
 				.content(session)
 
-		const pdfMetadata = new PdfMetadata(rootHashEntry, pdfMetadataPayload)
+		const epubMetadata = new EpubMetadata(rootHashEntry, epubMetadataPayload)
 
-		return new PdfFile(root, rootHashEntry, hashEntries, pdfMetadata)
+		return new EpubFile(root, rootHashEntry, hashEntries, epubMetadata)
 	}
 
 	/**
@@ -70,7 +70,7 @@ export default class PdfFile {
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pagedata') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'content') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pdf') &&
-						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
+						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
 	}
 
 	/**
@@ -107,12 +107,12 @@ export default class PdfFile {
 	}
 
 	/**
-	 * Returns the file extension of the PDF file.
+	 * Returns the file extension of the ePub file.
 	 *
 	 * @returns {string}
 	 */
 	get extension() {
-		return 'pdf'
+		return 'epub'
 	}
 
 	/**
