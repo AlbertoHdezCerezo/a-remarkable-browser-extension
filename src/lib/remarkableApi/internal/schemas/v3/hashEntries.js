@@ -232,6 +232,19 @@ export class HashEntries extends AbstractHashEntries {
 	}
 
 	/**
+	 * Returns a new instance of HashEntries with the given
+	 * hash entry attached to the current hash entries.
+	 *
+	 * @param {HashEntry} newHashEntry - The hash entry to attach.
+	 * @returns {HashEntries} - A new instance of HashEntries with the attached hash entry.
+	 */
+	attach(newHashEntry) {
+		let newHashEntriesPayload = this.payload + '\n' + newHashEntry.payload
+
+		return new HashEntries(newHashEntriesPayload)
+	}
+
+	/**
 	 * Returns a new instance of HashEntries where a given
 	 * hash entry is replaced with a new hash entry. If
 	 * the current hash entry is not found,
