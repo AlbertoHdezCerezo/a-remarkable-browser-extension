@@ -1,19 +1,19 @@
 import { jest } from '@jest/globals'
 import {setupHttpRecording} from '../../../../../helpers/pollyHelper'
 import FetchBasedHttpClient from '../../../../../../src/lib/utils/httpClient/fetchBasedHttpClient'
-import DeviceConnection from '../../../../../../src/lib/remarkableApi/deviceConnection'
+import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
 import Root, {
 	UnreachableRootError,
 	UnreachableRootHashEntriesError
 } from '../../../../../../src/lib/remarkableApi/internal/sync/root'
-import Session from '../../../../../../src/lib/remarkableApi/session'
+import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
 
 describe('Root', () => {
 	setupHttpRecording()
 
 	describe('.fromSession', () => {
 		it('fetches root information and hash entries from the reMarkable cloud account', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -25,7 +25,7 @@ describe('Root', () => {
 		})
 
 		it('if request to fetch root metadata fails, throws an UnreachableRootError', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			// Simulate a failure in fetching root metadata
@@ -41,7 +41,7 @@ describe('Root', () => {
 		})
 
 		it('if request to fetch root hash entries fails, throws an UnreachableRootHashEntriesError', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			// Simulate a failure in fetching root hash entries

@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { jwtDecode } from 'jwt-decode'
-import FetchBasedHttpClient from '../utils/httpClient/fetchBasedHttpClient.js'
-
-export const AUTHENTICATION_URL = 'https://webapp-prod.cloud.remarkable.engineering/token/json/2/device/new'
+import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient.js'
+import {CONFIGURATION} from "../../configuration.js";
 
 export class UnsuccessfulDeviceConnectionPairingError extends Error {}
 
@@ -17,7 +16,7 @@ export class UnsuccessfulDeviceConnectionPairingError extends Error {}
  * session tokens, which can then be used to authenticate
  * requests to the reMarkable API endpoints.
  */
-export default class DeviceConnection {
+export default class Device {
 	/**
 	 * Creates a new DeviceConnection instance.
 	 *
@@ -29,8 +28,9 @@ export default class DeviceConnection {
 	 *
 	 * @param {string} oneTimeCode - The one-time code provided by remarkable.
 	 * @param {string} deviceConnectionId - UUID v4 used to identify the device connection.
-	 * @param description - A description of the device type, e.g., 'browser-chrome', 'desktop-macos', etc.
-	 * @returns {Promise<DeviceConnection>}
+	 * @param {String} description - A description of the device type, e.g., 'browser-chrome', 'desktop-macos', etc.
+	 * @param {FetchBasedHttpClient} httpClient - The HTTP client to use for making requests.
+	 * @returns {Promise<Device>}
 	 */
 	static async from(
 		oneTimeCode,
@@ -40,7 +40,7 @@ export default class DeviceConnection {
 	) {
 		try {
 			const pairResponse = await httpClient.post(
-				AUTHENTICATION_URL,
+				CONFIGURATION.endpoints.token.v2.endpoints.device,
 				{
 					code: oneTimeCode,
 					deviceID: deviceConnectionId,
@@ -48,7 +48,7 @@ export default class DeviceConnection {
 				}
 			)
 
-			return new DeviceConnection(await pairResponse.text())
+			return new Device(await pairResponse.text())
 		} catch (error) {
 			throw new UnsuccessfulDeviceConnectionPairingError(
 				`Failed to pair device connection: ${error.message}`

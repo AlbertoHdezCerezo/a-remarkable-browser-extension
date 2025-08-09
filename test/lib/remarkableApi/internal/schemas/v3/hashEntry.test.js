@@ -1,7 +1,7 @@
 import {setupHttpRecording} from '../../../../../helpers/pollyHelper'
 import {CONFIGURATION} from '../../../../../../src/lib/remarkableApi/configuration'
-import Session from '../../../../../../src/lib/remarkableApi/session'
-import DeviceConnection from '../../../../../../src/lib/remarkableApi/deviceConnection'
+import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
+import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
 import {
 	HashEntry,
 	IncompatibleHashEntrySchemaError, UnreachableHashEntryContentError
@@ -75,7 +75,7 @@ describe('HashEntry', () => {
 
 	describe('#content', () => {
 		it('if hash entry content is a set of hash entries, returns them as plain text', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 			const hashEntryPayload = 'aeebfe158ac4aa8502703f8979cacbf2dd2d26641f3c8c037932d7fd90d2b484:0:0bacf12a-64fa-4fe5-9f28-16a043e8c809:4:56764166'
 			const hashEntry = new HashEntry(hashEntryPayload)
@@ -86,7 +86,7 @@ describe('HashEntry', () => {
 		})
 
 		it('if hash entry content is a JSON, returns it as an object', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 			const hashEntryPayload = 'd451044d7cd77de7ab6a6949957d0b8074fe55d6563fef1b40b392c99e74b5c9:0:0bacf12a-64fa-4fe5-9f28-16a043e8c809.metadata:0:314'
 			const hashEntry = new HashEntry(hashEntryPayload)
@@ -97,7 +97,7 @@ describe('HashEntry', () => {
 		})
 
 		it('if hash entry content cannot be fetched, throws an error', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 			const hashEntryPayload = 'thisisnotavalidchecksum:0:0bacf12a-64fa-4fe5-9f28-16a043e8c809.metadata:0:314'
 			const hashEntry = new HashEntry(hashEntryPayload)

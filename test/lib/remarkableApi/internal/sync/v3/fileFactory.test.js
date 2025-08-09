@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 import {setupHttpRecording} from '../../../../../helpers/pollyHelper'
-import DeviceConnection from '../../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../../src/lib/remarkableApi/session'
+import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
 import Root from '../../../../../../src/lib/remarkableApi/internal/sync/root'
 import {HashEntriesFactory} from '../../../../../../src/lib/remarkableApi/internal/schemas/index'
 import PdfFile from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfFile'
@@ -14,7 +14,7 @@ describe('FileFactory', () => {
 
 	describe('.fileFromHashEntries', () => {
 		it('if given a PDF file hash entries, returns a PdfFile instance', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -27,7 +27,7 @@ describe('FileFactory', () => {
 		})
 
 		it('if given an EPUB file hash entries, returns an EpubFile instance', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -40,7 +40,7 @@ describe('FileFactory', () => {
 		})
 
 		it('if given a folder hash entries, returns a Folder instance', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)

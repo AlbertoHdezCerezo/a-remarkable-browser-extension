@@ -2,8 +2,8 @@ import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
 import {HashEntry} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
 import RequestBuffer from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
 import EpubMetadata from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/epub/epubMetadata'
-import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../../../../src/lib/remarkableApi/session'
+import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
 
 describe('EpubMetadata', () => {
 	const epubFileRootHashEntry = new HashEntry('e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00f9663d-3d4a-4640-a755-3a0e66b44f1d:4:3943357')
@@ -51,7 +51,7 @@ describe('EpubMetadata', () => {
 		setupHttpRecording()
 
 		it('updates ePub file metadata against the reMarkable API', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 			const epubFileRootHashEntry = new HashEntry('883411c7fa93637f63ada401b9fbe06eda8d16363f946dc7f296a05c3b3ba91d:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759')
 			const epubMetadataPayload = {

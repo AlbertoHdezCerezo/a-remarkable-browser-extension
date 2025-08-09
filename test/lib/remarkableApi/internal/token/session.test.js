@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals'
 import {jwtDecode} from 'jwt-decode'
-import {setupHttpRecording} from '../../helpers/pollyHelper'
-import Session, {UnsuccessfulSessionAuthenticationError} from '../../../src/lib/remarkableApi/session'
-import DeviceConnection from '../../../src/lib/remarkableApi/deviceConnection.js'
+import {setupHttpRecording} from '../../../../helpers/pollyHelper.js'
+import Session, {UnsuccessfulSessionAuthenticationError} from '../../../../../src/lib/remarkableApi/internal/token/session.js'
+import Device from '../../../../../src/lib/remarkableApi/internal/token/device.js'
 
 describe('Session', () => {
 	setupHttpRecording()
 
 	describe('.from', () => {
 		it('creates remarkable API session out of device connection token', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 
 			const session = await Session.from(deviceConnection)
 
@@ -17,7 +17,7 @@ describe('Session', () => {
 		}, 50000)
 
 		it('if authentication fails, throws error', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableSessionToken)
+			const deviceConnection = new Device(global.remarkableSessionToken)
 
 			await expect(Session.from(deviceConnection))
 				.rejects

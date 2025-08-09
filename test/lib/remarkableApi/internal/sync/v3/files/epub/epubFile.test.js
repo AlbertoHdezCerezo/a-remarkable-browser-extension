@@ -1,6 +1,6 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../../../../src/lib/remarkableApi/session'
+import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
 import Root from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
 import EpubFile, {
 	EpubIncompatibleHashEntriesError
@@ -12,7 +12,7 @@ describe('EpubFile', () => {
 
 	describe('.fromHashEntry', () => {
 		it('returns ePub file from root ePub file hash entry', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -22,7 +22,7 @@ describe('EpubFile', () => {
 		})
 
 		it('if root hash entry does not represent a ePub file, throws an error', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -38,7 +38,7 @@ describe('EpubFile', () => {
 
 	describe('.fromHashEntries', () => {
 		it('returns ePub file from provided hash entries', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -51,7 +51,7 @@ describe('EpubFile', () => {
 		})
 
 		it('if provided hash entries do not represent a ePub file, throws an error', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -83,7 +83,7 @@ describe('EpubFile', () => {
 
 	describe('#rename', () => {
 		it('updates the file name', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -100,7 +100,7 @@ describe('EpubFile', () => {
 
 	describe('#moveToFolder', () => {
 		it('moves the ePub file to another folder', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -116,7 +116,7 @@ describe('EpubFile', () => {
 
 	describe('#moveToTrash', () => {
 		it('moves the PDF file to trash', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)

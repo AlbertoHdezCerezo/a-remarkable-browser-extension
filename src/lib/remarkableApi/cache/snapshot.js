@@ -147,4 +147,19 @@ export default class Snapshot {
 	get folders() {
 		return this.#folders
 	}
+
+	/**
+	 * Synchronizes the current snapshot with the
+	 * latest root snapshot. If a snapshot is provided,
+	 * it will be used to perform the synchronization,
+	 * otherwise the synchronization will be performed
+	 * against the current root hash entries from the
+	 * reMarkable cloud API.
+	 *
+	 * @param {Session} session - The session to use for synchronization.
+	 * @param {Root} [root=null] - Optional root to synchronize against.
+	 * @returns {Promise<Snapshot>}
+	 */
+	async synchronize(session, root = null) {
+	}
 }

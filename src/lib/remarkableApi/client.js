@@ -1,4 +1,4 @@
-import Session from './session'
+import Session from './internal/token/session.js'
 
 export default class Client {
 	static async from(deviceConnection, session = null, snapshot = null) {
@@ -21,7 +21,7 @@ export default class Client {
 	 * reMarkable cloud account associated with the
 	 * device.
 	 *
-	 * @type {DeviceConnection}
+	 * @type {Device}
 	 */
 	#deviceConnection
 
@@ -53,7 +53,7 @@ export default class Client {
 	/**
 	 * Returns the current device connection.
 	 *
-	 * @returns {DeviceConnection}
+	 * @returns {Device}
 	 */
 	get deviceConnection() {
 		return this.#deviceConnection

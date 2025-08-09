@@ -1,8 +1,8 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
 import {HashEntry} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
 import RequestBuffer from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
-import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../../../../src/lib/remarkableApi/session'
+import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
 import FolderMetadata
 	from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folderMetadata'
 
@@ -48,7 +48,7 @@ describe('FolderMetadata', () => {
 		setupHttpRecording()
 
 		it('updates folder metadata against the reMarkable API', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 			const folderRootHashEntry = new HashEntry(global.folderRootHashEntry)
 			const folderMetadataPayload = {

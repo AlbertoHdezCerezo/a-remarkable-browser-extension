@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid'
 import {jwtDecode} from 'jwt-decode'
-import DeviceConnection, {
+import Device, {
 	UnsuccessfulDeviceConnectionPairingError
-} from '../../../src/lib/remarkableApi/deviceConnection'
+} from '../../../../../src/lib/remarkableApi/internal/token/device.js'
 import {
 	mockFailedFetchBasedHttpRequest,
 	mockSuccessfulFetchBasedHttpRequest
-} from '../../helpers/fetchBasedHttpClientHelper.js'
+} from '../../../../helpers/fetchBasedHttpClientHelper.js'
 
-describe('DeviceConnection', () => {
+describe('Device', () => {
 	describe('.from', () => {
 		/**
 		 * For whatever reason, Polly.js fails to record this call,
@@ -26,11 +26,11 @@ describe('DeviceConnection', () => {
 			)
 
 			const deviceConnection =
-				await DeviceConnection.from(oneTimeCode, uuid, description)
+				await Device.from(oneTimeCode, uuid, description)
 
 			global.fetch = originalFetch
 
-			expect(deviceConnection).toBeInstanceOf(DeviceConnection)
+			expect(deviceConnection).toBeInstanceOf(Device)
 			expect(deviceConnection.token.replace(/^"(.*)"$/, '$1'))
 				.toBe(global.remarkableDeviceConnectionToken)
 		})
@@ -44,7 +44,7 @@ describe('DeviceConnection', () => {
 				`https://my.remarkable.com/api/v1/connection/${oneTimeCode}`,
 			)
 
-			await expect(DeviceConnection.from(oneTimeCode, uuid, description))
+			await expect(Device.from(oneTimeCode, uuid, description))
 				.rejects
 				.toThrow(UnsuccessfulDeviceConnectionPairingError)
 
@@ -62,7 +62,7 @@ describe('DeviceConnection', () => {
 				issuedAt: new Date(decodedToken.iat * 1000)
 			}
 
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 
 			const actualTokenFields = {
 				id: deviceConnection.id,

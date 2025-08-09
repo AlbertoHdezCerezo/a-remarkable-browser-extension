@@ -1,6 +1,6 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../../../../src/lib/remarkableApi/session'
+import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
 import Root from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
 import {HashEntriesFactory} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index'
 import Folder, {
@@ -12,7 +12,7 @@ describe('Folder', () => {
 
 	describe('.create', () => {
 		it('creates a new folder', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -26,7 +26,7 @@ describe('Folder', () => {
 
 	describe('.fromHashEntry', () => {
 		it('returns folder from root folder hash entry', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -36,7 +36,7 @@ describe('Folder', () => {
 		})
 
 		it('if root hash entry does not represent a folder, throws an error', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -52,7 +52,7 @@ describe('Folder', () => {
 
 	describe('.fromHashEntries', () => {
 		it('returns folder from provided hash entries', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -64,7 +64,7 @@ describe('Folder', () => {
 		})
 
 		it('if provided hash entries do not represent a folder, throws an error', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -96,7 +96,7 @@ describe('Folder', () => {
 
 	describe('#rename', () => {
 		it('updates the folder name', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -113,7 +113,7 @@ describe('Folder', () => {
 
 	describe('#moveToFolder', () => {
 		it('moves the ePub file to another folder', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -129,7 +129,7 @@ describe('Folder', () => {
 
 	describe('#moveToTrash', () => {
 		it('moves the PDF file to trash', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)

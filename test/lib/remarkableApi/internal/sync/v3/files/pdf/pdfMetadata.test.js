@@ -2,8 +2,8 @@ import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
 import {HashEntry} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
 import RequestBuffer from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
 import PdfMetadata from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfMetadata'
-import DeviceConnection from '../../../../../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../../../../../src/lib/remarkableApi/session'
+import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
 
 describe('PdfMetadata', () => {
 	const pdfFileRootHashEntry = new HashEntry('e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00f9663d-3d4a-4640-a755-3a0e66b44f1d:4:3943357')
@@ -49,7 +49,7 @@ describe('PdfMetadata', () => {
 		setupHttpRecording()
 
 		it('updates PDF file metadata against the reMarkable API', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 			const pdfFileRootHashEntry = new HashEntry('3ca0a5c6320ea93d185aa04e5ed1bae1469bdb06b6eb97adb59ee7ab8c86fb58:0:d4da3a60-8afb-4db6-82b4-de9154c26355.metadata:0:300')
 			const pdfMetadataPayload = {

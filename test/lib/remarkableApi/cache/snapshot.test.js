@@ -1,6 +1,6 @@
 import {setupHttpRecording} from '../../../helpers/pollyHelper'
-import DeviceConnection from '../../../../src/lib/remarkableApi/deviceConnection'
-import Session from '../../../../src/lib/remarkableApi/session'
+import Device from '../../../../src/lib/remarkableApi/internal/token/device.js'
+import Session from '../../../../src/lib/remarkableApi/internal/token/session.js'
 import Snapshot from '../../../../src/lib/remarkableApi/cache/snapshot'
 import Document from '../../../../src/lib/remarkableApi/cache/document'
 import Folder from '../../../../src/lib/remarkableApi/cache/folder'
@@ -10,7 +10,7 @@ describe('Snapshot', () => {
 
 	describe('.fromSession', () => {
 		it('returns a snapshot of reMarkable cloud account attached to session', async () => {
-			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
 
 			const snapshot = await Snapshot.fromSession(session)

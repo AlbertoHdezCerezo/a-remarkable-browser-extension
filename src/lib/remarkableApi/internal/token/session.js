@@ -1,7 +1,6 @@
 import { jwtDecode } from 'jwt-decode'
-import FetchBasedHttpClient from '../utils/httpClient/fetchBasedHttpClient.js'
-
-export const SESSION_URL = 'https://webapp-prod.cloud.remarkable.engineering/token/json/2/user/new'
+import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient'
+import {CONFIGURATION} from "../../configuration.js";
 
 export class UnsuccessfulSessionAuthenticationError extends Error {}
 
@@ -17,13 +16,13 @@ export default class Session {
 	 * Used to interact with the reMarkable API
 	 * via a session token with an expiration time.
 	 *
-	 * @param {DeviceConnection} deviceConnection - The device connection to create the session from.
+	 * @param {Device} deviceConnection - The device connection to create the session from.
 	 * @returns {Session}
 	 */
 	static async from(deviceConnection) {
 		try {
 			const sessionResponse = await FetchBasedHttpClient.post(
-				SESSION_URL,
+				CONFIGURATION.endpoints.token.v2.endpoints.user,
 				null,
 				{Authorization: `Bearer ${deviceConnection.token}`}
 			)
