@@ -100,7 +100,7 @@ export default class File {
 				newFileHashEntry
 			)
 
-		return await this.#updateFileHashEntries(newFileHashEntries, session)
+		return await this.updateFileHashEntries(newFileHashEntries, session)
 	}
 
 	/**
@@ -110,7 +110,7 @@ export default class File {
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<File>}
 	 */
-	async #updateFileHashEntries(newFileHashEntries, session) {
+	async updateFileHashEntries(newFileHashEntries, session) {
 		const newFileHashEntriesRequestBuffer = newFileHashEntries.asRequestBuffer()
 		const newFileHashEntriesChecksum = await newFileHashEntriesRequestBuffer.checksum()
 		const newFileHashEntry = await newFileHashEntries.hashEntry()
@@ -128,11 +128,16 @@ export default class File {
 			updateRequestHeaders,
 		)
 
-		const newRootHashEntries =
-			this.root.hashEntries.replace(
+		let newRootHashEntries = null
+
+		if (this.root.hashEntries.hashEntriesList.some(entry => entry.checksum === this.rootHashEntry.checksum)) {
+			newRootHashEntries = this.root.hashEntries.replace(
 				this.root.hashEntries.hashEntriesList.find(entry => entry.checksum === this.rootHashEntry.checksum),
 				newFileHashEntry
 			)
+		} else {
+			newRootHashEntries = this.root.hashEntries.attach(newFileHashEntry)
+		}
 
 		const updatedRoot = await this.#updateRootHashEntries(newRootHashEntries, session)
 

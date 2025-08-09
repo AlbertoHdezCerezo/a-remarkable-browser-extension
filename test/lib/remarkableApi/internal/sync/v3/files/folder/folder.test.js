@@ -10,6 +10,20 @@ import Folder, {
 describe('Folder', () => {
 	setupHttpRecording()
 
+	describe('.create', () => {
+		it('creates a new folder', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const folderName = 'Test Folder'
+			const newFolder = await Folder.create(root, folderName, session)
+
+			expect(newFolder).toBeInstanceOf(Folder)
+			expect(newFolder.name).toBe(folderName)
+		})
+	})
+
 	describe('.fromHashEntry', () => {
 		it('returns folder from root folder hash entry', async () => {
 			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)

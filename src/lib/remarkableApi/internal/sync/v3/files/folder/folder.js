@@ -1,7 +1,12 @@
+import { v4 as uuidv4 } from 'uuid'
+import Root from '../../../root'
 import File from '../abstracts/file'
 import FolderMetadata from './folderMetadata'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'
+import RequestBuffer from "../../utils/requestBuffer.js";
+import FetchBasedHttpClient from "../../../../../../utils/httpClient/fetchBasedHttpClient.js";
+import {CONFIGURATION} from "../../../../../configuration.js";
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
@@ -18,6 +23,68 @@ export class FolderIncompatibleHashEntriesError extends Error {
  * delete, or move folders in the reMarkable cloud.
  */
 export default class Folder extends File {
+	/**
+	 * Creates a Folder instance from the provided
+	 * reMarkable Cloud root snapshot and session.
+	 *
+	 * @param {Root} root - reMarkable Cloud root snapshot.
+	 * @param {String} name - The name of the folder.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @param {String} parentFolderId - The ID of the parent folder.
+	 * @returns {Promise<Folder>}
+	 */
+	static async create(root, name, session, parentFolderId = '') {
+		const newFolderId = uuidv4()
+
+		const folderMetadataPayload = {
+			createdTime: Date.now(),
+			lastModified: Date.now(),
+			visibleName: name,
+			type: 'CollectionType',
+			source: '',
+			new: false,
+			pinned: false,
+			parent: parentFolderId,
+		}
+
+		const createRequestBuffer =
+			new RequestBuffer(JSON.stringify(folderMetadataPayload))
+
+		const newFolderMetadataChecksum = await createRequestBuffer.checksum()
+
+		const updateRequestHeaders = {
+			'authorization': `Bearer ${session.token}`,
+			'content-type': 'application/octet-stream',
+			'rm-filename': `${newFolderId}.metadata`,
+			'rm-batch-number': 1,
+			'x-goog-hash': `crc32c=${createRequestBuffer.crc32Hash}`,
+		}
+
+		await FetchBasedHttpClient.put(
+			CONFIGURATION.endpoints.sync.v3.endpoints.files + newFolderMetadataChecksum,
+			createRequestBuffer.payload,
+			updateRequestHeaders
+		)
+
+		const newFolderHashEntries = new HashEntries(`
+			4
+			0:${newFolderId}:1:${createRequestBuffer.sizeInBytes}
+			${newFolderMetadataChecksum}:0:${newFolderId}.metadata:0:${createRequestBuffer.sizeInBytes}
+		`.trim().replace(/\t+/g, '')
+		)
+
+		const newFolderRootHashEntry = await newFolderHashEntries.hashEntry()
+
+		const newFolder = new Folder(
+			root,
+			newFolderRootHashEntry,
+			newFolderHashEntries,
+			new FolderMetadata(newFolderRootHashEntry, folderMetadataPayload)
+		)
+
+		return await newFolder.updateFileHashEntries(newFolderHashEntries, session)
+	}
+
 	/**
 	 * Fetches folder hash entries from foloder root
 	 * hash entry and returns a Folder instance.
@@ -68,7 +135,6 @@ export default class Folder extends File {
 	 */
 	static compatibleWithHashEntries(hashEntries) {
 		return 	hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'metadata') &&
-						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'content') &&
 						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pagedata') &&
 						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pdf') &&
 						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
