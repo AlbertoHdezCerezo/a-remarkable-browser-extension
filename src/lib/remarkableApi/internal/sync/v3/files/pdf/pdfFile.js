@@ -1,4 +1,4 @@
-import File from '../abstracts/file.js'
+import File from '../abstracts/file'
 import PdfMetadata from './pdfMetadata'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'

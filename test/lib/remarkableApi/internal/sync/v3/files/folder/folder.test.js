@@ -26,10 +26,10 @@ describe('Folder', () => {
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const folderHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.folderId)
 
 			try {
-				await Folder.fromHashEntry(root, epubHashEntry, session)
+				await Folder.fromHashEntry(root, folderHashEntry, session)
 			} catch (error) {
 				expect(error instanceof FolderIncompatibleHashEntriesError).toBe(true)
 			}
@@ -54,12 +54,12 @@ describe('Folder', () => {
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
-			const epubHashEntriesPayload = await epubHashEntry.content(session)
-			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
+			const folderHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.folderId)
+			const folderHashEntriesPayload = await folderHashEntry.content(session)
+			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
 
 			try {
-				await Folder.fromHashEntries(root, epubHashEntry, epubHashEntries, session)
+				await Folder.fromHashEntries(root, folderHashEntry, folderHashEntries, session)
 			} catch (error) {
 				expect(error instanceof FolderIncompatibleHashEntriesError).toBe(true)
 			}
@@ -74,9 +74,58 @@ describe('Folder', () => {
 		})
 
 		it('if given hash entries do not resemble a reMarkable folder, returns false', () => {
-			const epubHashEntries = HashEntriesFactory.fromPayload(global.epubHashEntriesPayload)
+			const folderHashEntries = HashEntriesFactory.fromPayload(global.folderHashEntriesPayload)
 
-			expect(Folder.compatibleWithHashEntries(epubHashEntries)).toBe(false)
+			expect(Folder.compatibleWithHashEntries(folderHashEntries)).toBe(false)
+		})
+	})
+
+	describe('#rename', () => {
+		it('updates the folder name', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const folderHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.folderId)
+			const folderFile = await Folder.fromHashEntry(root, folderHashEntry, session)
+
+			const newName = 'New Folder Name'
+			const newFolderFile = await folderFile.rename(newName, session)
+
+			expect(newFolderFile).toBeInstanceOf(Folder)
+			expect(newFolderFile.name).toBe(newName)
+		})
+	})
+
+	describe('#moveToFolder', () => {
+		it('moves the ePub file to another folder', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const folderHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.folderId)
+			const folderFile = await Folder.fromHashEntry(root, folderHashEntry, session)
+
+			const movedFolderFile = await folderFile.moveToFolder('')
+
+			expect(movedFolderFile).toBeInstanceOf(Folder)
+			expect(movedFolderFile.metadata.folderId).toBe('')
+		})
+	})
+
+	describe('#moveToTrash', () => {
+		it('moves the PDF file to trash', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const folderHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.folderId)
+			const folderFile = await Folder.fromHashEntry(root, folderHashEntry, session)
+
+			const trashedFolderFile = await folderFile.moveToTrash(session)
+
+			expect(trashedFolderFile).toBeInstanceOf(Folder)
+			expect(trashedFolderFile.metadata.folderId).toBe('trash')
 		})
 	})
 })

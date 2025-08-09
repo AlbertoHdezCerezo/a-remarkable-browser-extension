@@ -1,9 +1,7 @@
-import {CONFIGURATION} from '../../../../../configuration'
+import File from '../abstracts/file'
 import FolderMetadata from './folderMetadata'
-import RequestBuffer from '../../utils/requestBuffer'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
@@ -19,7 +17,7 @@ export class FolderIncompatibleHashEntriesError extends Error {
  * on the reMarkable API, allowing us to rename,
  * delete, or move folders in the reMarkable cloud.
  */
-export default class Folder {
+export default class Folder extends File {
 	/**
 	 * Fetches folder hash entries from foloder root
 	 * hash entry and returns a Folder instance.
@@ -105,6 +103,8 @@ export default class Folder {
 	#metadata
 
 	constructor(root, rootHashEntry, hashEntries, metadata) {
+		super()
+
 		this.#root = root
 		this.#rootHashEntry = rootHashEntry
 		this.#hashEntries = hashEntries
@@ -152,7 +152,46 @@ export default class Folder {
 	 *
 	 * @returns {String}
 	 */
-	get folderName() {
+	get name() {
 		return this.metadata.folderName
+	}
+
+	/**
+	 * Renames the folder in the reMarkable cloud.
+	 *
+	 * @param {String} newName - The new name for the folder.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<Folder>}
+	 */
+	async rename(newName, session) {
+		const newFolderMetadataHashEntry =
+			await this.metadata.update({ visibleName: newName }, session)
+
+		return await this.updateHashEntryToFileHashEntries(newFolderMetadataHashEntry, session)
+	}
+
+	/**
+	 * Moves the folder to a specified folder in the reMarkable cloud.
+	 *
+	 * @param {String} destinationFolderId - The ID of the destination folder.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<Folder>}
+	 */
+	async moveToFolder(destinationFolderId, session) {
+		const newFolderMetadataHashEntry =
+			await this.metadata.update({ parent: destinationFolderId }, session)
+
+		return await this.updateHashEntryToFileHashEntries(newFolderMetadataHashEntry, session)
+	}
+
+	/**
+	 * Moves the folder to the trash folder in the reMarkable cloud.
+	 * This is the equivalent of removing a folder in the reMarkable cloud.
+	 *
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<EpubFile>}
+	 */
+	async moveToTrash(session) {
+		return await this.moveToFolder('trash', session)
 	}
 }

@@ -90,7 +90,7 @@ describe('EpubFile', () => {
 			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
 			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
 
-			const newName = 'New PDF Name'
+			const newName = 'New ePub Name'
 			const newEpubFile = await epubFile.rename(newName, session)
 
 			expect(newEpubFile).toBeInstanceOf(EpubFile)

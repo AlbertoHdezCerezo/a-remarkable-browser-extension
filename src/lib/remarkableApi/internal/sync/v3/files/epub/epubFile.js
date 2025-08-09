@@ -1,4 +1,4 @@
-import File from '../abstracts/file.js'
+import File from '../abstracts/file'
 import EpubMetadata from './epubMetadata'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'
@@ -104,15 +104,6 @@ export default class EpubFile extends File {
 		this.#rootHashEntry = rootHashEntry
 		this.#hashEntries = hashEntries
 		this.#metadata = metadata
-	}
-
-	/**
-	 * Returns the file extension of the ePub file.
-	 *
-	 * @returns {string}
-	 */
-	get extension() {
-		return 'epub'
 	}
 
 	/**

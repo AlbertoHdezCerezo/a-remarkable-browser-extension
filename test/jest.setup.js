@@ -47,7 +47,7 @@ global.remarkableSessionToken = process.env.REMARKABLE_SESSION_TOKEN
  */
 global.pdfFileId = '00f9663d-3d4a-4640-a755-3a0e66b44f1d'
 global.epubFileId = '008302bc-c5ba-41be-925b-8567166246e4'
-global.folderId = '74bdc8ab-6985-419f-8416-ce93b2451e71'
+global.folderId = '35e17d60-ca6b-4e75-9c17-b5cbbca88c80'
 global.folderRootHashEntry = '5120d65b0899e6592dcf562b7f716f32c14ed6f7b241be1944b2e06f18bf68f5:0:74bdc8ab-6985-419f-8416-ce93b2451e71:2:241'
 global.pdfHashEntriesPayload = `
 4
