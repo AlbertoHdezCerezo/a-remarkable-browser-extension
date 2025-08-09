@@ -80,4 +80,53 @@ describe('EpubFile', () => {
 			expect(EpubFile.compatibleWithHashEntries(pdfHashEntries)).toBe(false)
 		})
 	})
+
+	describe('#rename', () => {
+		it('updates the file name', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
+
+			const newName = 'New PDF Name'
+			const newEpubFile = await epubFile.rename(newName, session)
+
+			expect(newEpubFile).toBeInstanceOf(EpubFile)
+			expect(newEpubFile.name).toBe(newName)
+		})
+	})
+
+	describe('#moveToFolder', () => {
+		it('moves the ePub file to another folder', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
+
+			const movedEpubFile = await epubFile.moveToFolder('')
+
+			expect(movedEpubFile).toBeInstanceOf(EpubFile)
+			expect(movedEpubFile.metadata.folderId).toBe('')
+		})
+	})
+
+	describe('#moveToTrash', () => {
+		it('moves the PDF file to trash', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
+
+			const trashedEpubFile = await epubFile.moveToTrash(session)
+
+			expect(trashedEpubFile).toBeInstanceOf(EpubFile)
+			expect(trashedEpubFile.metadata.folderId).toBe('trash')
+		})
+	})
 })

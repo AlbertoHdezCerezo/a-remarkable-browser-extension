@@ -164,4 +164,29 @@ export default class PdfFile extends File {
 
 		return await this.updateHashEntryToFileHashEntries(newPdfMetadataHashEntry, session)
 	}
+
+	/**
+	 * Moves the PDF file to a specified folder in the reMarkable cloud.
+	 *
+	 * @param {String} destinationFolderId - The ID of the destination folder.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<PdfFile>}
+	 */
+	async moveToFolder(destinationFolderId, session) {
+		const newPdfMetadataHashEntry =
+			await this.metadata.update({ parent: destinationFolderId }, session)
+
+		return await this.updateHashEntryToFileHashEntries(newPdfMetadataHashEntry, session)
+	}
+
+	/**
+	 * Moves the PDF file to the trash folder in the reMarkable cloud.
+	 * This is the equivalent of removing a file in the reMarkable cloud.
+	 *
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<PdfFile>}
+	 */
+	async moveToTrash(session) {
+		return await this.moveToFolder('trash', session)
+	}
 }

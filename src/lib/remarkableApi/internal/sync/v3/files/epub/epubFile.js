@@ -1,9 +1,7 @@
-import {CONFIGURATION} from '../../../../../configuration'
+import File from '../abstracts/file.js'
 import EpubMetadata from './epubMetadata'
-import RequestBuffer from '../../utils/requestBuffer'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
 
 export class EpubIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable ePub file.') {
@@ -19,7 +17,7 @@ export class EpubIncompatibleHashEntriesError extends Error {
  * on the reMarkable API, allowing us to download,
  * rename, or move ePub files in the reMarkable cloud.
  */
-export default class EpubFile {
+export default class EpubFile extends File {
 	/**
 	 * Fetches ePub hash entries from ePub root hash entry
 	 * and returns its equivalent EpubFile instance.
@@ -100,6 +98,8 @@ export default class EpubFile {
 	#metadata
 
 	constructor(root, rootHashEntry, hashEntries, metadata) {
+		super()
+
 		this.#root = root
 		this.#rootHashEntry = rootHashEntry
 		this.#hashEntries = hashEntries
@@ -156,120 +156,46 @@ export default class EpubFile {
 	 *
 	 * @returns {String}
 	 */
-	get fileName() {
+	get name() {
 		return this.metadata.fileName
 	}
 
+	/**
+	 * Renames the ePub file in the reMarkable cloud.
+	 *
+	 * @param {String} newName - The new name for the PDF file.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<EpubFile>}
+	 */
 	async rename(newName, session) {
-		const newPdfMetadataHashEntry =
+		const newEpubMetadataHashEntry =
 			await this.metadata.update({ visibleName: newName }, session)
 
-		const newPdfHashEntries =
-			this.hashEntries.replace(
-				this.hashEntries.hashEntriesList.find(entry => entry.fileExtension === 'metadata'),
-				newPdfMetadataHashEntry
-			)
-
-		const newRootPdfFileHashEntry =
-			await this.#updatePdfFileHashEntries(newPdfHashEntries, session)
-
-		const newRootHashEntries =
-			this.root.hashEntries.replace(
-				this.root.hashEntries.hashEntriesList.find(entry => entry.hash === this.rootHashEntry.hash),
-				newRootPdfFileHashEntry
-			)
-
-		const newRootChecksum = await this.#updateRootHashEntries(newRootHashEntries, session)
-
-		return await this.#updateRoot(newRootChecksum, session)
-	}
-
-	async #updatePdfFileHashEntries(newPdfHashEntries, session) {
-		const newPdfFileHashEntriesRequestBuffer = newPdfHashEntries.asRequestBuffer()
-
-		const updateRequestHeaders = {
-			'authorization': `Bearer ${session.token}`,
-			'content-type': 'text/plain; charset=UTF-8',
-			'rm-filename': `${this.rootHashEntry.fileId}.docSchema`,
-			'x-goog-hash': `crc32c=${newPdfFileHashEntriesRequestBuffer.crc32Hash}`,
-		}
-
-		const newPdfFileHashEntriesChecksum = await newPdfFileHashEntriesRequestBuffer.checksum()
-
-		await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + newPdfFileHashEntriesChecksum,
-			newPdfFileHashEntriesRequestBuffer.payload,
-			updateRequestHeaders,
-		)
-
-		return new HashEntry(
-			`${newPdfFileHashEntriesChecksum}:0:${this.rootHashEntry.fileId}:${newPdfHashEntries.hashEntriesList.length}:${newPdfHashEntries.sizeInBytesFromHashEntries}`
-		)
+		return await this.updateHashEntryToFileHashEntries(newEpubMetadataHashEntry, session)
 	}
 
 	/**
-	 * Updates reMarkable cloud root hash entries with the new set of hash entries.
+	 * Moves the PDF file to a specified folder in the reMarkable cloud.
 	 *
-	 * @param {HashEntries} newRootHashEntries - The new root hash entries to update.
+	 * @param {String} destinationFolderId - The ID of the destination folder.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<String>}
+	 * @returns {Promise<EpubFile>}
 	 */
-	async #updateRootHashEntries(newRootHashEntries, session) {
-		const newRootHashRequestBuffer = newRootHashEntries.asRequestBuffer()
+	async moveToFolder(destinationFolderId, session) {
+		const newEpubMetadataHashEntry =
+			await this.metadata.update({ parent: destinationFolderId }, session)
 
-		const newRootHashChecksum = await newRootHashRequestBuffer.checksum()
-
-		const updateRequestHeaders = {
-			'authorization': `Bearer ${session.token}`,
-			'content-type': 'text/plain; charset=UTF-8',
-			'rm-filename': `root.docSchema`,
-			'x-goog-hash': `crc32c=${newRootHashRequestBuffer.crc32Hash}`,
-		}
-
-		await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + newRootHashChecksum,
-			newRootHashRequestBuffer.payload,
-			updateRequestHeaders,
-		)
-
-		return newRootHashChecksum
+		return await this.updateHashEntryToFileHashEntries(newEpubMetadataHashEntry, session)
 	}
 
 	/**
-	 * Updates reMarkable cloud root snapshot.
+	 * Moves the ePub file to the trash folder in the reMarkable cloud.
+	 * This is the equivalent of removing a file in the reMarkable cloud.
 	 *
-	 * Given a new checksum representing the new root hash
-	 * entries, defines a new generation of the root with
-	 * the new set of hash entries attached to it, becoming
-	 * the new default snapshot root of the reMarkable cloud
-	 * account.
-	 *
-	 * @param {String} newRootHash - The new root hash representing the new root hash entries.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<any>}
+	 * @returns {Promise<EpubFile>}
 	 */
-	async #updateRoot(newRootHash, session) {
-		const newRootPayload = {
-			broadcast: true,
-			generation: this.root.generation,
-			hash: newRootHash
-		}
-
-		const newRootBuffer = new RequestBuffer(newRootPayload)
-
-		const updateRequestHeaders = {
-			'authorization': `Bearer ${session.token}`,
-			'content-type': 'application/json',
-			'rm-filename': `roothash`,
-			'x-goog-hash': `crc32c=${newRootBuffer.crc32Hash}`,
-		}
-
-		const newRootResponse = await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.root,
-			newRootPayload,
-			updateRequestHeaders
-		)
-
-		return (await newRootResponse.json())
+	async moveToTrash(session) {
+		return await this.moveToFolder('trash', session)
 	}
 }

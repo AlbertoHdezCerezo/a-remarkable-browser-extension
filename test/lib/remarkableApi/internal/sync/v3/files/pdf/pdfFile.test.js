@@ -80,7 +80,7 @@ describe('PdfFile', () => {
 		})
 	})
 
-	describe('.rename', () => {
+	describe('#rename', () => {
 		it('updates the file name', async () => {
 			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
 			const session = await Session.from(deviceConnection)
@@ -94,6 +94,38 @@ describe('PdfFile', () => {
 
 			expect(newPdfFile).toBeInstanceOf(PdfFile)
 			expect(newPdfFile.name).toBe(newName)
+		})
+	})
+
+	describe('#moveToFolder', () => {
+		it('moves the PDF file to another folder', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const pdfHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.pdfFileId)
+			const pdfFile = await PdfFile.fromHashEntry(root, pdfHashEntry, session)
+
+			const movedPdfFile = await pdfFile.moveToFolder('')
+
+			expect(movedPdfFile).toBeInstanceOf(PdfFile)
+			expect(movedPdfFile.metadata.folderId).toBe('')
+		})
+	})
+
+	describe('#moveToTrash', () => {
+		it('moves the PDF file to trash', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const pdfHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.pdfFileId)
+			const pdfFile = await PdfFile.fromHashEntry(root, pdfHashEntry, session)
+
+			const trashedPdfFile = await pdfFile.moveToTrash(session)
+
+			expect(trashedPdfFile).toBeInstanceOf(PdfFile)
+			expect(trashedPdfFile.metadata.folderId).toBe('trash')
 		})
 	})
 })
