@@ -1,11 +1,45 @@
 import Root from '../internal/sync/root'
 import {HashEntriesFactory} from '../internal/schemas/index'
 import FileFactory from '../internal/sync/fileFactory'
+import Folder from './folder'
+import Document from './document'
 
 const SNAPSHOT_DOWNLOAD_BATCH_SIZE = 25
-const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 2000
+const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 0
 
+/**
+ * Represents a cacheable snapshot of the
+ * reMarkable cloud API file system.
+ *
+ * This class acts a wrapper of a `Root`
+ * object and the folders and documents
+ * underneath it, with methods to serialize
+ * and deserialize the snapshot, so it can
+ * be persisted and reused.
+ *
+ * The snapshot allows the applications to
+ * keep track of the files and folders in
+ * a reMarkable cloud account, without the
+ * need to fetch the entire file system
+ * every time the application starts.
+ *
+ * The cache can be compared and updated
+ * against new root hash entries, identifying
+ * the entries that have been modified, and
+ * updating those within the same snapshot,
+ * without the need to download the entire
+ * file system again.
+ */
 export default class Snapshot {
+	/**
+	 * Fetches current snapshot of the reMarkable
+	 * cloud API file system, by fetching the root
+	 * hash entries and downloading the documents
+	 * and folders associated to the hash entries.
+	 *
+	 * @param {Session} session
+	 * @returns {Promise<Snapshot>}
+	 */
 	static async fromSession(session) {
 		const root = await Root.fromSession(session)
 
@@ -41,8 +75,12 @@ export default class Snapshot {
 
 		return new Snapshot(
 			root,
-			snapshotDocumentsAndFolders.filter(file => file.constructor.name !== 'Folder'),
-			snapshotDocumentsAndFolders.filter(file => file.constructor.name === 'Folder'),
+			snapshotDocumentsAndFolders
+				.filter(file => file.constructor.name !== 'Folder')
+				.map(file => new Document(file)),
+			snapshotDocumentsAndFolders
+				.filter(file => file.constructor.name === 'Folder')
+				.map(folder => new Folder(folder))
 		)
 	}
 

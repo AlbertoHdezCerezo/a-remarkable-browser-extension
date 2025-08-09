@@ -1,7 +1,9 @@
 import {setupHttpRecording} from '../../../helpers/pollyHelper'
 import DeviceConnection from '../../../../src/lib/remarkableApi/deviceConnection'
 import Session from '../../../../src/lib/remarkableApi/session'
-import Snapshot from "../../../../src/lib/remarkableApi/cache/snapshot.js";
+import Snapshot from '../../../../src/lib/remarkableApi/cache/snapshot'
+import Document from '../../../../src/lib/remarkableApi/cache/document'
+import Folder from '../../../../src/lib/remarkableApi/cache/folder'
 
 describe('Snapshot', () => {
 	setupHttpRecording()
@@ -18,7 +20,8 @@ describe('Snapshot', () => {
 			expect(snapshot.documents).toBeInstanceOf(Array)
 			expect(snapshot.folders).toBeInstanceOf(Array)
 			expect(snapshot.documents.length).toBeGreaterThan(0)
-			expect(snapshot.folders.length).toBeGreaterThan(0)
+			expect(snapshot.documents[0]).toBeInstanceOf(Document)
+			expect(snapshot.folders[0]).toBeInstanceOf(Folder)
 		}, 100000000)
 	})
 })
