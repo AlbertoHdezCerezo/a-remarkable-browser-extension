@@ -1,8 +1,8 @@
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient.js'
-import {CONFIGURATION} from '../../../../../configuration.js'
-import {HashEntry} from '../../../../schemas/v4/hashEntry.js'
+import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {CONFIGURATION} from '../../../../../configuration'
+import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import RequestBuffer from '../../utils/requestBuffer'
-import Root from "../../../root.js";
+import Root from '../../../root'
 
 /**
  * Abstract class representing a file
@@ -206,6 +206,7 @@ export default class File {
 			updateRequestHeaders
 		)
 
+		// TODO: I should fetch the root from the checksum present in the response
 		return await Root.fromSession(session)
 	}
 }
