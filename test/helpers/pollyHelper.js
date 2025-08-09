@@ -1,5 +1,6 @@
 import { Polly } from '@pollyjs/core'
 
+const IN_BETWEEN_RECORDED_SPECS_WAIT_TIME_IN_MS = 5000 // 2 seconds
 const DEFAULT_RECORDS_DIR = './test/fixtures/http-records'
 const DEFAULT_POLLY_CONFIGURATION = {
   recordIfMissing: true,
@@ -40,5 +41,10 @@ export function setupHttpRecording () {
   let polly
 
   beforeEach(() => { polly = startHttpRecording() })
-  afterEach(async () => { await stopHttpRecording(polly) })
+
+  afterEach(async () => {
+    await stopHttpRecording(polly)
+    // Wait 2 seconds after each test to ensure we do not hit API rate limits
+    await new Promise(resolve => setTimeout(resolve, IN_BETWEEN_RECORDED_SPECS_WAIT_TIME_IN_MS))
+  })
 }

@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals'
+
 /**
  * Script to set up test environment
  * before test suite run starts.
@@ -25,6 +27,14 @@ Polly.register(FSPersister)
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.test' })
+
+/**
+ * This tests perform a lot of HTTP operations, and many
+ * of them use delays in between calls to avoid hitting
+ * API rate limits. Therefore, we increase the Jest timeout
+ * to 100 seconds.
+ */
+jest.setTimeout(100000)
 
 /**
  * Global credentials
