@@ -21,6 +21,17 @@ export const CONFIGURATION = {
 					2: "collection"
 				}
 			}
+		},
+		doc: {
+			v2: {
+				endpoints: {
+					/**
+					 * Endpoint for uploading documents.
+					 * (!) Used by the official reMarkable browser extension
+					 */
+					files: 'https://internal.cloud.remarkable.com/doc/v2/files'
+				}
+			}
 		}
 	}
 }
