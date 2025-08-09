@@ -1,18 +1,18 @@
 import Root from '../internal/sync/root'
-import {HashEntriesFactory} from "../internal/schemas/index.js";
-import FileFactory from "../internal/sync/fileFactory.js";
+import {HashEntriesFactory} from '../internal/schemas/index'
+import FileFactory from '../internal/sync/fileFactory'
 
-const SNAPSHOT_DOWNLOAD_BATCH_SIZE = 20
-const SNAPSHOT_DOWNLOAD_BATCH_DELAY = 5
+const SNAPSHOT_DOWNLOAD_BATCH_SIZE = 25
+const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 2000
 
 export default class Snapshot {
-	static async fromDeviceConnection(deviceConnection, session) {
-		const root = await Root.fromDeviceConnection(deviceConnection, session)
+	static async fromSession(session) {
+		const root = await Root.fromSession(session)
 
 		let snapshotDocumentsAndFolders = []
 
-		for (let index = 0; index < root.hashEntries.length; index += SNAPSHOT_DOWNLOAD_BATCH_SIZE) {
-			const hashEntriesBatch = root.hashEntries.slice(index, index + SNAPSHOT_DOWNLOAD_BATCH_SIZE)
+		for (let index = 0; index < root.hashEntries.hashEntriesList.length; index += SNAPSHOT_DOWNLOAD_BATCH_SIZE) {
+			const hashEntriesBatch = root.hashEntries.hashEntriesList.slice(index, index + SNAPSHOT_DOWNLOAD_BATCH_SIZE)
 
 			const documentsAndFoldersRawHashEntriesInBatch =
 				await Promise.all(hashEntriesBatch.map(async hashEntry => await hashEntry.content(session)))
@@ -21,21 +21,29 @@ export default class Snapshot {
 				documentsAndFoldersRawHashEntriesInBatch
 					.map(rawHashEntries => HashEntriesFactory.fromPayload(rawHashEntries))
 
-			snapshotDocumentsAndFolders = snapshotDocumentsAndFolders.concat(
-				await Promise.all(
-					documentsAndFoldersHashEntries.map(
-						async (hashEntries, index) => await FileFactory.fileFromHashEntries(
-							root,
-							root.hashEntries[index],
-							hashEntries,
-							session
-						)
-					)
+			await Promise.all(
+				documentsAndFoldersHashEntries.map(
+					async (hashEntries, index) => {
+						try {
+							const snapshotFile =
+								await FileFactory.fileFromHashEntries(root, root.hashEntries[index], hashEntries, session)
+
+							snapshotDocumentsAndFolders.push(snapshotFile)
+						} catch (error) {
+							// TODO: I should handle unsupported files at some point
+						}
+					}
 				)
 			)
 
-			await new Promise(resolve => setTimeout(resolve, SNAPSHOT_DOWNLOAD_BATCH_DELAY * 1000))
+			await new Promise(resolve => setTimeout(resolve, SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS))
 		}
+
+		return new Snapshot(
+			root,
+			snapshotDocumentsAndFolders.filter(file => file.constructor.name !== 'Folder'),
+			snapshotDocumentsAndFolders.filter(file => file.constructor.name === 'Folder'),
+		)
 	}
 
 	/**
