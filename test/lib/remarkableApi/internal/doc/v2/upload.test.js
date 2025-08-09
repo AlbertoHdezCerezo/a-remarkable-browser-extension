@@ -1,9 +1,9 @@
 import fs from 'fs'
 import {setupHttpRecording} from '../../../../../helpers/pollyHelper.js'
-import FileBuffer from '../../../../../../src/lib/remarkableApi/utils/fileBuffer.js'
-import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
-import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
-import Upload from '../../../../../../src/lib/remarkableApi/internal/doc/v2/upload.js'
+import FileBuffer from '../../../../../../src/lib/remarkableApi/utils/fileBuffer'
+import Device from '../../../../../../src/lib/remarkableApi/internal/token/device'
+import Session from '../../../../../../src/lib/remarkableApi/internal/token/session'
+import Upload from '../../../../../../src/lib/remarkableApi/internal/doc/v2/upload'
 import File from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/abstracts/file'
 
 describe('Upload', () => {
