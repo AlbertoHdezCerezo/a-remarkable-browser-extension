@@ -1,4 +1,5 @@
 import {CONFIGURATION} from '../../../configuration'
+import {HashEntry as AbstractHashEntry} from '../abstracts/hashEntry'
 import FetchBasedHttpClient from '../../../../utils/httpClient/fetchBasedHttpClient'
 
 export class IncompatibleHashEntrySchemaError extends Error {
@@ -36,7 +37,10 @@ export class UnreachableHashEntryContentError extends Error {
  * A hash entry is a string composed by a set of
  * fields separated by a colon (:).
  *
- * Example: cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
+ * Example:
+ * ```
+ * cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
+ * ```
  *
  * - checksum: checksum of the content behind the hash entry
  * - zero: always 0
@@ -56,7 +60,7 @@ export class UnreachableHashEntryContentError extends Error {
  * 		total content of a file. They have a file extension,
  * 		and they always have a zero as the second field.
  */
-export class HashEntry {
+export class HashEntry extends AbstractHashEntry {
 	/**
 	 * Payload of the hash entry.
 	 *
@@ -109,6 +113,8 @@ export class HashEntry {
 	#fileExtension
 
 	constructor(hashEntryPayload) {
+		super()
+
 		this.#payload = hashEntryPayload
 
 		const [checksum, _zero, subFileHash, nestedHashEntriesCount, sizeInBytes] = hashEntryPayload.split(':')

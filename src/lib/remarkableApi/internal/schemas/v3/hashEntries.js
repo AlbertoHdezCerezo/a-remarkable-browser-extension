@@ -1,3 +1,4 @@
+import {HashEntries as AbstractHashEntries} from '../abstracts/hashEntries'
 import {HashEntry} from './hashEntry'
 import RequestBuffer from '../../sync/v3/utils/requestBuffer'
 
@@ -58,7 +59,7 @@ export class IncompatibleHashEntriesSchemaError extends Error {
  * - Hash entries schema version: schema version of the hash entries payload
  * - Hash entries: list of hash entries representing the content behind the file
  */
-export class HashEntries {
+export class HashEntries extends AbstractHashEntries {
 	/**
 	 * Payload of the hash entries.
 	 *
@@ -90,6 +91,8 @@ export class HashEntries {
 	#schemaVersion
 
 	constructor(hashEntriesPayload) {
+		super()
+
 		this.#payload = hashEntriesPayload
 
 		const hashEntriesLines =
@@ -217,6 +220,15 @@ export class HashEntries {
 		return this.hashEntriesList.reduce((total, hashEntry) => {
 			return total + hashEntry.sizeInBytes
 		}, 0)
+	}
+
+	/**
+	 * Returns a hash entry from the payload.
+	 *
+	 * @returns {HashEntry}
+	 */
+	async hashEntry() {
+		return new HashEntry([await this.checksum(), '0', this.fileId, this.hashEntriesList.length, this.sizeInBytesFromHashEntries].join(':'))
 	}
 
 	/**

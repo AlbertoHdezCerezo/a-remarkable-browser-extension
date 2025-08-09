@@ -1,4 +1,5 @@
 import {HashEntry} from './hashEntry'
+import {HashEntries as AbstractHashEntries} from '../abstracts/hashEntries'
 import RequestBuffer from '../../sync/v3/utils/requestBuffer'
 
 export class MissingHashEntryForReplacementError extends Error {
@@ -73,7 +74,7 @@ export class IncompatibleHashEntriesSchemaError extends Error {
  * 	 	notebooks, etc). The file data line contains a file ID,
  * 	 	and nested hash entries contain a file extension.
  */
-export class HashEntries {
+export class HashEntries extends AbstractHashEntries {
 	/**
 	 * Payload of the hash entries.
 	 *
@@ -127,6 +128,8 @@ export class HashEntries {
 	#sizeInBytes
 
 	constructor(hashEntriesPayload) {
+		super()
+
 		this.#payload = hashEntriesPayload
 
 		const hashEntriesLines =
@@ -266,6 +269,15 @@ export class HashEntries {
 		return this.hashEntriesList.reduce((total, hashEntry) => {
 			return total + hashEntry.sizeInBytes
 		}, 0)
+	}
+
+	/**
+	 * Returns a hash entry from the payload.
+	 *
+	 * @returns {HashEntry}
+	 */
+	async hashEntry() {
+		return new HashEntry([await this.checksum(), '0', this.fileId, this.hashEntriesList.length, this.sizeInBytesFromHashEntries].join(':'))
 	}
 
 	/**
