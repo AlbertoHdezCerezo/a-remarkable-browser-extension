@@ -1,5 +1,5 @@
-export HashEntry from './abstracts/hashEntry'
-export HashEntries from './abstracts/hashEntries'
+export {HashEntry} from './abstracts/hashEntry'
+export {HashEntries} from './abstracts/hashEntries'
 export {HashEntry as V3HashEntry} from './v3/hashEntry'
 export {HashEntries as V3HashEntries} from './v3/hashEntries'
 export {HashEntry as V4HashEntry} from './v4/hashEntry'

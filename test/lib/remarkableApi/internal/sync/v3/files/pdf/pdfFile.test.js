@@ -79,4 +79,21 @@ describe('PdfFile', () => {
 			expect(PdfFile.compatibleWithHashEntries(epubHashEntries)).toBe(false)
 		})
 	})
+
+	describe('.rename', () => {
+		it('updates the file name', async () => {
+			const deviceConnection = new DeviceConnection(global.remarkableDeviceConnectionToken)
+			const session = await Session.from(deviceConnection)
+
+			const root = await Root.fromSession(session)
+			const pdfHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.pdfFileId)
+			const pdfFile = await PdfFile.fromHashEntry(root, pdfHashEntry, session)
+
+			const newName = 'New PDF Name'
+			const newPdfFile = await pdfFile.rename(newName, session)
+
+			expect(newPdfFile).toBeInstanceOf(PdfFile)
+			expect(newPdfFile.name).toBe(newName)
+		})
+	})
 })
