@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { jwtDecode } from 'jwt-decode'
+import {CONFIGURATION} from '../../configuration.js'
 import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient.js'
-import {CONFIGURATION} from "../../configuration.js";
 
 export class UnsuccessfulDeviceConnectionPairingError extends Error {}
 

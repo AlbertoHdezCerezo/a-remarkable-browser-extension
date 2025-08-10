@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode'
-import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient'
-import {CONFIGURATION} from "../../configuration.js";
+import {CONFIGURATION} from '../../configuration.js'
+import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient.js'
 
 export class UnsuccessfulSessionAuthenticationError extends Error {}
 
@@ -16,15 +16,15 @@ export default class Session {
 	 * Used to interact with the reMarkable API
 	 * via a session token with an expiration time.
 	 *
-	 * @param {Device} deviceConnection - The device connection to create the session from.
+	 * @param {Device} device - The device connection to create the session from.
 	 * @returns {Session}
 	 */
-	static async from(deviceConnection) {
+	static async from(device) {
 		try {
 			const sessionResponse = await FetchBasedHttpClient.post(
 				CONFIGURATION.endpoints.token.v2.endpoints.user,
 				null,
-				{Authorization: `Bearer ${deviceConnection.token}`}
+				{Authorization: `Bearer ${device.token}`}
 			)
 
 			return new Session(await sessionResponse.text())
@@ -36,19 +36,22 @@ export default class Session {
 	}
 
 	/**
-	 * Device Connection ID
+	 * Device ID
+	 *
 	 * @type {string}
 	 */
-	#deviceConnectionId
+	#deviceId
 
 	/**
 	 * Session token expiration time
+	 *
 	 * @type {Date}
 	 */
 	#expiredAt
 
 	/**
 	 * Session token used to authenticate requests
+	 *
 	 * @type {string}
 	 */
 	#token
@@ -56,13 +59,14 @@ export default class Session {
 	constructor(token) {
 		const decodedToken = jwtDecode(token)
 
-		this.#deviceConnectionId = decodedToken['device-id']
+		this.#deviceId = decodedToken['device-id']
 		this.#expiredAt = new Date(decodedToken.exp * 1000)
 		this.#token = token
 	}
 
 	/**
 	 * Returns the session token used to authenticate requests.
+	 *
 	 * @returns {string}
 	 */
 	get token() {
@@ -70,15 +74,17 @@ export default class Session {
 	}
 
 	/**
-	 * Returns the device connection ID associated to the session.
+	 * Returns the device ID associated to the session.
+	 *
 	 * @returns {string}
 	 */
-	get deviceConnectionId() {
-		return this.#deviceConnectionId
+	get deviceId() {
+		return this.#deviceId
 	}
 
 	/**
 	 * Returns the session token expiration time.
+	 *
 	 * @returns {Date}
 	 */
 	get expiredAt() {
@@ -87,6 +93,7 @@ export default class Session {
 
 	/**
 	 * Returns true if session token is expired.
+	 *
 	 * @returns {boolean}
 	 */
 	get expired() {
