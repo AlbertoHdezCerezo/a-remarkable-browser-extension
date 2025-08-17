@@ -3,7 +3,7 @@ import {setupHttpRecording} from '../../../../../helpers/pollyHelper'
 import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
 import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
 import Root from '../../../../../../src/lib/remarkableApi/internal/sync/root'
-import {HashEntriesFactory} from '../../../../../../src/lib/remarkableApi/internal/schemas/index'
+import {HashEntriesFactory, HashEntryFactory} from '../../../../../../src/lib/remarkableApi/internal/schemas/index'
 import PdfFile from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfFile'
 import EpubFile from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/epub/epubFile'
 import FileFactory from '../../../../../../src/lib/remarkableApi/internal/sync/fileFactory'
@@ -14,11 +14,9 @@ describe('FileFactory', () => {
 
 	describe('.fileFromHashEntries', () => {
 		it('if given a PDF file hash entries, returns a PdfFile instance', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const pdfHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.pdfFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
 			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
 			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
 
@@ -27,11 +25,9 @@ describe('FileFactory', () => {
 		})
 
 		it('if given an EPUB file hash entries, returns an EpubFile instance', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
 			const epubHashEntriesPayload = await epubHashEntry.content(session)
 			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
@@ -40,11 +36,9 @@ describe('FileFactory', () => {
 		})
 
 		it('if given a folder hash entries, returns a Folder instance', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const folderHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.folderId)
+			const folderHashEntry = HashEntryFactory.fromPayload(global.sampleFolderHashEntryPayload)
 			const folderHashEntriesPayload = await folderHashEntry.content(session)
 			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
 

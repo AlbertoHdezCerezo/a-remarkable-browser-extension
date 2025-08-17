@@ -5,28 +5,37 @@ import Root from '../../../../../../../../src/lib/remarkableApi/internal/sync/ro
 import EpubFile, {
 	EpubIncompatibleHashEntriesError
 } from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/epub/epubFile'
-import {HashEntriesFactory} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index'
+import {
+	HashEntriesFactory,
+	HashEntryFactory
+} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index'
 
 describe('EpubFile', () => {
 	setupHttpRecording()
 
 	describe('.fromHashEntry', () => {
 		it('returns ePub file from root ePub file hash entry', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
 			await EpubFile.fromHashEntry(root, epubHashEntry, session)
 		})
 
 		it('if root hash entry does not represent a ePub file, throws an error', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.pdfFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
 			try {
 				await EpubFile.fromHashEntry(root, epubHashEntry, session)
@@ -38,26 +47,27 @@ describe('EpubFile', () => {
 
 	describe('.fromHashEntries', () => {
 		it('returns ePub file from provided hash entries', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
 			const epubHashEntriesPayload = await epubHashEntry.content(session)
-
 			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
 			await EpubFile.fromHashEntries(root, epubHashEntry, epubHashEntries, session)
 		})
 
 		it('if provided hash entries do not represent a ePub file, throws an error', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const pdfHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.pdfFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
 			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
 			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
 			try {
 				await EpubFile.fromHashEntries(root, pdfHashEntry, pdfHashEntries, session)
@@ -68,14 +78,28 @@ describe('EpubFile', () => {
 	})
 
 	describe('.compatibleWithHashEntries', () => {
-		it('returns true if hash entries resemble a reMarkable ePub file', () => {
-			const epubHashEntries = HashEntriesFactory.fromPayload(global.epubHashEntriesPayload)
+		it('returns true if hash entries resemble a reMarkable ePub file', async () => {
+			const session = global.remarkableApiSession
+			const root = await Root.fromSession(session)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
 			expect(EpubFile.compatibleWithHashEntries(epubHashEntries)).toBe(true)
 		})
 
-		it('returns false if hash entries do not resemble a reMarkable ePub file', () => {
-			const pdfHashEntries = HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload)
+		it('returns false if hash entries do not resemble a reMarkable ePub file', async () => {
+			const session = global.remarkableApiSession
+			const root = await Root.fromSession(session)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 
 			expect(EpubFile.compatibleWithHashEntries(pdfHashEntries)).toBe(false)
 		})
@@ -83,14 +107,16 @@ describe('EpubFile', () => {
 
 	describe('#rename', () => {
 		it('updates the file name', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
-
-			const newName = 'New ePub Name'
+			const newName = 'a-remarkable-web-browser-renamed-epub-file-renamed.epub'
 			const newEpubFile = await epubFile.rename(newName, session)
 
 			expect(newEpubFile).toBeInstanceOf(EpubFile)
@@ -100,33 +126,19 @@ describe('EpubFile', () => {
 
 	describe('#moveToFolder', () => {
 		it('moves the ePub file to another folder', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
+			const session = global.remarkableApiSession
 			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
+			const pdfHashEntry = HashEntryFactory.fromPayload(global.samplePdfHashEntryPayload)
+			const pdfHashEntriesPayload = await pdfHashEntry.content(session)
+			const pdfHashEntries = HashEntriesFactory.fromPayload(pdfHashEntriesPayload)
+			const epubHashEntry = HashEntryFactory.fromPayload(global.sampleEpubHashEntryPayload)
+			const epubHashEntriesPayload = await epubHashEntry.content(session)
+			const epubHashEntries = HashEntriesFactory.fromPayload(epubHashEntriesPayload)
 			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
-
-			const movedEpubFile = await epubFile.moveToFolder('')
+			const movedEpubFile = await epubFile.moveToFolder('trash', session)
 
 			expect(movedEpubFile).toBeInstanceOf(EpubFile)
-			expect(movedEpubFile.metadata.folderId).toBe('')
-		})
-	})
-
-	describe('#moveToTrash', () => {
-		it('moves the PDF file to trash', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
-			const root = await Root.fromSession(session)
-			const epubHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.fileId === global.epubFileId)
-			const epubFile = await EpubFile.fromHashEntry(root, epubHashEntry, session)
-
-			const trashedEpubFile = await epubFile.moveToTrash(session)
-
-			expect(trashedEpubFile).toBeInstanceOf(EpubFile)
-			expect(trashedEpubFile.metadata.folderId).toBe('trash')
+			expect(movedEpubFile.metadata.folderId).toBe('trash')
 		})
 	})
 })

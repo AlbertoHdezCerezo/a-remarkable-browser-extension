@@ -5,9 +5,13 @@ import Device from '../../../../../../../../src/lib/remarkableApi/internal/token
 import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
 import FolderMetadata
 	from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folderMetadata'
+import {
+	HashEntriesFactory,
+	HashEntryFactory
+} from "../../../../../../../../src/lib/remarkableApi/internal/schemas/index.js";
 
 describe('FolderMetadata', () => {
-	const folderRootHashEntry = new HashEntry(global.folderRootHashEntry)
+	const folderRootHashEntry = HashEntryFactory.fromPayload(global.sampleFolderHashEntryPayload)
 
 	const folderMetadataPayload = {
 		"createdTime": "1733944931405",
@@ -48,22 +52,10 @@ describe('FolderMetadata', () => {
 		setupHttpRecording()
 
 		it('updates folder metadata against the reMarkable API', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-			const folderRootHashEntry = new HashEntry(global.folderRootHashEntry)
-			const folderMetadataPayload = {
-				"createdTime": "1733944931405",
-				"lastModified": "1733944931404",
-				"parent": "5100ea0c-cec8-4d2e-9833-d179ddfff95d",
-				"pinned": false,
-				"type": "CollectionType",
-				"visibleName": "A folder name"
-			}
-
+			const session = global.remarkableApiSession
+			const folderRootHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
 			const folderMetadata = new FolderMetadata(folderRootHashEntry, folderMetadataPayload)
-
 			const newFolderMetadataHasEntry = await folderMetadata.update({ visibleName: 'Updated Folder' }, session)
-
 			const expectedFolderMetadataPayload = JSON.stringify({ ...folderMetadataPayload, "visibleName": "Updated Folder" })
 			const expectedRequestBuffer = new RequestBuffer(expectedFolderMetadataPayload)
 			const expectedFolderMetadataHash = await expectedRequestBuffer.checksum()

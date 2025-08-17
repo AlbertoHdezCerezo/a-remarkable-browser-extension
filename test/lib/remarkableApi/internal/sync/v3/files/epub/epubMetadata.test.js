@@ -51,8 +51,7 @@ describe('EpubMetadata', () => {
 		setupHttpRecording()
 
 		it('updates ePub file metadata against the reMarkable API', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
+			const session = global.remarkableApiSession
 			const epubFileRootHashEntry = new HashEntry('883411c7fa93637f63ada401b9fbe06eda8d16363f946dc7f296a05c3b3ba91d:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759')
 			const epubMetadataPayload = {
 				"createdTime": "1732308492654",

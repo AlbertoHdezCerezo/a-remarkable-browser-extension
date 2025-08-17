@@ -14,7 +14,7 @@ describe('Upload', () => {
 
 			const session = global.remarkableApiSession
 
-			const uploadDocumentHashEntry = await Upload.upload("sample.pdf", fileBuffer, session)
+			const uploadDocumentHashEntry = await Upload.upload("a-remarkable-web-browser-sample.pdf", fileBuffer, session)
 
 			expect(uploadDocumentHashEntry).toBeInstanceOf(File)
 		})
@@ -25,7 +25,7 @@ describe('Upload', () => {
 
 			const session = global.remarkableApiSession
 
-			const uploadDocumentHashEntry = await Upload.upload("sample.epub", fileBuffer, session)
+			const uploadDocumentHashEntry = await Upload.upload("a-remarkable-web-browser-sample.epub", fileBuffer, session)
 
 			expect(uploadDocumentHashEntry).toBeInstanceOf(File)
 		})

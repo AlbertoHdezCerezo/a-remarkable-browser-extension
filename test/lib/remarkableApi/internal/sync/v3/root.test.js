@@ -11,11 +11,10 @@ import Session from '../../../../../../src/lib/remarkableApi/internal/token/sess
 describe('Root', () => {
 	setupHttpRecording()
 
+	const session = global.remarkableApiSession
+
 	describe('.fromSession', () => {
 		it('fetches root information and hash entries from the reMarkable cloud account', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
 			const root = await Root.fromSession(session)
 
 			expect(root).toBeDefined()
@@ -25,9 +24,6 @@ describe('Root', () => {
 		})
 
 		it('if request to fetch root metadata fails, throws an UnreachableRootError', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
 			// Simulate a failure in fetching root metadata
 			jest.spyOn(FetchBasedHttpClient, 'get').mockImplementationOnce(() => {
 				throw new Error('Network error')
@@ -41,9 +37,6 @@ describe('Root', () => {
 		})
 
 		it('if request to fetch root hash entries fails, throws an UnreachableRootHashEntriesError', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
-			const session = await Session.from(deviceConnection)
-
 			// Simulate a failure in fetching root hash entries
 			jest.spyOn(FetchBasedHttpClient, 'get')
 				.mockImplementationOnce(() => Promise.resolve({

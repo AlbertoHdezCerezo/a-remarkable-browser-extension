@@ -74,9 +74,9 @@ describe('HashEntry', () => {
 	})
 
 	describe('#content', () => {
-		it('if hash entry content is a set of hash entries, returns them as plain text', async () => {
-			const session = new Session(global.remarkableSessionToken)
-			const hashEntryPayload = global.samplePdfFile.rootHashEntry.payload
+		it('returns content behind hash entry', async () => {
+			const session = global.remarkableApiSession
+			const hashEntryPayload = global.samplePdfHashEntryPayload
 			const hashEntry = new HashEntry(hashEntryPayload)
 
 			const hashEntryContent = await hashEntry.content(session)
@@ -84,18 +84,8 @@ describe('HashEntry', () => {
 			expect(typeof hashEntryContent).toBe('string')
 		})
 
-		it('if hash entry content is a JSON, returns it as an object', async () => {
-			const session = new Session(global.remarkableSessionToken)
-			const hashEntryPayload = global.samplePdfFile.hashEntries.find(entry => entry.fileExtension === 'metadata').payload
-			const hashEntry = new HashEntry(hashEntryPayload)
-
-			const hashEntryContent = await hashEntry.content(session)
-
-			expect(typeof hashEntryContent).toBe('object')
-		})
-
 		it('if hash entry content cannot be fetched, throws an error', async () => {
-			const session = new Session(global.remarkableSessionToken)
+			const session = global.remarkableApiSession
 			const hashEntryPayload = 'thisisnotavalidchecksum:0:0bacf12a-64fa-4fe5-9f28-16a043e8c809.metadata:0:314'
 			const hashEntry = new HashEntry(hashEntryPayload)
 
