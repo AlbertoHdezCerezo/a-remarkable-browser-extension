@@ -181,7 +181,49 @@ export default class Snapshot {
 	 * @param {Root} [root=null] - Optional root to synchronize against.
 	 * @returns {Promise<Snapshot>}
 	 */
-	async synchronize(session, root = null) {
+	async synchronize(session, root) {
+		if(root.generation <= this.root.generation) {
+			// No need to synchronize, the root is already up-to-date
+			return this
+		}
+
+		// Takes new hash entries not present in the current snapshot
+		// and entries present in the current snapshot but with a different checksum.
+		const differentHashEntries = root.hashEntries.filter((hashEntry) => {
+			const snapshotHashEntry = this.root.hashEntries.find(
+				snapshotHashEntry => snapshotHashEntry.fileId === hashEntry.fileId
+			)
+
+			if(snapshotHashEntry) {
+				return snapshotHashEntry.checksum !== hashEntry.checksum
+			} else {
+				return true
+			}
+		})
+
+		const differentHashFileIds = differentHashEntries.map(hashEntry => hashEntry.fileId)
+
+		const newDocumentsAndFolders = await differentHashEntries
+			.map(async (hashEntry) =>
+				await FileFactory.fileFromHashEntries(root, hashEntry, root.hashEntries, session))
+		const newCachedDocuments = newDocumentsAndFolders
+			.filter(file => file.constructor.name !== 'Folder')
+			.map(file => new Document(file))
+		const newCachedFolders = newDocumentsAndFolders
+			.filter(file => file.constructor.name === 'Folder')
+			.map(folder => new Folder(folder))
+
+		return new Snapshot(
+			root,
+			[
+				...this.documents.filter(document => differentHashFileIds.includes(document.apiDocument.rootHashEntry.fileId)),
+				...newCachedDocuments
+			],
+			[
+				...this.folders.filter(folder => differentHashFileIds.includes(folder.apiFolder.rootHashEntry.fileId)),
+				...newCachedFolders
+			]
+		)
 	}
 
 	/**

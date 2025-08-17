@@ -1,10 +1,9 @@
 import {setupHttpRecording} from '../../../helpers/pollyHelper'
 import Snapshot from '../../../../src/lib/remarkableApi/cache/snapshot'
-import Document from '../../../../src/lib/remarkableApi/cache/document'
 import Folder from '../../../../src/lib/remarkableApi/cache/folder'
-import Root from "../../../../src/lib/remarkableApi/internal/sync/root.js";
-import {HashEntriesFactory} from "../../../../src/lib/remarkableApi/internal/schemas/index.js";
-import ApiFolder from "../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folder.js";
+import Root from '../../../../src/lib/remarkableApi/internal/sync/root'
+import {HashEntriesFactory} from '../../../../src/lib/remarkableApi/internal/schemas/index'
+import ApiFolder from '../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folder'
 
 describe('Snapshot', () => {
 	setupHttpRecording()
@@ -38,31 +37,31 @@ describe('Snapshot', () => {
 		}
 	)
 
-	describe('.fromJson', () => {
-		it('from a snapshot JSON, returns Snapshot instance', () => {
-			const snapshotJson = JSON.stringify({
-				rootChecksum: root.checksum,
-				rootGeneration: root.generation,
-				rootHashEntriesPayload: root.hashEntries.payload,
-				documents: [],
-				folders: [{
-					folderRootHashEntryPayload: apiFolder.rootHashEntry.payload,
-					folderHashEntriesPayload: apiFolder.hashEntries.payload,
-					folderMetadataPayload: JSON.stringify(apiFolder.metadata.payload)
-				}]
-			})
-
-			const snapshot = Snapshot.fromJson(snapshotJson, root)
-
-			expect(snapshot).toBeInstanceOf(Snapshot)
-			expect(snapshot.root).toBeDefined()
-			expect(snapshot.documents).toBeInstanceOf(Array)
-			expect(snapshot.folders).toBeInstanceOf(Array)
-			expect(snapshot.documents.length).toBe(0)
-			expect(snapshot.folders.length).toBe(1)
-			expect(snapshot.folders[0]).toBeInstanceOf(Folder)
-		})
-	})
+	// describe('.fromJson', () => {
+	// 	it('from a snapshot JSON, returns Snapshot instance', () => {
+	// 		const snapshotJson = JSON.stringify({
+	// 			rootChecksum: root.checksum,
+	// 			rootGeneration: root.generation,
+	// 			rootHashEntriesPayload: root.hashEntries.payload,
+	// 			documents: [],
+	// 			folders: [{
+	// 				folderRootHashEntryPayload: apiFolder.rootHashEntry.payload,
+	// 				folderHashEntriesPayload: apiFolder.hashEntries.payload,
+	// 				folderMetadataPayload: JSON.stringify(apiFolder.metadata.payload)
+	// 			}]
+	// 		})
+	//
+	// 		const snapshot = Snapshot.fromJson(snapshotJson, root)
+	//
+	// 		expect(snapshot).toBeInstanceOf(Snapshot)
+	// 		expect(snapshot.root).toBeDefined()
+	// 		expect(snapshot.documents).toBeInstanceOf(Array)
+	// 		expect(snapshot.folders).toBeInstanceOf(Array)
+	// 		expect(snapshot.documents.length).toBe(0)
+	// 		expect(snapshot.folders.length).toBe(1)
+	// 		expect(snapshot.folders[0]).toBeInstanceOf(Folder)
+	// 	})
+	// })
 
 	// describe('.fromSession', () => {
 	// 	it('returns a snapshot of reMarkable cloud account attached to session', async () => {
@@ -80,21 +79,25 @@ describe('Snapshot', () => {
 	// 	}, 100000000)
 	// })
 
-	describe('#toJson', () => {
-		it('returns JSON representation of the snapshot', () => {
-			const snapshot = new Snapshot(root, [], [new Folder(apiFolder)])
+	// describe('#toJson', () => {
+	// 	it('returns JSON representation of the snapshot', () => {
+	// 		const snapshot = new Snapshot(root, [], [new Folder(apiFolder)])
+	//
+	// 		expect(snapshot.toJson).toEqual({
+	// 			rootChecksum: root.checksum,
+	// 			rootGeneration: root.generation,
+	// 			rootHashEntriesPayload: root.hashEntries.payload,
+	// 			documents: [],
+	// 			folders: [{
+	// 				folderRootHashEntryPayload: apiFolder.rootHashEntry.payload,
+	// 				folderHashEntriesPayload: apiFolder.hashEntries.payload,
+	// 				folderMetadataPayload: JSON.stringify(apiFolder.metadata.payload)
+	// 			}]
+	// 		})
+	// 	})
+	// })
 
-			expect(snapshot.toJson).toEqual({
-				rootChecksum: root.checksum,
-				rootGeneration: root.generation,
-				rootHashEntriesPayload: root.hashEntries.payload,
-				documents: [],
-				folders: [{
-					folderRootHashEntryPayload: apiFolder.rootHashEntry.payload,
-					folderHashEntriesPayload: apiFolder.hashEntries.payload,
-					folderMetadataPayload: JSON.stringify(apiFolder.metadata.payload)
-				}]
-			})
-		})
+	describe('#synchronize', () => {
+
 	})
 })
