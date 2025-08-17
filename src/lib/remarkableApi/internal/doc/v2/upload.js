@@ -1,10 +1,10 @@
-import { fromByteArray } from 'base64-js'
-import { TextEncoder } from '@polkadot/x-textencoder'
+import {fromByteArray} from 'base64-js'
+import {TextEncoder} from '@polkadot/x-textencoder'
 import {CONFIGURATION} from '../../../configuration'
 import Root from '../../sync/root'
-import FetchBasedHttpClient from '../../../../utils/httpClient/fetchBasedHttpClient'
 import FileFactory from '../../sync/fileFactory'
 import {HashEntriesFactory} from '../../schemas/index'
+import FetchBasedHttpClient from '../../../../utils/httpClient/fetchBasedHttpClient'
 
 export const REMARKABLE_UPLOAD_SOURCE = 'RoR-Browser'
 

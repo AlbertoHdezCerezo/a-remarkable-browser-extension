@@ -9,7 +9,7 @@ describe('Session', () => {
 
 	describe('.from', () => {
 		it('creates remarkable API session out of device connection token', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceToken)
 
 			const session = await Session.from(deviceConnection)
 
@@ -37,7 +37,7 @@ describe('Session', () => {
 			const session = new Session(global.remarkableSessionToken)
 
 			const actualTokenFields = {
-				deviceId: session.deviceConnectionId,
+				deviceId: session.deviceId,
 				expiredAt: session.expiredAt
 			}
 

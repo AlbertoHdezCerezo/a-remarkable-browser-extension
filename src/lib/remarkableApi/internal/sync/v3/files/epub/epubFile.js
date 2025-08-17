@@ -67,7 +67,6 @@ export default class EpubFile extends File {
 		return 	hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'metadata') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pagedata') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'content') &&
-						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pdf') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
 	}
 

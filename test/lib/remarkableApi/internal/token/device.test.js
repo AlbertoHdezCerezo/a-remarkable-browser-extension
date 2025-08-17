@@ -21,7 +21,7 @@ describe('Device', () => {
 
 			const originalFetch = mockSuccessfulFetchBasedHttpRequest(
 				`https://my.remarkable.com/api/v1/connection/${oneTimeCode}`,
-				global.remarkableDeviceConnectionToken,
+				global.remarkableDeviceToken,
 				200
 			)
 
@@ -32,7 +32,7 @@ describe('Device', () => {
 
 			expect(deviceConnection).toBeInstanceOf(Device)
 			expect(deviceConnection.token.replace(/^"(.*)"$/, '$1'))
-				.toBe(global.remarkableDeviceConnectionToken)
+				.toBe(global.remarkableDeviceToken)
 		})
 
 		it('if pairing fails, throws error', async () => {
@@ -54,7 +54,7 @@ describe('Device', () => {
 
 	describe('.constructor', () => {
 		it('initializes device connection with token data', () => {
-			const decodedToken = jwtDecode(global.remarkableDeviceConnectionToken)
+			const decodedToken = jwtDecode(global.remarkableDeviceToken)
 
 			const expectedTokenFields = {
 				id: decodedToken['device-id'],
@@ -62,7 +62,7 @@ describe('Device', () => {
 				issuedAt: new Date(decodedToken.iat * 1000)
 			}
 
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceToken)
 
 			const actualTokenFields = {
 				id: deviceConnection.id,

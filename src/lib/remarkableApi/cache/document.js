@@ -7,7 +7,7 @@ export default class Document {
 	 * Returns a Document instance from the provided
 	 * JSON representation of the document.
 	 *
-	 * @param {Object} documentJson - JSON representation of the document.
+	 * @param {String} documentJson - JSON representation of the document.
 	 * @param {Root} root - reMarkable Cloud root.
 	 * @returns {Document}
 	 */
@@ -57,19 +57,15 @@ export default class Document {
 	/**
 	 * Serializes document to JSON format.
 	 *
-	 * @returns {
-	 * 		{
-	 *			documentRootHashEntryPayload: string,
-	 *			documentHashEntriesPayload: string,
-	 *			documentMetadataPayload: Object
- 	 *		}
-	 * 	}
+	 * @returns {String}
 	 */
 	get toJson() {
-		return {
-			documentRootHashEntryPayload: this.#apiDocument.rootHashEntry.payload,
-			documentHashEntriesPayload: this.#apiDocument.hashEntries.payload,
-			documentMetadataPayload: JSON.stringify(this.#apiDocument.metadata.payload)
-		}
+		return JSON.stringify(
+			{
+				documentRootHashEntryPayload: this.#apiDocument.rootHashEntry.payload,
+				documentHashEntriesPayload: this.#apiDocument.hashEntries.payload,
+				documentMetadataPayload: this.#apiDocument.metadata.payload
+			}
+		)
 	}
 }

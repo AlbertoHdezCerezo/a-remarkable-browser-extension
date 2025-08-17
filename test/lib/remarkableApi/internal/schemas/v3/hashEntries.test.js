@@ -1,9 +1,9 @@
-import RequestBuffer from '../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
 import {HashEntry} from '../../../../../../src/lib/remarkableApi/internal/schemas/v3/hashEntry'
 import {
-	HashEntries, IncompatibleHashEntriesSchemaError,
+	HashEntries,
 	IncompatibleSchemaVersionError, MissingHashEntryForReplacementError
 } from '../../../../../../src/lib/remarkableApi/internal/schemas/v3/hashEntries'
+import RequestBuffer from '../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
 
 describe('HashEntries', () => {
 	describe('.construct', () => {

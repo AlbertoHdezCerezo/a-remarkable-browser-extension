@@ -6,7 +6,7 @@ export default class Folder {
 	 * Returns a Folder instance from the provided
 	 * JSON representation of the folder.
 	 *
-	 * @param {Object} folderJson - JSON representation of the folder.
+	 * @param {String} folderJson - JSON representation of the folder.
 	 * @param {Root} root - reMarkable Cloud root.
 	 * @returns {Folder}
 	 */
@@ -54,19 +54,15 @@ export default class Folder {
 	/**
 	 * Serializes document to JSON format.
 	 *
-	 * @returns {
-	 * 		{
-	 *			folderRootHashEntryPayload: string,
-	 *			folderHashEntriesPayload: string,
-	 *			folderMetadataPayload: Object
- 	 *		}
-	 * 	}
+	 * @returns {String}
 	 */
 	get toJson() {
-		return {
-			folderRootHashEntryPayload: this.#apiFolder.rootHashEntry.payload,
-			folderHashEntriesPayload: this.#apiFolder.hashEntries.payload,
-			folderMetadataPayload: JSON.stringify(this.#apiFolder.metadata.payload)
-		}
+		return JSON.stringify(
+			{
+				folderRootHashEntryPayload: this.#apiFolder.rootHashEntry.payload,
+				folderHashEntriesPayload: this.#apiFolder.hashEntries.payload,
+				folderMetadataPayload: this.#apiFolder.metadata.payload
+			}
+		)
 	}
 }

@@ -32,6 +32,27 @@ const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 0
  */
 export default class Snapshot {
 	/**
+	 * Returns a Snapshot instance from the provided
+	 * JSON representation of the snapshot.
+	 *
+	 * @param {Object} snapshotJson - JSON representation of the snapshot.
+	 */
+	static fromJson(snapshotJson) {
+		const snapshotObject = JSON.parse(snapshotJson)
+
+		const snapshotRoot = new Root(
+			snapshotObject.rootChecksum,
+			snapshotObject.rootGeneration,
+			snapshotObject.rootHashEntriesPayload
+		)
+
+		const snapshotDocuments = snapshotObject.documents.map(documentJson => Document.fromJson(documentJson, snapshotRoot))
+		const snapshotFolders = snapshotObject.folders.map(folderJson => Folder.fromJson(folderJson, snapshotRoot))
+
+		return new Snapshot(snapshotRoot, snapshotDocuments, snapshotFolders)
+	}
+
+	/**
 	 * Fetches current snapshot of the reMarkable
 	 * cloud API file system, by fetching the root
 	 * hash entries and downloading the documents
@@ -161,5 +182,22 @@ export default class Snapshot {
 	 * @returns {Promise<Snapshot>}
 	 */
 	async synchronize(session, root = null) {
+	}
+
+	/**
+	 * Serializes snapshot to JSON format.
+	 *
+	 * @returns {String}
+	 */
+	get toJson() {
+		return JSON.stringify(
+			{
+				rootChecksum: this.root.checksum,
+				rootGeneration: this.root.generation,
+				rootHashEntriesPayload: this.root.hashEntries.payload,
+				documents: this.documents.map(document => document.toJson),
+				folders: this.folders.map(folder => folder.toJson)
+			}
+		)
 	}
 }

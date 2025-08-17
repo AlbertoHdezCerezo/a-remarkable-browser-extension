@@ -1,8 +1,9 @@
 #! /usr/bin/env node
 
+import fs from 'fs'
+import shell from 'shelljs'
 import {program} from 'commander'
 import {spinner, intro, outro, text, confirm, cancel, select, tasks, log} from '@clack/prompts'
-import fs from 'fs'
 
 import dotenv from 'dotenv'
 
@@ -34,74 +35,65 @@ intro(`a reMarkable API debug CLI`)
  * information in the fixtures.
  */
 const regenerateTextFixtures = async () => {
-	await tasks([
-		{
-			task: async (message) => {
-				const s = spinner()
+	const s = spinner()
 
-				log.step('1. Clearing existing HTTP record fixtures ...')
+	log.step('1. Clearing existing HTTP record fixtures ...')
 
-				fs.rmSync('./test/fixtures/http-records', { recursive: true, force: true })
-				fs.mkdirSync('./test/fixtures/http-records', { recursive: true })
+	fs.rmSync('./test/fixtures/http-records', { recursive: true, force: true })
+	fs.mkdirSync('./test/fixtures/http-records', { recursive: true })
 
-				log.success('Fixtures under test/fixtures/http-records were cleared!')
-			},
-		},
-		{
-			task: async (message) => {
-				const s = spinner()
+	log.success('Fixtures under test/fixtures/http-records were cleared!')
 
-				log.step('2. Generating new device connection token')
+	log.step('2. Generating new device connection token')
 
-				let device = null
-				if (process.env.REMARKABLE_DEVICE_CONNECTION_TOKEN) {
-					device = new Device(process.env.REMARKABLE_DEVICE_CONNECTION_TOKEN)
-					log.success(`
+	let device = null
+	if (process.env.REMARKABLE_DEVICE_TOKEN) {
+		device = new Device(process.env.REMARKABLE_DEVICE_TOKEN)
+		log.success(`
 						Found reMarkable device connection token in configuration:
 						- token: ${device.token}
 						- device ID: ${device.deviceId}
 						- description: ${device.description}
 						- issued at: ${device.issuedAt.toISOString()}
 					`.replace(/\t/g, ''))
-				}
+	}
 
-				log.step('3. Generating new session token')
+	log.step('3. Generating new session token')
 
-				let session = null
-				if (process.env.REMARKABLE_SESSION_TOKEN)
-					session = new Session(process.env.REMARKABLE_SESSION_TOKEN)
+	let session = null
+	if (process.env.REMARKABLE_SESSION_TOKEN)
+		session = new Session(process.env.REMARKABLE_SESSION_TOKEN)
 
-				if (!session) {
-					log.info('No session token found in configuration, fetching a new one ...')
-					session = await Session.from(device)
-					log.success(`
+	if (!session) {
+		log.info('No session token found in configuration, fetching a new one ...')
+		session = await Session.from(device)
+		log.success(`
 						New session token fetched successfully:
 						- token: ${session.token}
 						- expiration: ${session.expiredAt.toISOString()}
 						Dumping session token to .env.test file ...
 					`.replace(/\t/g, ''))
 
-					fs.appendFileSync('.env.test', `\nREMARKABLE_SESSION_TOKEN=${session.token}\n`)
-				} else {
-					if(session.expired) {
-						log.info('Session token found in configuration, but it is expired ...')
-						session = await Session.from(device)
-						log.success(`
+		fs.appendFileSync('.env.test', `\nREMARKABLE_SESSION_TOKEN=${session.token}\n`)
+	} else {
+		if(session.expired) {
+			log.info('Session token found in configuration, but it is expired ...')
+			session = await Session.from(device)
+			log.success(`
 							New session token fetched successfully:
 							- token: ${session.token}
 							- expiration: ${session.expiredAt.toISOString()}
 							Dumping session token to .env.test file ...
 						`.replace(/\t/g, ''))
-						fs.appendFileSync('.env.test', `\nREMARKABLE_SESSION_TOKEN=${session.token}\n`)
-					}
-				}
-
-				log.step('4. Running test suite to regenerate text fixtures ...')
-
-
-			},
+			fs.appendFileSync('.env.test', `\nREMARKABLE_SESSION_TOKEN=${session.token}\n`)
 		}
-	])
+	}
+
+	log.step('4. Running test suite to regenerate text fixtures ...')
+
+	s.start('running HTTP library specs ...')
+	shell.exec('yarn test test/lib/utils')
+	s.stop('All specs executed ...')
 }
 
 const command = await select({

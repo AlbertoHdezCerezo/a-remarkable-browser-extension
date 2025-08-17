@@ -1,6 +1,6 @@
-import FetchBasedHttpClient from '../../../../src/lib/utils/httpClient/httpsBasedHttpClient'
 import { setupHttpRecording } from '../../../helpers/pollyHelper'
-import HttpClientError from "../../../../src/lib/utils/httpClient/httpClientError.js";
+import HttpClientError from '../../../../src/lib/utils/httpClient/httpClientError'
+import FetchBasedHttpClient from '../../../../src/lib/utils/httpClient/httpsBasedHttpClient'
 
 describe('FetchBasedHttpClient', () => {
   // Enables Polly.js to record and replay HTTP requests for each test

@@ -6,6 +6,13 @@ import { jest } from '@jest/globals'
  */
 
 /**
+ * Set-Up logic: designed to easily set development
+ * environment variables and run test suite
+ * to regenerate text fixtures.
+ */
+import {spinner, intro, outro, text, confirm, cancel, select, tasks, log} from '@clack/prompts'
+
+/**
  * Due to Polly.js deprecations, we use NodeHTTPAdapter instead of FetchAdapter.
  * When @pollyjs/adapter-fetch is running in a Node.js environment, it uses a polyfill
  * for fetch, which is not as reliable or feature-complete as the native fetch API in
@@ -36,11 +43,48 @@ dotenv.config({ path: '.env.test' })
  */
 jest.setTimeout(100000)
 
+import fs from 'fs'
+import Device from '../src/lib/remarkableApi/internal/token/device'
+import Session from '../src/lib/remarkableApi/internal/token/session'
+import FileBuffer from '../src/lib/remarkableApi/utils/fileBuffer'
+import Upload from '../src/lib/remarkableApi/internal/doc/v2/upload'
+
 /**
  * Global credentials
  */
-global.remarkableDeviceConnectionToken = process.env.REMARKABLE_DEVICE_CONNECTION_TOKEN
+global.remarkableDeviceToken = process.env.REMARKABLE_DEVICE_TOKEN
 global.remarkableSessionToken = process.env.REMARKABLE_SESSION_TOKEN
+
+/**
+ * Active session for running queries against the device.
+ */
+// Memoizes reMarkable device globally
+if (!global.remarkableDeviceToken) throw new Error('REMARKABLE_DEVICE_TOKEN environment variable is not set')
+global.remarkableDevice = new Device(global.remarkableDeviceToken)
+
+// Memoizes reMarkable session globally
+if (!global.remarkableSessionToken) throw new Error('REMARKABLE_SESSION_TOKEN environment variable is not set')
+global.remarkableApiSession = new Session(global.remarkableSessionToken)
+
+if (global.remarkableApiSession.expired) {
+	global.remarkableApiSession = await Session.from(global.remarkableDevice)
+	fs.appendFileSync('.env.test', `\nREMARKABLE_SESSION_TOKEN=${global.remarkableApiSession.token}\n`)
+	console.warn('Remarkable API session was expired, created a new one.')
+}
+
+// Memoizes reMarkable sample documents globally.
+// (!) Only when generating fixtures for the first time.
+const files = fs.readdirSync('./test/fixtures/http-records')
+if (files.length === 0) {
+	const pdfFile = fs.readFileSync('./test/fixtures/documents/sample.pdf')
+	const pdfFileBuffer = new FileBuffer(pdfFile)
+
+	const epubFile = fs.readFileSync('./test/fixtures/documents/sample.epub')
+	const epubFileBuffer = new FileBuffer(epubFile)
+
+	global.samplePdfFile = await Upload.upload("a-remarkable-test-file.pdf", pdfFileBuffer, global.remarkableApiSession)
+	global.sampleEpubFile = await Upload.upload("a-remarkable-test-file.epub", epubFileBuffer, global.remarkableApiSession)
+}
 
 /**
  * Global sample data

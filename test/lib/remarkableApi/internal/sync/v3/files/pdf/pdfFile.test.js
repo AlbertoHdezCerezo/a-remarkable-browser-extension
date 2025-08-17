@@ -82,7 +82,7 @@ describe('PdfFile', () => {
 
 	describe('#rename', () => {
 		it('updates the file name', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -99,7 +99,7 @@ describe('PdfFile', () => {
 
 	describe('#moveToFolder', () => {
 		it('moves the PDF file to another folder', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
@@ -115,7 +115,7 @@ describe('PdfFile', () => {
 
 	describe('#moveToTrash', () => {
 		it('moves the PDF file to trash', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceConnectionToken)
+			const deviceConnection = new Device(global.remarkableDeviceToken)
 			const session = await Session.from(deviceConnection)
 
 			const root = await Root.fromSession(session)
