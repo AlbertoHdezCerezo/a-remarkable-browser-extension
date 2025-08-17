@@ -1,5 +1,4 @@
-import {HashEntry} from '../internal/schemas/v4/hashEntry'
-import {HashEntriesFactory} from '../internal/schemas/index'
+import {HashEntriesFactory, HashEntryFactory} from '../internal/schemas/index'
 import PdfFile from '../internal/sync/v3/files/pdf/pdfFile'
 import EpubFile from '../internal/sync/v3/files/epub/epubFile'
 
@@ -9,12 +8,12 @@ export default class Document {
 	 * JSON representation of the document.
 	 *
 	 * @param {Object} documentJson - JSON representation of the document.
-	 * @param {Root} root - reMarkable Cloud root snapshot.
+	 * @param {Root} root - reMarkable Cloud root.
 	 * @returns {Document}
 	 */
 	static fromJson(documentJson, root) {
 		const documentObject = JSON.parse(documentJson)
-		const documentRootHashEntry = new HashEntry(documentObject.documentRootHashEntryPayload)
+		const documentRootHashEntry = HashEntryFactory.fromPayload(documentObject.documentRootHashEntryPayload)
 		const documentHashEntries = HashEntriesFactory.fromPayload(documentObject.documentHashEntriesPayload)
 		const documentMetadataPayload = documentObject.documentMetadataPayload
 
@@ -63,7 +62,7 @@ export default class Document {
 	 *			documentRootHashEntryPayload: string,
 	 *			documentHashEntriesPayload: string,
 	 *			documentMetadataPayload: Object
- *			}
+ 	 *		}
 	 * 	}
 	 */
 	get toJson() {

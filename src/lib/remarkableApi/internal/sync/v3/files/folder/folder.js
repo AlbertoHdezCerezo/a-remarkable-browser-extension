@@ -4,9 +4,9 @@ import File from '../abstracts/file'
 import FolderMetadata from './folderMetadata'
 import {HashEntry} from '../../../../schemas/v4/hashEntry'
 import {HashEntries} from '../../../../schemas/v4/hashEntries'
-import RequestBuffer from "../../utils/requestBuffer.js";
-import FetchBasedHttpClient from "../../../../../../utils/httpClient/fetchBasedHttpClient.js";
-import {CONFIGURATION} from "../../../../../configuration.js";
+import RequestBuffer from '../../utils/requestBuffer'
+import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {CONFIGURATION} from '../../../../../configuration'
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
