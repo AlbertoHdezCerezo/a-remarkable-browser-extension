@@ -24,4 +24,24 @@ intro(`a reMarkable API debug CLI`)
 let loop = true
 
 while (loop) {
+	const option = await select({
+		message: 'What do you want to do?',
+		options: [
+			{ value: 'file-manager', label: 'Navigate through reMarkable File System' },
+			{ value: 'exit', label: 'Exit CLI tool' }
+		],
+	})
+
+	switch (option) {
+		case 'file-manager':
+
+		case 'exit':
+			loop = false
+			break
+		default:
+			loop = false
+			break
+	}
 }
+
+outro('Goodbye!')
