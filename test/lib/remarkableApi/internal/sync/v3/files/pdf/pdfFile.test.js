@@ -1,18 +1,14 @@
-import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
-import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
-import Root from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
-import PdfFile, {
+import {Root} from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
+import {
+	PdfFile,
 	PdfIncompatibleHashEntriesError
-} from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfFile'
+} from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files'
 import {
 	HashEntriesFactory,
 	HashEntryFactory
-} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index'
+} from '../../../../../../../../src/lib/remarkableApi/internal/schemas'
 
 describe('PdfFile', () => {
-	setupHttpRecording()
-
 	describe('.fromHashEntry', () => {
 		it('returns PDF file from root PDF file hash entry', async () => {
 			const session = global.remarkableApiSession

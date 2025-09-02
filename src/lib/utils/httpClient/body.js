@@ -3,7 +3,7 @@
  *
  * @class
  */
-export default class Body {
+export class Body {
   /**
 	 * Raw payload of the HTTP request.
 	 *

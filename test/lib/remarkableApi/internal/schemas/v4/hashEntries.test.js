@@ -1,9 +1,5 @@
-import RequestBuffer from '../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
-import {HashEntry} from '../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
-import {
-	HashEntries, IncompatibleHashEntriesSchemaError,
-	IncompatibleSchemaVersionError, MissingHashEntryForReplacementError
-} from '../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntries'
+import * as Schemas from '../../../../../../src/lib/remarkableApi/internal/schemas'
+import {RequestBuffer} from '../../../../../../src/lib/remarkableApi/internal/sync/v3/utils'
 
 describe('HashEntries', () => {
 	describe('.construct', () => {
@@ -19,7 +15,7 @@ describe('HashEntries', () => {
 				7a6c64d0d2a619eaab290e1a0d179af6ba11e2b5b4ae64c24c834d4af6d1a930:0:0608d996-dd20-4d19-970d-bc803fd91b78:4:17780398
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.payload).toBe(hashEntriesPayload)
 			expect(hashEntries.schemaVersion).toBe(4)
@@ -42,7 +38,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.payload).toBe(hashEntriesPayload)
 			expect(hashEntries.schemaVersion).toBe(4)
@@ -61,8 +57,8 @@ describe('HashEntries', () => {
 				cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
 			`.trim().replace(/\t/g, '')
 
-			try { new HashEntries(hashEntriesPayload) } catch (error) {
-				expect(error).toBeInstanceOf(IncompatibleSchemaVersionError)
+			try { new Schemas.V4.HashEntries(hashEntriesPayload) } catch (error) {
+				expect(error).toBeInstanceOf(Schemas.V4.IncompatibleSchemaVersionError)
 			}
 		})
 
@@ -74,7 +70,7 @@ describe('HashEntries', () => {
 				cf0603f27e347959822926d78430c77e4264f014a9c816fe33029befb4a80f12:0:008302bc-c5ba-41be-925b-8567166246e4.epub:0:2583509
 			`.trim().replace(/\t/g, '')
 
-			try { new HashEntries(IncompatibleHashEntriesSchemaError) } catch (error) {
+			try { new Schemas.V4.HashEntries(Schemas.V4.IncompatibleHashEntriesSchemaError) } catch (error) {
 				expect(error).toBeInstanceOf(Error)
 			}
 		})
@@ -88,7 +84,7 @@ describe('HashEntries', () => {
 				883411c7fa93637f63ada401b9fbe06eda8d16363f946dc7f296a05c3b3ba91d:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.rootHashEntries).toBe(true)
 		})
@@ -100,7 +96,7 @@ describe('HashEntries', () => {
 				cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.rootHashEntries).toBe(false)
 		})
@@ -115,7 +111,7 @@ describe('HashEntries', () => {
 				cf0603f27e347959822926d78430c77e4264f014a9c816fe33029befb4a80f12:0:008302bc-c5ba-41be-925b-8567166246e4.epub:0:2583509
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAFolder).toBe(true)
 		})
@@ -130,7 +126,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAFolder).toBe(true)
 		})
@@ -143,7 +139,7 @@ describe('HashEntries', () => {
 				cf0603f27e347959822926d78430c77e4264f014a9c816fe33029befb4a80f12:0:008302bc-c5ba-41be-925b-8567166246e4.epub:0:2583509
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAPdf).toBe(false)
 		})
@@ -157,7 +153,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAPdf).toBe(false)
 		})
@@ -173,7 +169,7 @@ describe('HashEntries', () => {
 				69ae298325a1a1d3f2dc4f6d6daa1db9b52ac523a1c455f19de4348184ce53e6:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:327
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAnEpub).toBe(true)
 		})
@@ -186,7 +182,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAnEpub).toBe(false)
 		})
@@ -204,7 +200,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.sizeInBytesFromHashEntries).toBe(26531 + 2583509 + 327 + 2346 + 3053046)
 		})
@@ -222,11 +218,11 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			const hashEntry = await hashEntries.hashEntry()
 
-			expect(hashEntry).toBeInstanceOf(HashEntry)
+			expect(hashEntry).toBeInstanceOf(Schemas.V4.HashEntry)
 			expect(hashEntry.payload).toBe('712b3d82f2e2c4f2d94ee50ece4505d1a8e1178b61b1d4e88e86d24370b44edf:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759')
 		})
 	})
@@ -254,9 +250,9 @@ describe('HashEntries', () => {
 				712b3d82f2e2c4f2d94ee50ece4505d1a8e1178b61b1d4e88e86d24370b44edf:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
-			const newHashEntry = new HashEntry('712b3d82f2e2c4f2d94ee50ece4505d1a8e1178b61b1d4e88e86d24370b44edf:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759')
+			const newHashEntry = new Schemas.V4.HashEntry('712b3d82f2e2c4f2d94ee50ece4505d1a8e1178b61b1d4e88e86d24370b44edf:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759')
 
 			const newHashEntries = hashEntries.attach(newHashEntry)
 
@@ -287,10 +283,10 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			const currentHashEntry = hashEntries.hashEntriesList[0]
-			const newHashEntry = new HashEntry(expectedHashEntriesPayload.split('\n')[2])
+			const newHashEntry = new Schemas.V4.HashEntry(expectedHashEntriesPayload.split('\n')[2])
 
 			const newHashEntries = hashEntries.replace(currentHashEntry, newHashEntry)
 
@@ -308,14 +304,14 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
-			const currentHashEntry = new HashEntry('thisisnotanexistinghashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531')
+			const currentHashEntry = new Schemas.V4.HashEntry('thisisnotanexistinghashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531')
 
 			try {
-				hashEntries.replace(currentHashEntry, new HashEntry('newhashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531'))
+				hashEntries.replace(currentHashEntry, new Schemas.V4.HashEntry('newhashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531'))
 			} catch (error) {
-				expect(error).toBeInstanceOf(MissingHashEntryForReplacementError)
+				expect(error).toBeInstanceOf(Schemas.V4.MissingHashEntryForReplacementError)
 			}
 		})
 	})
@@ -332,7 +328,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.asRequestBuffer()).toBeInstanceOf(RequestBuffer)
 			expect(hashEntries.asRequestBuffer().payload).toBe(hashEntriesPayload)
@@ -351,7 +347,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V4.HashEntries(hashEntriesPayload)
 			const hashEntriesChecksum = await hashEntries.checksum()
 
 			expect(hashEntriesChecksum).toBe('712b3d82f2e2c4f2d94ee50ece4505d1a8e1178b61b1d4e88e86d24370b44edf')

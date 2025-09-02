@@ -1,10 +1,10 @@
 import {fromByteArray} from 'base64-js'
 import {TextEncoder} from '@polkadot/x-textencoder'
 import {CONFIGURATION} from '../../../configuration'
-import Root from '../../sync/root'
-import FileFactory from '../../sync/fileFactory'
+import {Root} from '../../sync/root'
+import {FileFactory} from '../../sync/fileFactory'
 import {HashEntriesFactory} from '../../schemas/index'
-import FetchBasedHttpClient from '../../../../utils/httpClient/fetchBasedHttpClient'
+import {FetchBasedHttpClient} from '../../../../utils/httpClient'
 
 export const REMARKABLE_UPLOAD_SOURCE = 'RoR-Browser'
 
@@ -26,7 +26,7 @@ export class UploadError extends Error {
  * by allowing us to upload files directly
  * without needing to create a document first.
  */
-export default class Upload {
+export class Upload {
 	/**
 	 * Uploads a file to the reMarkable cloud.
 	 *

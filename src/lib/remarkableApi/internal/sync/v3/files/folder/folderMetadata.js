@@ -1,7 +1,7 @@
 import {CONFIGURATION} from '../../../../../configuration'
-import RequestBuffer from '../../utils/requestBuffer'
-import {V4HashEntry} from '../../../../schemas/index'
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
+import {HashEntryFactory} from '../../../../schemas'
+import {RequestBuffer} from '../../utils'
 
 /**
  * Represents a reMarkable cloud API folder metadata.
@@ -27,7 +27,7 @@ import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedH
  * to access the metadata attributes; to persist
  * changes back to the reMarkable cloud API.
  */
-export default class FolderMetadata {
+export class FolderMetadata {
 	/**
 	 * The folder root hash entry the metadata belongs to.
 	 *
@@ -114,6 +114,6 @@ export default class FolderMetadata {
 			updateRequestHeaders,
 		)
 
-		return new V4HashEntry(`${newFolderMetadataChecksum}:0:${this.folderRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return new HashEntryFactory.fromPayload(`${newFolderMetadataChecksum}:0:${this.folderRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

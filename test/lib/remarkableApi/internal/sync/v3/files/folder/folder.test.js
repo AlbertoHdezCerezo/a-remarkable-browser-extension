@@ -1,9 +1,8 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
-import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
-import Root from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
+import {Root} from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
 import {HashEntriesFactory} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index'
-import Folder, {
+import {
+	Folder,
 	FolderIncompatibleHashEntriesError
 } from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folder'
 

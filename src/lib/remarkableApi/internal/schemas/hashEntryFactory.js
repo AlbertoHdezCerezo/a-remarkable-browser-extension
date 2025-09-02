@@ -1,9 +1,9 @@
-import {HashEntry as V3HashEntry} from './v3/hashEntry'
-import {HashEntry as V4HashEntry} from './v4/hashEntry'
+import * as V3 from './v3'
+import * as V4 from './v4'
 
 export class HashEntryFactory {
 	static fromPayload(payload) {
-		const hashEntryInstances = [V4HashEntry, V3HashEntry].map(
+		const hashEntryInstances = [V4.HashEntry, V3.HashEntry].map(
 			hashEntriesClass => {
 				try {
 					return new hashEntriesClass(payload)

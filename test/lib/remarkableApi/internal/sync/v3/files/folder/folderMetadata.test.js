@@ -1,14 +1,11 @@
 import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import {HashEntry} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/v4/hashEntry'
-import RequestBuffer from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
-import Device from '../../../../../../../../src/lib/remarkableApi/internal/token/device.js'
-import Session from '../../../../../../../../src/lib/remarkableApi/internal/token/session.js'
-import FolderMetadata
+import {RequestBuffer} from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
+import {FolderMetadata}
 	from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folderMetadata'
 import {
 	HashEntriesFactory,
 	HashEntryFactory
-} from "../../../../../../../../src/lib/remarkableApi/internal/schemas/index.js";
+} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
 
 describe('FolderMetadata', () => {
 	const folderRootHashEntry = HashEntryFactory.fromPayload(global.sampleFolderHashEntryPayload)

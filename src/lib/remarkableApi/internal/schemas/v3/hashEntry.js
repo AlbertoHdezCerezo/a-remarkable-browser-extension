@@ -1,6 +1,6 @@
 import {CONFIGURATION} from '../../../configuration'
+import {FetchBasedHttpClient} from '../../../../utils/httpClient'
 import {HashEntry as AbstractHashEntry} from '../abstracts/hashEntry'
-import FetchBasedHttpClient from '../../../../utils/httpClient/fetchBasedHttpClient'
 
 export class IncompatibleHashEntrySchemaError extends Error {
 	constructor(

@@ -27,7 +27,7 @@ const MIME_TYPE_MAPS = {
  * Represents a file content in a buffer-format compatible
  * with the reMarkable API internal API for file uploads.
  */
-export default class FileBuffer {
+export class FileBuffer {
 	/**
 	 * Given a buffer representing a file content,
 	 * determines the file type based on its

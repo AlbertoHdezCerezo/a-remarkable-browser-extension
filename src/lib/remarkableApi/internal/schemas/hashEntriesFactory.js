@@ -1,5 +1,5 @@
-import {HashEntries as V4HashEntries} from './v4/hashEntries'
-import {HashEntries as V3HashEntries} from './v3/hashEntries'
+import * as V4 from './v4'
+import * as V3 from './v3'
 
 export class UnsupportedHashEntriesPayloadError extends Error {
 	constructor(
@@ -16,7 +16,7 @@ export class UnsupportedHashEntriesPayloadError extends Error {
 
 export class HashEntriesFactory {
 	static fromPayload(payload) {
-		const hashEntriesInstances = [V4HashEntries, V3HashEntries].map(
+		const hashEntriesInstances = [V4.HashEntries, V3.HashEntries].map(
 			hashEntriesClass => {
 				try {
 					return new hashEntriesClass(payload)

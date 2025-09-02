@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { jwtDecode } from 'jwt-decode'
 import {CONFIGURATION} from '../../configuration.js'
-import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient.js'
+import {FetchBasedHttpClient} from '../../../utils/httpClient'
 
 export class UnsuccessfulDeviceConnectionPairingError extends Error {}
 
@@ -16,7 +16,7 @@ export class UnsuccessfulDeviceConnectionPairingError extends Error {}
  * session tokens, which can then be used to authenticate
  * requests to the reMarkable API endpoints.
  */
-export default class Device {
+export class Device {
 	/**
 	 * Creates a new DeviceConnection instance.
 	 *

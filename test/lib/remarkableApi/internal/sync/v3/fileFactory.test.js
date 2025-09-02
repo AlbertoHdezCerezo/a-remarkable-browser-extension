@@ -1,13 +1,10 @@
-import { jest } from '@jest/globals'
 import {setupHttpRecording} from '../../../../../helpers/pollyHelper'
-import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
-import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
-import Root from '../../../../../../src/lib/remarkableApi/internal/sync/root'
+import {Root} from '../../../../../../src/lib/remarkableApi/internal/sync/root'
 import {HashEntriesFactory, HashEntryFactory} from '../../../../../../src/lib/remarkableApi/internal/schemas/index'
-import PdfFile from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/pdf/pdfFile'
-import EpubFile from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/epub/epubFile'
-import FileFactory from '../../../../../../src/lib/remarkableApi/internal/sync/fileFactory'
-import Folder from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folder'
+import {PdfFile} from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files'
+import {Folder} from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files'
+import {EpubFile} from '../../../../../../src/lib/remarkableApi/internal/sync/v3/files'
+import {FileFactory} from '../../../../../../src/lib/remarkableApi/internal/sync'
 
 describe('FileFactory', () => {
 	setupHttpRecording()

@@ -1,6 +1,6 @@
-import { jwtDecode } from 'jwt-decode'
+import {jwtDecode} from 'jwt-decode'
 import {CONFIGURATION} from '../../configuration.js'
-import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient.js'
+import {FetchBasedHttpClient} from '../../../utils/httpClient'
 
 export class UnsuccessfulSessionAuthenticationError extends Error {}
 
@@ -9,7 +9,7 @@ export class UnsuccessfulSessionAuthenticationError extends Error {}
  * This is a temporary token used to authenticate
  * requests with the reMarkable API.
  */
-export default class Session {
+export class Session {
 	/**
 	 * Creates a new Session instance.
 	 *

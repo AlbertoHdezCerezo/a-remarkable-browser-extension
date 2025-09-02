@@ -1,11 +1,10 @@
-import { v4 as uuidv4 } from 'uuid'
-import Root from '../../../root'
-import File from '../abstracts/file'
-import FolderMetadata from './folderMetadata'
-import {HashEntry} from '../../../../schemas/v4/hashEntry'
-import {HashEntries} from '../../../../schemas/v4/hashEntries'
-import RequestBuffer from '../../utils/requestBuffer'
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {v4 as uuidv4} from 'uuid'
+import {Root} from '../../../root'
+import {File} from '../abstracts/file'
+import {RequestBuffer} from '../../utils'
+import {FolderMetadata} from './folderMetadata'
+import {HashEntriesFactory} from '../../../../schemas'
+import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
 import {CONFIGURATION} from '../../../../../configuration'
 
 export class FolderIncompatibleHashEntriesError extends Error {
@@ -22,7 +21,7 @@ export class FolderIncompatibleHashEntriesError extends Error {
  * on the reMarkable API, allowing us to rename,
  * delete, or move folders in the reMarkable cloud.
  */
-export default class Folder extends File {
+export class Folder extends File {
 	/**
 	 * Creates a Folder instance from the provided
 	 * reMarkable Cloud root snapshot and session.
@@ -66,7 +65,7 @@ export default class Folder extends File {
 			updateRequestHeaders
 		)
 
-		const newFolderHashEntries = new HashEntries(`
+		const newFolderHashEntries = HashEntriesFactory.fromPayload(`
 			4
 			0:${newFolderId}:1:${createRequestBuffer.sizeInBytes}
 			${newFolderMetadataChecksum}:0:${newFolderId}.metadata:0:${createRequestBuffer.sizeInBytes}
@@ -97,7 +96,7 @@ export default class Folder extends File {
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
 
-		const hashEntries = new HashEntries(hashEntriesPayload)
+		const hashEntries = HashEntriesFactory.fromPayload(hashEntriesPayload)
 
 		return await this.fromHashEntries(root, rootHashEntry, hashEntries, session)
 	}

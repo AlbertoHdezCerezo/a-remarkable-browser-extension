@@ -1,7 +1,7 @@
 import {CONFIGURATION} from '../../../../../configuration'
-import RequestBuffer from '../../utils/requestBuffer'
-import {V4HashEntry} from '../../../../schemas/index'
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {RequestBuffer} from '../../utils'
+import * as Schemas from '../../../../schemas'
+import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
 
 /**
  * Represents a reMarkable cloud API PDF file metadata.
@@ -29,7 +29,7 @@ import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedH
  * to access the metadata attributes; to persist
  * changes back to the reMarkable cloud API.
  */
-export default class PdfMetadata {
+export class PdfMetadata {
 	/**
 	 * The PDF file root hash entry the metadata belongs to.
 	 *
@@ -116,6 +116,6 @@ export default class PdfMetadata {
 			updateRequestHeaders,
 		)
 
-		return new V4HashEntry(`${newPdfMetadataChecksum}:0:${this.pdfFileHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return new Schemas.V4.HashEntry(`${newPdfMetadataChecksum}:0:${this.pdfFileHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

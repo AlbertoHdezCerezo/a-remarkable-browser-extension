@@ -1,6 +1,6 @@
 import {CONFIGURATION} from '../../configuration'
 import {HashEntriesFactory} from '../schemas/index'
-import FetchBasedHttpClient from '../../../utils/httpClient/fetchBasedHttpClient'
+import {FetchBasedHttpClient} from '../../../utils/httpClient'
 
 export class UnreachableRootError extends Error {
 	constructor(
@@ -71,7 +71,7 @@ export class UnreachableRootHashEntriesError extends Error {
  * triggers the generation of a new root hash, containing a
  * new hash entry for the modified file, and a new generation number.
  */
-export default class Root {
+export class Root {
 	/**
 	 * Returns the current root of the reMarkable cloud account
 	 *

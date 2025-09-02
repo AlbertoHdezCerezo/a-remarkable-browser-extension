@@ -1,8 +1,8 @@
-import { jest } from '@jest/globals'
+import {jest} from '@jest/globals'
 import {jwtDecode} from 'jwt-decode'
 import {setupHttpRecording} from '../../../../helpers/pollyHelper.js'
-import Session, {UnsuccessfulSessionAuthenticationError} from '../../../../../src/lib/remarkableApi/internal/token/session.js'
-import Device from '../../../../../src/lib/remarkableApi/internal/token/device.js'
+import {Device} from '../../../../../src/lib/remarkableApi/internal/token/device.js'
+import {Session, UnsuccessfulSessionAuthenticationError} from '../../../../../src/lib/remarkableApi/internal/token/session.js'
 
 describe('Session', () => {
 	setupHttpRecording()

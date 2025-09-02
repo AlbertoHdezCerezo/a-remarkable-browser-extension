@@ -1,5 +1,5 @@
 import fs from 'fs'
-import FileBuffer, {UnsupportedFileExtensionError} from '../../../../src/lib/remarkableApi/utils/fileBuffer'
+import {FileBuffer, UnsupportedFileExtensionError} from '../../../../src/lib/remarkableApi/utils/fileBuffer'
 
 describe('fileBuffer', () => {
 	describe('.extension', () => {

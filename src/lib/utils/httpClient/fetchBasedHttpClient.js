@@ -1,5 +1,5 @@
-import Request from './request.js'
-import HttpClientError from "./httpClientError.js";
+import {Request} from './request.js'
+import {HttpClientError} from './httpClientError.js'
 
 /**
  * HTTP client for JS web-browser environments.
@@ -8,7 +8,7 @@ import HttpClientError from "./httpClientError.js";
  *
  * @class
  */
-export default class FetchBasedHttpClient {
+export class FetchBasedHttpClient {
   /**
 	 * Executes an HTTP request using the Node.js `https` module.
 	 *

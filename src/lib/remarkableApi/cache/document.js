@@ -1,6 +1,5 @@
 import {HashEntriesFactory, HashEntryFactory} from '../internal/schemas/index'
-import PdfFile from '../internal/sync/v3/files/pdf/pdfFile'
-import EpubFile from '../internal/sync/v3/files/epub/epubFile'
+import * as V3 from '../internal/sync/v3'
 
 export default class Document {
 	/**
@@ -19,14 +18,14 @@ export default class Document {
 
 		let documentFile = null
 		if (documentHashEntries.resemblesAPdf) {
-			documentFile = new PdfFile(
+			documentFile = new V3.PdfFile(
 				root,
 				documentRootHashEntry,
 				documentHashEntries,
 				documentMetadataPayload
 			)
 		} else if (documentHashEntries.resemblesAnEpub) {
-			documentFile = new EpubFile(
+			documentFile = new V3.EpubFile(
 				root,
 				documentRootHashEntry,
 				documentHashEntries,

@@ -1,7 +1,7 @@
 /**
  * Specialized Error class for HTTP client errors
  */
-export default class HttpClientError extends Error {
+export class HttpClientError extends Error {
 	/**
 	 * Response status code
 	 * @type {number}

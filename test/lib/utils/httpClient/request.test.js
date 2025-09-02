@@ -1,4 +1,4 @@
-import Request from '../../../../src/lib/utils/httpClient/request'
+import {Request} from '../../../../src/lib/utils/httpClient'
 
 describe('Request', () => {
   describe('#construct', () => {

@@ -1,11 +1,11 @@
-import Body from './body.js'
+import {Body} from './body.js'
 
 /**
  * Represents an HTTP request
  *
  * @class
  */
-export default class Request {
+export class Request {
   /**
 	 * @private
 	 * @type {URL}

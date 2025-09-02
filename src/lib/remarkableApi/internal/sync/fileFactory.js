@@ -1,6 +1,4 @@
-import PdfFile from './v3/files/pdf/pdfFile'
-import EpubFile from './v3/files/epub/epubFile'
-import Folder from './v3/files/folder/folder'
+import * as V3 from './v3'
 
 export class UnsupportedHashFileHashEntriesPayloadError extends Error {
 	constructor(
@@ -29,7 +27,7 @@ export class UnsupportedHashFileHashEntriesPayloadError extends Error {
  * to encapsulate the logic for inferring the
  * correct model based on the hash entries.
  */
-export default class FileFactory {
+export class FileFactory {
 	/**
 	 * Given a set of hash entries belonging to a
 	 * reMarkable API file, returns the equivalent
@@ -40,7 +38,7 @@ export default class FileFactory {
 	 */
 	static async fileFromHashEntries(root, rootFileHashEntry, hashEntries, session) {
 		const fileClassCandidate = [
-			PdfFile, EpubFile, Folder
+			V3.PdfFile, V3.EpubFile, V3.Folder
 		].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
 
 		if(!fileClassCandidate) throw new UnsupportedHashFileHashEntriesPayloadError()

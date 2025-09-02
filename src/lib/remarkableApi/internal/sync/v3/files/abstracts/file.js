@@ -1,8 +1,7 @@
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
 import {CONFIGURATION} from '../../../../../configuration'
-import {HashEntry} from '../../../../schemas/v4/hashEntry'
-import RequestBuffer from '../../utils/requestBuffer'
-import Root from '../../../root'
+import {RequestBuffer} from '../../utils'
+import {Root} from '../../../root'
 
 /**
  * Abstract class representing a file
@@ -12,7 +11,7 @@ import Root from '../../../root'
  * documents and folders across
  * the Remarkable API data models.
  */
-export default class File {
+export class File {
 	static fromHashEntry(root, rootHashEntry, session) {
 		throw new Error('Method fromHashEntry() must be implemented')
 	}

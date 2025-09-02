@@ -1,7 +1,7 @@
 import {CONFIGURATION} from '../../../../../configuration'
-import RequestBuffer from '../../utils/requestBuffer'
-import {V4HashEntry} from '../../../../schemas/index'
-import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedHttpClient'
+import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
+import {HashEntryFactory} from '../../../../schemas'
+import {RequestBuffer} from '../../utils'
 
 /**
  * Represents a reMarkable cloud API ePub file metadata.
@@ -31,7 +31,7 @@ import FetchBasedHttpClient from '../../../../../../utils/httpClient/fetchBasedH
  * to access the metadata attributes; to persist
  * changes back to the reMarkable cloud API.
  */
-export default class EpubMetadata {
+export class EpubMetadata {
 	/**
 	 * The ePub file root hash entry the metadata belongs to.
 	 *
@@ -118,6 +118,6 @@ export default class EpubMetadata {
 			updateRequestHeaders,
 		)
 
-		return new V4HashEntry(`${newEpubMetadataChecksum}:0:${this.epubFileRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return new HashEntryFactory.fromPayload(`${newEpubMetadataChecksum}:0:${this.epubFileRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

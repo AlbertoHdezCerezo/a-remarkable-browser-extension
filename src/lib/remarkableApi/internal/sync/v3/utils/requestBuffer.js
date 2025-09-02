@@ -6,7 +6,7 @@ import {fromByteArray} from 'base64-js'
  *
  * Each operation performed
  */
-export default class RequestBuffer {
+export class RequestBuffer {
 	/**
 	 * Data to be sent to the reMarkable API.
 	 *

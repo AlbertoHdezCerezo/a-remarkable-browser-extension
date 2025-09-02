@@ -1,12 +1,11 @@
-import { jest } from '@jest/globals'
+import {jest} from '@jest/globals'
 import {setupHttpRecording} from '../../../../../helpers/pollyHelper'
-import FetchBasedHttpClient from '../../../../../../src/lib/utils/httpClient/fetchBasedHttpClient'
-import Device from '../../../../../../src/lib/remarkableApi/internal/token/device.js'
-import Root, {
+import {FetchBasedHttpClient} from '../../../../../../src/lib/utils/httpClient/fetchBasedHttpClient'
+import {
+	Root,
 	UnreachableRootError,
 	UnreachableRootHashEntriesError
 } from '../../../../../../src/lib/remarkableApi/internal/sync/root'
-import Session from '../../../../../../src/lib/remarkableApi/internal/token/session.js'
 
 describe('Root', () => {
 	setupHttpRecording()

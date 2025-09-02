@@ -1,9 +1,5 @@
-import {HashEntry} from '../../../../../../src/lib/remarkableApi/internal/schemas/v3/hashEntry'
-import {
-	HashEntries,
-	IncompatibleSchemaVersionError, MissingHashEntryForReplacementError
-} from '../../../../../../src/lib/remarkableApi/internal/schemas/v3/hashEntries'
-import RequestBuffer from '../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
+import * as Schemas from '../../../../../../src/lib/remarkableApi/internal/schemas'
+import {RequestBuffer} from '../../../../../../src/lib/remarkableApi/internal/sync/v3/utils'
 
 describe('HashEntries', () => {
 	describe('.construct', () => {
@@ -16,7 +12,7 @@ describe('HashEntries', () => {
 				3b42607786f14b90d3486eb325c98578283be42b74dabd63cf07efa3eaf10ec6:0:90d8edb1-7c90-41ad-860b-b20faa2177d1.pdf:0:28368
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.payload).toBe(hashEntriesPayload)
 			expect(hashEntries.schemaVersion).toBe(3)
@@ -37,7 +33,7 @@ describe('HashEntries', () => {
 				3b42607786f14b90d3486eb325c98578283be42b74dabd63cf07efa3eaf10ec6:0:90d8edb1-7c90-41ad-860b-b20faa2177d1:0:28368
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.payload).toBe(hashEntriesPayload)
 			expect(hashEntries.schemaVersion).toBe(3)
@@ -56,8 +52,8 @@ describe('HashEntries', () => {
 				cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
 			`.trim().replace(/\t/g, '')
 
-			try { new HashEntries(hashEntriesPayload) } catch (error) {
-				expect(error).toBeInstanceOf(IncompatibleSchemaVersionError)
+			try { new Schemas.V3.HashEntries(hashEntriesPayload) } catch (error) {
+				expect(error).toBeInstanceOf(Schemas.V3.IncompatibleSchemaVersionError)
 			}
 		})
 
@@ -66,7 +62,7 @@ describe('HashEntries', () => {
 				3
 			`.trim().replace(/\t/g, '')
 
-			try { new HashEntries(hashEntriesPayload) } catch (error) {
+			try { new Schemas.V3.HashEntries(hashEntriesPayload) } catch (error) {
 				expect(error).toBeInstanceOf(Error)
 			}
 		})
@@ -79,7 +75,7 @@ describe('HashEntries', () => {
 				883411c7fa93637f63ada401b9fbe06eda8d16363f946dc7f296a05c3b3ba91d:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.rootHashEntries).toBe(true)
 		})
@@ -90,7 +86,7 @@ describe('HashEntries', () => {
 				cd2696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.rootHashEntries).toBe(false)
 		})
@@ -104,7 +100,7 @@ describe('HashEntries', () => {
 				cf0603f27e347959822926d78430c77e4264f014a9c816fe33029befb4a80f12:0:008302bc-c5ba-41be-925b-8567166246e4.epub:0:2583509
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAFolder).toBe(true)
 		})
@@ -118,7 +114,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAFolder).toBe(true)
 		})
@@ -130,7 +126,7 @@ describe('HashEntries', () => {
 				cf0603f27e347959822926d78430c77e4264f014a9c816fe33029befb4a80f12:0:008302bc-c5ba-41be-925b-8567166246e4.epub:0:2583509
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAPdf).toBe(false)
 		})
@@ -143,7 +139,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAPdf).toBe(false)
 		})
@@ -158,7 +154,7 @@ describe('HashEntries', () => {
 				69ae298325a1a1d3f2dc4f6d6daa1db9b52ac523a1c455f19de4348184ce53e6:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:327
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAnEpub).toBe(true)
 		})
@@ -170,7 +166,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.resemblesAnEpub).toBe(false)
 		})
@@ -187,7 +183,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.sizeInBytesFromHashEntries).toBe(26531 + 2583509 + 327 + 2346 + 3053046)
 		})
@@ -204,11 +200,11 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			const hashEntry = await hashEntries.hashEntry()
 
-			expect(hashEntry).toBeInstanceOf(HashEntry)
+			expect(hashEntry).toBeInstanceOf(Schemas.V3.HashEntry)
 			expect(hashEntry.payload).toBe('1f08cb74bb994a496a635f2d7e816025041ca7495beb7241bb9e9bcae6861360:0:008302bc-c5ba-41be-925b-8567166246e4:5:5665759')
 		})
 	})
@@ -234,8 +230,8 @@ describe('HashEntries', () => {
 				452696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26530
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
-			const newHashEntry = new HashEntry('452696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26530')
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
+			const newHashEntry = new Schemas.V3.HashEntry('452696e19cdff3c645bf32c67bf625d9fb86208a6bd3ff33e860d76bf09a604d:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26530')
 			const newHashEntries = hashEntries.attach(newHashEntry)
 
 			expect(newHashEntries.payload).toBe(expectedHashEntriesPayload)
@@ -263,10 +259,10 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			const currentHashEntry = hashEntries.hashEntriesList[0]
-			const newHashEntry = new HashEntry(expectedHashEntriesPayload.split('\n')[1])
+			const newHashEntry = new Schemas.V3.HashEntry(expectedHashEntriesPayload.split('\n')[1])
 
 			const newHashEntries = hashEntries.replace(currentHashEntry, newHashEntry)
 
@@ -283,14 +279,14 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
-			const currentHashEntry = new HashEntry('thisisnotanexistinghashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531')
+			const currentHashEntry = new Schemas.V3.HashEntry('thisisnotanexistinghashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531')
 
 			try {
-				hashEntries.replace(currentHashEntry, new HashEntry('newhashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531'))
+				hashEntries.replace(currentHashEntry, new Schemas.V3.HashEntry('newhashentry:0:008302bc-c5ba-41be-925b-8567166246e4.content:0:26531'))
 			} catch (error) {
-				expect(error).toBeInstanceOf(MissingHashEntryForReplacementError)
+				expect(error).toBeInstanceOf(Schemas.V3.MissingHashEntryForReplacementError)
 			}
 		})
 	})
@@ -306,7 +302,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 
 			expect(hashEntries.asRequestBuffer()).toBeInstanceOf(RequestBuffer)
 			expect(hashEntries.asRequestBuffer().payload).toBe(hashEntriesPayload)
@@ -324,7 +320,7 @@ describe('HashEntries', () => {
 				322e173fac914ce59df9db85a533b6eb65d9e0e8807d07ca57f9c6e18b76af29:0:008302bc-c5ba-41be-925b-8567166246e4.pdf:0:3053046
 			`.trim().replace(/\t/g, '')
 
-			const hashEntries = new HashEntries(hashEntriesPayload)
+			const hashEntries = new Schemas.V3.HashEntries(hashEntriesPayload)
 			const hashEntriesChecksum = await hashEntries.checksum()
 
 			expect(hashEntriesChecksum).toBe('1f08cb74bb994a496a635f2d7e816025041ca7495beb7241bb9e9bcae6861360')

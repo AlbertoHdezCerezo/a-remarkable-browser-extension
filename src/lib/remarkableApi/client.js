@@ -1,6 +1,6 @@
-import Session from './internal/token/session.js'
+import {Session} from './internal/token/session.js'
 
-export default class Client {
+export class Client {
 	static async from(deviceConnection, session = null, snapshot = null) {
 		let newSession = session
 		if(!newSession || newSession.expired) {
@@ -67,8 +67,6 @@ export default class Client {
 	get session() {
 		return this.#session
 	}
-
-
 
 	/**
 	 * Updates client session with a new session,

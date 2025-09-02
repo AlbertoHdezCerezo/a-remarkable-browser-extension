@@ -1,6 +1,7 @@
-import { v4 as uuidv4 } from 'uuid'
+import {v4 as uuidv4} from 'uuid'
 import {jwtDecode} from 'jwt-decode'
-import Device, {
+import {
+	Device,
 	UnsuccessfulDeviceConnectionPairingError
 } from '../../../../../src/lib/remarkableApi/internal/token/device.js'
 import {

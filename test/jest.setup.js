@@ -43,12 +43,8 @@ dotenv.config({ path: '.env.test' })
  */
 
 import fs from 'fs'
-import Device from '../src/lib/remarkableApi/internal/token/device'
-import Session from '../src/lib/remarkableApi/internal/token/session'
-import Root from '../src/lib/remarkableApi/internal/sync/root'
-import Upload from '../src/lib/remarkableApi/internal/doc/v2/upload'
-import Folder from '../src/lib/remarkableApi/internal/sync/v3/files/folder/folder'
-import FileBuffer from '../src/lib/remarkableApi/utils/fileBuffer'
+import {Device} from '../src/lib/remarkableApi/internal/token/device.js'
+import {Session} from '../src/lib/remarkableApi/internal/token/session.js'
 
 /**
  * Global credentials
@@ -82,31 +78,70 @@ if (!global.remarkableSessionToken) {
 }
 
 /**
- * Creates a set of sample files which will be used
- * across test suite to handle safely account documents
- * only uploaded for testing purposes.
+ * Sample payloads to be reused across methods
  */
-global.samplePdfHashEntryPayload = process.env.SAMPLE_PDF_FILE_HASH_ENTRY_PAYLOAD
-global.sampleEpubHashEntryPayload = process.env.SAMPLE_EPUB_FILE_HASH_ENTRY_PAYLOAD
-global.sampleFolderHashEntryPayload = process.env.SAMPLE_FOLDER_FILE_HASH_ENTRY_PAYLOAD
-
-if (!global.samplePdfHashEntryPayload) {
-	const pdfFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.pdf'))
-	const pdfFile = await Upload.upload('a-remarkable-web-browser-pdf-file.pdf', pdfFileBuffer, global.remarkableApiSession)
-	fs.appendFileSync('.env.test', `\nSAMPLE_PDF_FILE_HASH_ENTRY_PAYLOAD=${pdfFile.rootHashEntry.payload}\n`)
-	global.samplePdfHashEntryPayload = pdfFile.rootHashEntry.payload
+global.rootHashChecksum = 'f1c4e71ee19b26fda596b84e929e936c77aef64644a68253854b4db795b48b1e'
+global.rootMetadata = {
+	hash: global.rootHashChecksum,
+	generation: 1756597331766283,
+	schemaVersion: 4
 }
-
-if (!global.sampleEpubHashEntryPayload) {
-	const epubFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.epub'))
-	const epubFile = await Upload.upload('a-remarkable-web-browser-epub-file.epub', epubFileBuffer, global.remarkableApiSession)
-	fs.appendFileSync('.env.test', `\nSAMPLE_EPUB_FILE_HASH_ENTRY_PAYLOAD=${epubFile.rootHashEntry.payload}\n`)
-	global.sampleEpubHashEntryPayload = epubFile.rootHashEntry.payload
+global.rootHashEntriesPayload = `
+4
+0:.:321:13967872951
+e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142
+7ecb1979b6b317aea72ab8066d3757cbb4f0682cd5ab6ad153005f26efda75e5:0:01635e9d-b255-47d1-b5f2-db142b10ac9c:4:1546205
+9b9c28591fdde725669bc0ee8aae9fe48e8bf2fdf6ecb4446b2324b8302741e8:0:01a91de2-9baf-4d5f-bee6-bc7983c74aea:4:28488972
+3a629f01fb74e36b5f88bd3fd48524928e149f2a7ba4c4993530e4b5cbd4ce3a:0:01ca1e3c-1ad8-4190-bf77-609b739b5cb8:4:60142131
+5150a86233164972185f78a7f52f5482b781eb0deea0c0f3defad9427373ec09:0:037ef393-041d-4092-8c7a-27729f5f98b3:4:6117879
+e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161
+e1fd1872fd23acd589dd318a247889f5bd9f4288a87ab8121c6b2bfb540cbc78:0:0566801a-1ac1-4e9a-8f7c-5b0f34d38eb6:4:15582957
+394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137
+`
+global.pdfRootHashEntryPayload = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142'
+global.pdfFileChecksum = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2'
+global.pdfHashEntriesPayload = `
+4
+0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142
+28c5b06d4fc59837fa3c28edd3e6ac872c026859e29445aeede5554abb742584:0:00a69f8e-8a4f-431b-b8d0-635114f7e958.content:0:10518
+c67b27de419b0aba24ea786e60295f2f59d1c8ea3a6a61d174675fa3bab36270:0:00a69f8e-8a4f-431b-b8d0-635114f7e958.metadata:0:360
+aa05f6f0a0f26de05beebb18c0484f945bbc421c64ec32f4f1e80becb090a0a5:0:00a69f8e-8a4f-431b-b8d0-635114f7e958.pagedata:0:161
+c98ae15cfe5e0e99d477bc89cbd8d7d3df89fa4422aecbfd6278f054e2f9425d:0:00a69f8e-8a4f-431b-b8d0-635114f7e958.pdf:0:40141103
+`
+global.pdfMetadataChecksum = 'c67b27de419b0aba24ea786e60295f2f59d1c8ea3a6a61d174675fa3bab36270'
+global.pdfMetadata = {
+	createdTime: "1755458613054",
+	lastModified: "1755458613054",
+	lastOpened: "0",
+	lastOpenedPage: 0,
+	new: false,
+	parent: "a80ce266-2974-491c-86b6-670453fd0b51",
+	pinned: false,
+	source: "",
+	type: "DocumentType",
+	visibleName: "PDF Document.pdf"
 }
-
-if (!global.sampleFolderHashEntryPayload) {
-	const root = await Root.fromSession(global.remarkableApiSession)
-	const folder = await Folder.create(root, 'a-remarkable-web-browser-folder', global.remarkableApiSession)
-	fs.appendFileSync('.env.test', `\nSAMPLE_FOLDER_FILE_HASH_ENTRY_PAYLOAD=${folder.rootHashEntry.payload}\n`)
-	global.sampleFolderHashEntryPayload = folder.rootHashEntry.payload
+global.ePubHashEntryPayload = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142'
+global.ePubFileChecksum = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162'
+global.ePubHashEntriesPayload = `
+4
+0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137
+db023e4a0be5ac43f8ea09e889e02f01e224366a8caa9817ded34eb9a4c0e508:0:05d47ac3-2f8d-4a16-a382-c14607305169.content:0:38228
+19969af609615dd9499abdd46814f58bcde2625abe916d916bf0fe883544c8e8:0:05d47ac3-2f8d-4a16-a382-c14607305169.epub:0:12637685
+5284b61dcad70c54c379cada178e00d62875580a0390324c94177202f821a6f3:0:05d47ac3-2f8d-4a16-a382-c14607305169.metadata:0:324
+bebfcdada9fd800bf50c40df77da78b2ea947c38845ab970be330afe43422572:0:05d47ac3-2f8d-4a16-a382-c14607305169.pagedata:0:3672
+50fbfb40af491c9479b663cc8e79d387e1582df77b80b27b230095475372558d:0:05d47ac3-2f8d-4a16-a382-c14607305169.pdf:0:12169228
+`
+global.ePubMetadataChecksum = '5284b61dcad70c54c379cada178e00d62875580a0390324c94177202f821a6f3'
+global.ePubMetadata = {
+	"createdTime": "1755461048428",
+	"lastModified": "1755931610113",
+	"lastOpened": "0",
+	"lastOpenedPage": 0,
+	"new": false,
+	"parent": "8d7b715b-b55e-4db0-95d2-876e5d6feef1",
+	"pinned": false,
+	"source": "",
+	"type": "DocumentType",
+	"visibleName": "ePub Document.epub"
 }

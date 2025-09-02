@@ -1,4 +1,4 @@
-import RequestBuffer from '../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils/requestBuffer'
+import {RequestBuffer} from '../../../../../../../src/lib/remarkableApi/internal/sync/v3/utils'
 
 describe('RequestBuffer', () => {
 	describe('payloadUint8Array', () => {
