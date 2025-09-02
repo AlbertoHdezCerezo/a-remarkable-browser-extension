@@ -1,7 +1,6 @@
-import {HashEntriesFactory, HashEntryFactory} from '../internal/schemas/index'
-import ApiFolder from '../internal/sync/v3/files/folder/folder'
+import * as Internal from '../internal'
 
-export default class Folder {
+export class Folder {
 	/**
 	 * Returns a Folder instance from the provided
 	 * JSON representation of the folder.
@@ -12,13 +11,13 @@ export default class Folder {
 	 */
 	static fromJson(folderJson, root) {
 		const folderObject = JSON.parse(folderJson)
-		const folderRootHashEntry = HashEntryFactory.fromPayload(folderObject.folderRootHashEntryPayload)
-		const folderHashEntries = HashEntriesFactory.fromPayload(folderObject.folderHashEntriesPayload)
+		const folderRootHashEntry = Internal.Schemas.HashEntryFactory.fromPayload(folderObject.folderRootHashEntryPayload)
+		const folderHashEntries = Internal.Schemas.HashEntriesFactory.fromPayload(folderObject.folderHashEntriesPayload)
 		const folderMetadataPayload = folderObject.folderMetadataPayload
 
 		let apiFolder = null
 		if (folderHashEntries.resemblesAFolder) {
-			apiFolder = new ApiFolder(
+			apiFolder = new Internal.Sync.V3.Folder(
 				root,
 				folderRootHashEntry,
 				folderHashEntries,

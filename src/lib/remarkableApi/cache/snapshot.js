@@ -1,8 +1,6 @@
-import Root from '../internal/sync/root'
-import {HashEntriesFactory} from '../internal/schemas/index'
-import FileFactory from '../internal/sync/fileFactory'
-import Folder from './folder'
-import Document from './document'
+import * as Internal from '../internal'
+import {Folder} from './folder'
+import {Document} from './document'
 
 const SNAPSHOT_DOWNLOAD_BATCH_SIZE = 25
 const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 0
@@ -40,7 +38,7 @@ export default class Snapshot {
 	static fromJson(snapshotJson) {
 		const snapshotObject = JSON.parse(snapshotJson)
 
-		const snapshotRoot = new Root(
+		const snapshotRoot = new Internal.Sync.Root(
 			snapshotObject.rootChecksum,
 			snapshotObject.rootGeneration,
 			snapshotObject.rootHashEntriesPayload
@@ -74,14 +72,14 @@ export default class Snapshot {
 
 			const documentsAndFoldersHashEntries =
 				documentsAndFoldersRawHashEntriesInBatch
-					.map(rawHashEntries => HashEntriesFactory.fromPayload(rawHashEntries))
+					.map(rawHashEntries => Internal.Schemas.HashEntriesFactory.fromPayload(rawHashEntries))
 
 			await Promise.all(
 				documentsAndFoldersHashEntries.map(
 					async (hashEntries, index) => {
 						try {
 							const snapshotFile =
-								await FileFactory.fileFromHashEntries(root, root.hashEntries[index], hashEntries, session)
+								await Internal.Sync.FileFactory.fileFromHashEntries(root, root.hashEntries[index], hashEntries, session)
 
 							snapshotDocumentsAndFolders.push(snapshotFile)
 						} catch (error) {
@@ -205,7 +203,7 @@ export default class Snapshot {
 
 		const newDocumentsAndFolders = await differentHashEntries
 			.map(async (hashEntry) =>
-				await FileFactory.fileFromHashEntries(root, hashEntry, root.hashEntries, session))
+				await Internal.Sync.FileFactory.fileFromHashEntries(root, hashEntry, root.hashEntries, session))
 		const newCachedDocuments = newDocumentsAndFolders
 			.filter(file => file.constructor.name !== 'Folder')
 			.map(file => new Document(file))

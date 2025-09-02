@@ -1,7 +1,6 @@
-import {HashEntriesFactory, HashEntryFactory} from '../internal/schemas/index'
-import * as V3 from '../internal/sync/v3'
+import * as Internal from '../internal'
 
-export default class Document {
+export class Document {
 	/**
 	 * Returns a Document instance from the provided
 	 * JSON representation of the document.
@@ -12,20 +11,20 @@ export default class Document {
 	 */
 	static fromJson(documentJson, root) {
 		const documentObject = JSON.parse(documentJson)
-		const documentRootHashEntry = HashEntryFactory.fromPayload(documentObject.documentRootHashEntryPayload)
-		const documentHashEntries = HashEntriesFactory.fromPayload(documentObject.documentHashEntriesPayload)
+		const documentRootHashEntry = Internal.Schemas.HashEntryFactory.fromPayload(documentObject.documentRootHashEntryPayload)
+		const documentHashEntries = Internal.Schemas.HashEntriesFactory.fromPayload(documentObject.documentHashEntriesPayload)
 		const documentMetadataPayload = documentObject.documentMetadataPayload
 
 		let documentFile = null
 		if (documentHashEntries.resemblesAPdf) {
-			documentFile = new V3.PdfFile(
+			documentFile = new Internal.Sync.V3.PdfFile(
 				root,
 				documentRootHashEntry,
 				documentHashEntries,
 				documentMetadataPayload
 			)
 		} else if (documentHashEntries.resemblesAnEpub) {
-			documentFile = new V3.EpubFile(
+			documentFile = new Internal.Sync.V3.EpubFile(
 				root,
 				documentRootHashEntry,
 				documentHashEntries,

@@ -1,7 +1,8 @@
 import fs from 'fs'
 import {setupHttpRecording} from '../helpers/pollyHelper.js'
-import {FileBuffer} from '../../src/lib/remarkableApi/index.js'
-import {V2Upload} from '../../src/lib/remarkableApi/internal/doc'
+import * as Doc from '../../src/lib/remarkableApi/internal/doc'
+import * as Sync from '../../src/lib/remarkableApi/internal/sync'
+import {FileBuffer} from '../../src/lib/remarkableApi'
 
 describe('reMarkable API integration specs', () => {
 	setupHttpRecording()
@@ -15,17 +16,20 @@ describe('reMarkable API integration specs', () => {
 		const pdfBuffer = fs.readFileSync('./test/fixtures/documents/sample.pdf')
 		const pdfFileBuffer = new FileBuffer(pdfBuffer)
 
-		pdfFile = await Upload.upload("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
+		pdfFile = await Doc.V2Upload.upload("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
 
-		expect(pdfFile).toBeInstanceOf(File)
+		expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
 
 		// - Upload an e-Pub file
 		const epubBuffer = fs.readFileSync('./test/fixtures/documents/sample.epub')
 		const epubFileBuffer = new FileBuffer(epubBuffer)
 
-		epubFile = await V2Upload.upload("a-remarkable-web-browser-sample.epub", epubFileBuffer, session)
+		epubFile = await Doc.V2Upload.upload("a-remarkable-web-browser-sample.epub", epubFileBuffer, session)
 
-		expect(epubFile).toBeInstanceOf(File)
+		expect(epubFile).toBeInstanceOf(Sync.V3.EpubFile)
+
+		// - Load a Snapshot
+		const pdfSnapshot = await
 
 		// - Remove PDF & ePub files
 		await pdfFile.moveToTrash(session)
