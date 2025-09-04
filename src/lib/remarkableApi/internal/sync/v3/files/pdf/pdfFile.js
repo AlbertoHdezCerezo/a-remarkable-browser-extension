@@ -1,8 +1,6 @@
 import {File} from '../abstracts/file'
 import {PdfMetadata} from './pdfMetadata'
-import {HashEntry} from '../../../../schemas/v4/hashEntry'
-import {HashEntries} from '../../../../schemas/v4/hashEntries'
-import {HashEntriesFactory} from "../../../../schemas/index.js";
+import * as Schemas from '../../../../schemas'
 
 export class PdfIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable PDF file.') {
@@ -31,7 +29,7 @@ export class PdfFile extends File {
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
 
-		return await this.fromHashEntries(root, rootHashEntry, HashEntriesFactory.fromPayload(hashEntriesPayload), session)
+		return await this.fromHashEntries(root, rootHashEntry, Schemas.HashEntriesFactory.fromPayload(hashEntriesPayload), session)
 	}
 
 	/**

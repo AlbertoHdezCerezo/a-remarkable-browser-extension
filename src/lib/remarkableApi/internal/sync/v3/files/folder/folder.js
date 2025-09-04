@@ -1,11 +1,10 @@
 import {v4 as uuidv4} from 'uuid'
-import {Root} from '../../../root'
 import {File} from '../abstracts/file'
 import {RequestBuffer} from '../../utils'
+import * as Schemas from '../../../../schemas'
 import {FolderMetadata} from './folderMetadata'
-import {HashEntriesFactory} from '../../../../schemas'
-import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
 import {CONFIGURATION} from '../../../../../configuration'
+import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
@@ -65,7 +64,7 @@ export class Folder extends File {
 			updateRequestHeaders
 		)
 
-		const newFolderHashEntries = HashEntriesFactory.fromPayload(`
+		const newFolderHashEntries = Schemas.HashEntriesFactory.fromPayload(`
 			4
 			0:${newFolderId}:1:${createRequestBuffer.sizeInBytes}
 			${newFolderMetadataChecksum}:0:${newFolderId}.metadata:0:${createRequestBuffer.sizeInBytes}
@@ -96,7 +95,7 @@ export class Folder extends File {
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
 
-		const hashEntries = HashEntriesFactory.fromPayload(hashEntriesPayload)
+		const hashEntries = Schemas.HashEntriesFactory.fromPayload(hashEntriesPayload)
 
 		return await this.fromHashEntries(root, rootHashEntry, hashEntries, session)
 	}

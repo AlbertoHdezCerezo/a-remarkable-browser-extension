@@ -128,7 +128,7 @@ global.pdfMetadata = {
 	type: "DocumentType",
 	visibleName: "PDF Document.pdf"
 }
-global.ePubRootHashEntryPayload = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142'
+global.ePubRootHashEntryPayload = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137'
 global.ePubFileChecksum = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162'
 global.ePubHashEntriesPayload = `
 4

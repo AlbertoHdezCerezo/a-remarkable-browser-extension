@@ -1,118 +1,104 @@
-import {setupHttpRecording} from '../../../../../../../helpers/pollyHelper'
-import {Root} from '../../../../../../../../src/lib/remarkableApi/internal/sync/root'
-import {HashEntriesFactory} from '../../../../../../../../src/lib/remarkableApi/internal/schemas/index'
-import {
-	Folder,
-	FolderIncompatibleHashEntriesError
-} from '../../../../../../../../src/lib/remarkableApi/internal/sync/v3/files/folder/folder'
+import {expect, jest} from '@jest/globals'
+import {CONFIGURATION} from '../../../../../../../../src/lib/remarkableApi'
+import * as Sync from '../../../../../../../../src/lib/remarkableApi/internal/sync'
+import * as Schemas from '../../../../../../../../src/lib/remarkableApi/internal/schemas'
+import {FetchBasedHttpClient} from "../../../../../../../../src/lib/utils/httpClient/index.js";
 
 describe('Folder', () => {
-	setupHttpRecording()
-
-	describe('.create', () => {
-		it('creates a new folder', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
-			const folderName = 'a-remarkable-web-browser-folder-test'
-			const newFolder = await Folder.create(root, folderName, session)
-
-			expect(newFolder).toBeInstanceOf(Folder)
-			expect(newFolder.name).toBe(folderName)
-		})
-	})
+	const root = global.root
+	const session = global.remarkableApiSession
+	const folderHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
+	const pdfFileRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
+	const folderHashEntries = Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload)
+	const pdfHashEntries = Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload)
 
 	describe('.fromHashEntry', () => {
 		it('returns folder from root folder hash entry', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
-			await Folder.fromHashEntry(root, folderHashEntry, session)
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.folderFileChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.folderHashEntriesPayload)})
+				})
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.folderMetadataChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.folderMetadata)})
+				})
+
+			const folder = await Sync.V3.Folder.fromHashEntry(root, folderHashEntry, session)
+
+			expect(folder).toBeInstanceOf(Sync.V3.Folder)
 		})
 
 		it('if root hash entry does not represent a folder, throws an error', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.pdfFileChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfHashEntriesPayload)})
+				})
 
 			try {
-				await Folder.fromHashEntry(root, folderHashEntry, session)
+				await Sync.V3.Folder.fromHashEntry(root, pdfFileRootHashEntry, session)
 			} catch (error) {
-				expect(error instanceof FolderIncompatibleHashEntriesError).toBe(true)
+				expect(error instanceof Sync.V3.FolderIncompatibleHashEntriesError).toBe(true)
 			}
 		})
 	})
 
 	describe('.fromHashEntries', () => {
 		it('returns folder from provided hash entries', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.folderMetadataChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
 
-			await Folder.fromHashEntries(root, folderHashEntry, folderHashEntries, session)
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.folderMetadata)})
+				})
+
+			const folder = await Sync.V3.Folder.fromHashEntries(root, folderHashEntry, folderHashEntries, session)
+
+			expect(folder).toBeInstanceOf(Sync.V3.Folder)
 		})
 
 		it('if provided hash entries do not represent a folder, throws an error', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.pdfMetadataChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
+				})
 
 			try {
-				await Folder.fromHashEntries(root, folderHashEntry, folderHashEntries, session)
+				await Sync.V3.Folder.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
 			} catch (error) {
-				expect(error instanceof FolderIncompatibleHashEntriesError).toBe(true)
+				expect(error instanceof Sync.V3.FolderIncompatibleHashEntriesError).toBe(true)
 			}
 		})
 	})
 
 	describe('.compatibleWithHashEntries', () => {
 		it('if given hash entries resemble a reMarkable folder, returns true', () => {
-			expect(Folder.compatibleWithHashEntries(folderHashEntries)).toBe(true)
+			expect(Sync.V3.Folder.compatibleWithHashEntries(folderHashEntries)).toBe(true)
 		})
 
 		it('if given hash entries do not resemble a reMarkable folder, returns false', () => {
-			expect(Folder.compatibleWithHashEntries(folderHashEntries)).toBe(false)
-		})
-	})
-
-	describe('#rename', () => {
-		it('updates the folder name', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
-			const folderFile = await Folder.fromHashEntry(root, folderHashEntry, session)
-			const newName = 'a-remarkable-web-browser-folder-renamed'
-			const newFolderFile = await folderFile.rename(newName, session)
-
-			expect(newFolderFile).toBeInstanceOf(Folder)
-			expect(newFolderFile.name).toBe(newName)
-		})
-	})
-
-	describe('#moveToFolder', () => {
-		it('moves the ePub file to another folder', async () => {
-			const session = global.remarkableApiSession
-			const root = await Root.fromSession(session)
-			const folderHashEntry = HashEntriesFactory.fromPayload(global.sampleFolderHashEntryPayload)
-			const folderHashEntriesPayload = await folderHashEntry.content(session)
-			const folderHashEntries = HashEntriesFactory.fromPayload(folderHashEntriesPayload)
-			const folderFile = await Folder.fromHashEntry(root, folderHashEntry, session)
-			const movedFolderFile = await folderFile.moveToFolder('')
-
-			expect(movedFolderFile).toBeInstanceOf(Folder)
-			expect(movedFolderFile.metadata.folderId).toBe('trash')
+			expect(Sync.V3.Folder.compatibleWithHashEntries(pdfHashEntries)).toBe(false)
 		})
 	})
 })

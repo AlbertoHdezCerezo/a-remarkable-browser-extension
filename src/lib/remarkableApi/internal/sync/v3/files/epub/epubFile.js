@@ -1,6 +1,6 @@
 import {File} from '../abstracts'
 import {EpubMetadata} from './epubMetadata'
-import {HashEntriesFactory} from '../../../../schemas'
+import * as Schemas from '../../../../schemas'
 
 export class EpubIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable ePub file.') {
@@ -29,7 +29,7 @@ export class EpubFile extends File {
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
 
-		return await this.fromHashEntries(root, rootHashEntry, HashEntriesFactory.fromPayload(hashEntriesPayload), session)
+		return await this.fromHashEntries(root, rootHashEntry, Schemas.HashEntriesFactory.fromPayload(hashEntriesPayload), session)
 	}
 
 	/**
