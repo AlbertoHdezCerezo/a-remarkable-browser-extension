@@ -15,7 +15,7 @@ describe('Folder', () => {
 				}
 			)
 
-			const folder = Sync.V3.Folder.fromJson(folderJson, root)
+			const folder = Folder.fromJson(folderJson, root)
 
 			expect(folder).toBeInstanceOf(Folder)
 			expect(folder.apiFolder).toBeInstanceOf(Sync.V3.Folder)
@@ -29,11 +29,13 @@ describe('Folder', () => {
 		it('from a folder, dumps document to JSON string', () => {
 			const folder = new Folder(apiFolder)
 
-			expect(folder.toJson).toEqual({
-				folderRootHashEntryPayload: apiFolder.rootHashEntry.payload,
-				folderHashEntriesPayload: apiFolder.hashEntries.payload,
-				folderMetadataPayload: JSON.stringify(apiFolder.metadata.payload)
-			})
+			expect(folder.toJson).toEqual(
+				JSON.stringify({
+					folderRootHashEntryPayload: apiFolder.rootHashEntry.payload,
+					folderHashEntriesPayload: apiFolder.hashEntries.payload,
+					folderMetadataPayload: JSON.stringify(apiFolder.metadata.payload)
+				})
+			)
 		})
 	})
 })

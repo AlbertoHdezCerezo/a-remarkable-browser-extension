@@ -6,7 +6,6 @@ describe('Document', () => {
 	const pdfFile = global.pdfFile
 	const ePubFile = global.ePubFile
 
-
 	describe('.fromJson', () => {
 		it('from a PDF document JSON, returns Document instance', () => {
 			const pdfDocumentJson = JSON.stringify(
