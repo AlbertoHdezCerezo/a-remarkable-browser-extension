@@ -37,7 +37,6 @@ describe('HashEntry', () => {
 			try {
 				new V4.HashEntry(hashEntryPayload)
 			} catch (error) {
-				console.log(error)
 				expect(error).toBeInstanceOf(V4.IncompatibleHashEntrySchemaError)
 			}
 		})

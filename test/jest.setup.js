@@ -90,15 +90,10 @@ global.rootMetadata = {
 }
 global.rootHashEntriesPayload = `
 4
-0:.:321:13967872951
+0:.:10:65001440
 e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142
-7ecb1979b6b317aea72ab8066d3757cbb4f0682cd5ab6ad153005f26efda75e5:0:01635e9d-b255-47d1-b5f2-db142b10ac9c:4:1546205
-9b9c28591fdde725669bc0ee8aae9fe48e8bf2fdf6ecb4446b2324b8302741e8:0:01a91de2-9baf-4d5f-bee6-bc7983c74aea:4:28488972
-3a629f01fb74e36b5f88bd3fd48524928e149f2a7ba4c4993530e4b5cbd4ce3a:0:01ca1e3c-1ad8-4190-bf77-609b739b5cb8:4:60142131
-5150a86233164972185f78a7f52f5482b781eb0deea0c0f3defad9427373ec09:0:037ef393-041d-4092-8c7a-27729f5f98b3:4:6117879
-e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161
-e1fd1872fd23acd589dd318a247889f5bd9f4288a87ab8121c6b2bfb540cbc78:0:0566801a-1ac1-4e9a-8f7c-5b0f34d38eb6:4:15582957
 394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137
+e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161
 `
 global.root = new Sync.Root(
 	global.rootMetadata.hash,
@@ -128,6 +123,12 @@ global.pdfMetadata = {
 	type: "DocumentType",
 	visibleName: "PDF Document.pdf"
 }
+global.pdfFile = new Sync.V3.PdfFile(
+	global.root,
+	global.root.hashEntries.hashEntriesList[0],
+	Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload),
+	global.pdfMetadata
+)
 global.ePubRootHashEntryPayload = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137'
 global.ePubFileChecksum = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162'
 global.ePubHashEntriesPayload = `
@@ -152,6 +153,12 @@ global.ePubMetadata = {
 	"type": "DocumentType",
 	"visibleName": "ePub Document.epub"
 }
+global.ePubFile = new Sync.V3.EpubFile(
+	global.root,
+	global.root.hashEntries.hashEntriesList[1],
+	Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload),
+	global.ePubMetadata
+)
 global.folderRootHashEntryPayload = 'e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161'
 global.folderFileChecksum = 'e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3'
 global.folderHashEntriesPayload = `
@@ -170,3 +177,9 @@ global.folderMetadata = {
 	"pinned":false,
 	"parent":""
 }
+global.folder = new Sync.V3.Folder(
+	global.root,
+	global.root.hashEntries.hashEntriesList[2],
+	Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload),
+	global.folderMetadata
+)
