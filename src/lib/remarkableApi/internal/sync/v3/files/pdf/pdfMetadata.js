@@ -116,6 +116,6 @@ export class PdfMetadata {
 			updateRequestHeaders,
 		)
 
-		return new Schemas.V4.HashEntry(`${newPdfMetadataChecksum}:0:${this.pdfFileHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return Schemas.HashEntryFactory.fromPayload(`${newPdfMetadataChecksum}:0:${this.pdfFileHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

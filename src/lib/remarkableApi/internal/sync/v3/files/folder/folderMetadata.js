@@ -1,6 +1,6 @@
 import {CONFIGURATION} from '../../../../../configuration'
 import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
-import {HashEntryFactory} from '../../../../schemas'
+import * as Schemas from '../../../../schemas'
 import {RequestBuffer} from '../../utils'
 
 /**
@@ -114,6 +114,6 @@ export class FolderMetadata {
 			updateRequestHeaders,
 		)
 
-		return new HashEntryFactory.fromPayload(`${newFolderMetadataChecksum}:0:${this.folderRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return Schemas.HashEntryFactory.fromPayload(`${newFolderMetadataChecksum}:0:${this.folderRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

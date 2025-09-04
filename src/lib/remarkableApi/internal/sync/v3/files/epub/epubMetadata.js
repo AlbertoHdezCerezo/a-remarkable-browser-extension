@@ -118,6 +118,6 @@ export class EpubMetadata {
 			updateRequestHeaders,
 		)
 
-		return new HashEntryFactory.fromPayload(`${newEpubMetadataChecksum}:0:${this.epubFileRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
+		return HashEntryFactory.fromPayload(`${newEpubMetadataChecksum}:0:${this.epubFileRootHashEntry.fileId}.metadata:0:${updateRequestBuffer.sizeInBytes}`)
 	}
 }

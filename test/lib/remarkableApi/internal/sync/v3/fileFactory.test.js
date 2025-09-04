@@ -1,3 +1,6 @@
+import {expect, jest} from '@jest/globals'
+import {CONFIGURATION} from '../../../../../../src/lib/remarkableApi'
+import {FetchBasedHttpClient} from '../../../../../../src/lib/utils/httpClient'
 import * as Sync from '../../../../../../src/lib/remarkableApi/internal/sync'
 import * as Schemas from '../../../../../../src/lib/remarkableApi/internal/schemas'
 
@@ -7,6 +10,16 @@ describe('FileFactory', () => {
 
 	describe('.fileFromHashEntries', () => {
 		it('if given a PDF file hash entries, returns a PdfFile instance', async () => {
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.pdfMetadataChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
+				})
+
 			const pdfHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
 			const pdfHashEntries = Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload)
 
@@ -15,6 +28,16 @@ describe('FileFactory', () => {
 		})
 
 		it('if given an EPUB file hash entries, returns an EpubFile instance', async () => {
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.ePubMetadataChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.ePubMetadata)})
+				})
+
 			const ePubHashEntry = Schemas.HashEntryFactory.fromPayload(global.ePubRootHashEntryPayload)
 			const ePubHashEntries = Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload)
 
@@ -23,6 +46,16 @@ describe('FileFactory', () => {
 		})
 
 		it('if given a folder hash entries, returns a Folder instance', async () => {
+			FetchBasedHttpClient.get = jest.fn()
+			FetchBasedHttpClient
+				.get
+				.mockImplementationOnce((...args) => {
+					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.folderMetadataChecksum)
+					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.folderMetadata)})
+				})
+
 			const folderHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
 			const folderHashEntries = Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload)
 

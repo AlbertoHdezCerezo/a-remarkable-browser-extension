@@ -128,7 +128,7 @@ global.pdfMetadata = {
 	type: "DocumentType",
 	visibleName: "PDF Document.pdf"
 }
-global.ePubHashEntryPayload = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142'
+global.ePubRootHashEntryPayload = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142'
 global.ePubFileChecksum = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162'
 global.ePubHashEntriesPayload = `
 4
@@ -151,4 +151,22 @@ global.ePubMetadata = {
 	"source": "",
 	"type": "DocumentType",
 	"visibleName": "ePub Document.epub"
+}
+global.folderRootHashEntryPayload = 'e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161'
+global.folderFileChecksum = 'e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3'
+global.folderHashEntriesPayload = `
+4
+0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161
+caaf86ab3ed7ee7c28eba326f6c351393b300fe6f954db37a3401b0ebd1faa52:0:03d93d9b-b6f3-4503-9993-26faf23c22e1.metadata:0:161
+`
+global.folderMetadataChecksum = 'caaf86ab3ed7ee7c28eba326f6c351393b300fe6f954db37a3401b0ebd1faa52'
+global.folderMetadata = {
+	"createdTime":1754766116482,
+	"lastModified":1754766116482,
+	"visibleName":"Test Folder",
+	"type":"CollectionType",
+	"source":"",
+	"new":false,
+	"pinned":false,
+	"parent":""
 }
