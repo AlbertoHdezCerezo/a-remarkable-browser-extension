@@ -43,6 +43,8 @@ dotenv.config({ path: '.env.test' })
  */
 
 import fs from 'fs'
+import * as Sync from '../src/lib/remarkableApi/internal/sync'
+import * as Schemas from '../src/lib/remarkableApi/internal/schemas'
 import {Device} from '../src/lib/remarkableApi/internal/token/device.js'
 import {Session} from '../src/lib/remarkableApi/internal/token/session.js'
 
@@ -98,6 +100,11 @@ e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3
 e1fd1872fd23acd589dd318a247889f5bd9f4288a87ab8121c6b2bfb540cbc78:0:0566801a-1ac1-4e9a-8f7c-5b0f34d38eb6:4:15582957
 394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137
 `
+global.root = new Sync.Root(
+	global.rootMetadata.hash,
+	global.rootMetadata.generation,
+	Schemas.HashEntriesFactory.fromPayload(global.rootHashEntriesPayload)
+)
 global.pdfRootHashEntryPayload = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f-431b-b8d0-635114f7e958:4:40152142'
 global.pdfFileChecksum = 'e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2'
 global.pdfHashEntriesPayload = `

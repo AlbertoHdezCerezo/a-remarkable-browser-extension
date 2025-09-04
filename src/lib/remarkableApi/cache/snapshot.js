@@ -1,6 +1,6 @@
+import {Folder} from './folder.js'
+import {Document} from './document.js'
 import * as Internal from '../internal'
-import {Folder} from './folder'
-import {Document} from './document'
 
 const SNAPSHOT_DOWNLOAD_BATCH_SIZE = 25
 const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 0
@@ -28,7 +28,7 @@ const SNAPSHOT_DOWNLOAD_BATCH_DELAY_IN_MS = 0
  * without the need to download the entire
  * file system again.
  */
-export default class Snapshot {
+export class Snapshot {
 	/**
 	 * Returns a Snapshot instance from the provided
 	 * JSON representation of the snapshot.
