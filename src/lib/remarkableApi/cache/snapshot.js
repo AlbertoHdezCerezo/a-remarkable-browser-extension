@@ -60,7 +60,7 @@ export class Snapshot {
 	 * @returns {Promise<Snapshot>}
 	 */
 	static async fromSession(session) {
-		const root = await Root.fromSession(session)
+		const root = await Internal.Sync.Root.fromSession(session)
 
 		let snapshotDocumentsAndFolders = []
 
