@@ -44,8 +44,8 @@ export class Snapshot {
 			snapshotObject.rootHashEntriesPayload
 		)
 
-		const snapshotDocuments = snapshotObject.documents.map(documentJson => Document.fromJson(documentJson, snapshotRoot))
-		const snapshotFolders = snapshotObject.folders.map(folderJson => Folder.fromJson(folderJson, snapshotRoot))
+		const snapshotDocuments = snapshotObject.documents.map(documentObject => Document.fromJson(JSON.stringify(documentObject), snapshotRoot))
+		const snapshotFolders = snapshotObject.folders.map(folderObject => Folder.fromJson(JSON.stringify(folderObject), snapshotRoot))
 
 		return new Snapshot(snapshotRoot, snapshotDocuments, snapshotFolders)
 	}
@@ -235,8 +235,8 @@ export class Snapshot {
 				rootChecksum: this.root.checksum,
 				rootGeneration: this.root.generation,
 				rootHashEntriesPayload: this.root.hashEntries.payload,
-				documents: this.documents.map(document => document.toJson),
-				folders: this.folders.map(folder => folder.toJson)
+				documents: this.documents.map(document => JSON.parse(document.toJson)),
+				folders: this.folders.map(folder => JSON.parse(folder.toJson))
 			}
 		)
 	}
