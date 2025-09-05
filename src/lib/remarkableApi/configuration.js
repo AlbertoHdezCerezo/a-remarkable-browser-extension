@@ -1,5 +1,9 @@
 export const CONFIGURATION = {
 	endpoints: {
+		/**
+		 * Endpoints used for reMarkable API
+		 * authentication of devices and sessions
+		 */
 		token: {
 			v2: {
 				endpoints: {
@@ -15,9 +19,10 @@ export const CONFIGURATION = {
 			}
 		},
 		/**
-		 * Configuration for the reMarkable API
-		 * sync endpoint, responsible for file
-		 * management and synchronization
+		 * Endpoints used by the reMarkable
+		 * desktop applications to synchronize
+		 * documents with the cloud and the
+		 * reMarkable devices
 		 */
 		sync: {
 			v3: {
@@ -30,25 +35,22 @@ export const CONFIGURATION = {
 					 * Endpoint for fetching file information.
 					 */
 					files: 'https://eu.tectonic.remarkable.com/sync/v3/files/'
-				},
-				types: {
-					2: "collection"
 				}
 			}
 		},
 		/**
-		 * Configuration for the reMarkable API
-		 * sync endpoint, responsible for file
-		 * upload
+		 * Endpoints used by the reMarkable
+		 * web services. Provide basic features
+		 * to handle documents and folders
+		 * through the web.
 		 */
 		doc: {
 			v2: {
 				endpoints: {
 					/**
-					 * Endpoint for uploading documents.
-					 * (!) Used by the official reMarkable browser extension
+					 * Endpoint for fetching documents
 					 */
-					files: 'https://internal.cloud.remarkable.com/doc/v2/files'
+					files: 'https://web.eu.tectonic.remarkable.com/doc/v2/files'
 				}
 			}
 		}
