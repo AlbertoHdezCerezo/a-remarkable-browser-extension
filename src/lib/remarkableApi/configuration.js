@@ -48,9 +48,10 @@ export const CONFIGURATION = {
 			v2: {
 				endpoints: {
 					/**
-					 * Endpoint for fetching documents
+					 * Endpoint for uploading documents.
+					 * (!) Used by the official reMarkable browser extension
 					 */
-					files: 'https://web.eu.tectonic.remarkable.com/doc/v2/files'
+					files: 'https://internal.cloud.remarkable.com/doc/v2/files'
 				}
 			}
 		}

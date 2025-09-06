@@ -1,10 +1,9 @@
 import {fromByteArray} from 'base64-js'
 import {TextEncoder} from '@polkadot/x-textencoder'
 import {CONFIGURATION} from '../../../configuration'
-import {Root} from '../../sync/root'
-import {FileFactory} from '../../sync/fileFactory'
-import {HashEntriesFactory} from '../../schemas/index'
 import {FetchBasedHttpClient} from '../../../../utils/httpClient'
+import * as Sync from '../../sync'
+import * as Schemas from '../../schemas'
 
 export const REMARKABLE_UPLOAD_SOURCE = 'RoR-Browser'
 
@@ -13,6 +12,7 @@ export class UploadError extends Error {
 		super()
 		this.message = `Failed to upload file: ${error.message}`
 		this.name = 'UploadError'
+		this.stack = error.stack
 	}
 }
 
@@ -33,7 +33,7 @@ export class Upload {
 	 * @param {string} fileName - The name of the file to upload.
 	 * @param {Buffer} fileBuffer - The buffer containing the file content.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<HashEntry>} - Hash entry representing the uploaded file.
+	 * @returns {Promise<PdfFile | EpubFile | Folder>} - Hash entry representing the uploaded file.
 	 */
 	static async upload(fileName, fileBuffer, session){
 		try {
@@ -50,12 +50,12 @@ export class Upload {
 
 			const uploadResponseJson = await uploadResponse.json()
 
-			const root = await Root.fromSession(session)
+			const root = await Sync.Root.fromSession(session)
 			const uploadedFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === uploadResponseJson.hash)
 			const uploadedFileHashEntriesPayload = await uploadedFileRootHashEntry.content(session)
-			const uploadedFileHashEntries = HashEntriesFactory.fromPayload(uploadedFileHashEntriesPayload)
+			const uploadedFileHashEntries = Schemas.HashEntriesFactory.fromPayload(uploadedFileHashEntriesPayload)
 
-			return FileFactory.fileFromHashEntries(root, uploadedFileRootHashEntry, uploadedFileHashEntries, session)
+			return await Sync.FileFactory.fileFromHashEntries(root, uploadedFileRootHashEntry, uploadedFileHashEntries, session)
 		} catch (error) {
 			throw new UploadError(error)
 		}
