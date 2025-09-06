@@ -2,7 +2,21 @@ import {jwtDecode} from 'jwt-decode'
 import {CONFIGURATION} from '../../configuration.js'
 import {FetchBasedHttpClient} from '../../../utils/httpClient'
 
-export class UnsuccessfulSessionAuthenticationError extends Error {}
+export class UnsuccessfulSessionAuthenticationError extends Error {
+	constructor(
+		error,
+		message = `
+			Authentication with reMarkable API failed.
+			Possible causes:
+			- Device token is invalid
+			- reMarkable API is unreachable
+		`
+	) {
+		super(message)
+		this.name = 'UnsuccessfulSessionAuthenticationError'
+		this.stack = `${this.stack}\nCaused by: ${error.stack}`
+	}
+}
 
 /**
  * Represents an active device connection session.
@@ -29,9 +43,7 @@ export class Session {
 
 			return new Session(await sessionResponse.text())
 		} catch (error) {
-			throw new UnsuccessfulSessionAuthenticationError(
-				`Failed to authenticate session: ${error.message}`
-			)
+			throw new UnsuccessfulSessionAuthenticationError(error)
 		}
 	}
 

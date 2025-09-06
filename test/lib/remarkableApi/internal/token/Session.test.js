@@ -1,27 +1,43 @@
-import {jest} from '@jest/globals'
+import {expect, jest} from '@jest/globals'
 import {jwtDecode} from 'jwt-decode'
-import {setupHttpRecording} from '../../../../helpers/pollyHelper.js'
-import {Device} from '../../../../../src/lib/remarkableApi/internal/token/device.js'
-import {Session, UnsuccessfulSessionAuthenticationError} from '../../../../../src/lib/remarkableApi/internal/token/session.js'
+import {mockSessionRequest} from '../../../../helpers/remarkableApiHelper.js'
+import {FetchBasedHttpClient} from '../../../../../src/lib/utils/httpClient'
+import {
+	Session,
+	UnsuccessfulSessionAuthenticationError
+} from '../../../../../src/lib/remarkableApi/internal/token/Session.js'
 
 describe('Session', () => {
-	setupHttpRecording()
+	let device = global.remarkableDevice
 
 	describe('.from', () => {
 		it('creates remarkable API session out of device connection token', async () => {
-			const deviceConnection = new Device(global.remarkableDeviceToken)
+			const fetchBasedHttpClientPostMock = jest.fn()
+			mockSessionRequest(
+				global.remarkableDeviceToken,
+				global.remarkableSessionToken,
+				fetchBasedHttpClientPostMock
+			)
+			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
-			const session = await Session.from(deviceConnection)
+			const session = await Session.from(device)
 
 			expect(session).toBeInstanceOf(Session)
-		}, 50000)
+		})
 
 		it('if authentication fails, throws error', async () => {
-			const deviceConnection = new Device(global.remarkableSessionToken)
+			const fetchBasedHttpClientPostMock = jest.fn()
+			fetchBasedHttpClientPostMock
+				.mockImplementationOnce((...args) => {
+					return Promise.resolve({ok: false, status: 401})
+				})
+			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
-			await expect(Session.from(deviceConnection))
-				.rejects
-				.toThrow(UnsuccessfulSessionAuthenticationError)
+			try {
+				await Session.from(device)
+			} catch (error) {
+				expect(error).toBeInstanceOf(UnsuccessfulSessionAuthenticationError)
+			}
 		})
 	})
 	

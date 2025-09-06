@@ -1,5 +1,22 @@
 import {expect, jest} from '@jest/globals'
-import {CONFIGURATION} from '../../src/lib/remarkableApi/index.js'
+import {CONFIGURATION} from '../../src/lib/remarkableApi'
+
+export function mockSessionRequest(
+	deviceToken = global.remarkableDeviceToken,
+	sessionToken = global.global.remarkableSessionToken,
+	fetchBasedHttpClientPostMock = jest.fn()
+) {
+	fetchBasedHttpClientPostMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.token.v2.endpoints.user)
+			expect(args[1]).toEqual(null)
+			expect(args[2]).toEqual({'Authorization': `Bearer ${deviceToken}`})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(sessionToken)})
+		})
+
+	return fetchBasedHttpClientPostMock
+}
 
 export function mockUploadRequest(
 	uploadBuffer,
