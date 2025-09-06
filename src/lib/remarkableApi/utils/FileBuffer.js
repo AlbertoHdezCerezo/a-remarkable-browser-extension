@@ -3,7 +3,13 @@
  * raised when an `Buffer` with an unsupported file extension is passed to
  * the `FileBufferType` class.
  */
-export class UnsupportedFileExtensionError extends Error {}
+export class UnsupportedFileExtensionError extends Error {
+	constructor() {
+		super()
+		this.message = 'Unsupported file extension. Only .pdf and .epub files are supported.'
+		this.name = 'UnsupportedFileExtensionError'
+	}
+}
 
 /**
  * Each `Buffer` presents a specific signature representing its corresponding

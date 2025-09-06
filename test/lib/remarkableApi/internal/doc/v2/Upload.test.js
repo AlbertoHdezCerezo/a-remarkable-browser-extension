@@ -105,9 +105,9 @@ describe('Upload', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(JSON.stringify(global.ePubMetadata))})
 				})
 
-			const epubFile = await Upload.upload("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
+			const ePubFile = await Upload.upload("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
 
-			expect(epubFile).toBeInstanceOf(V3.EpubFile)
+			expect(ePubFile).toBeInstanceOf(V3.EpubFile)
 		})
 	})
 })
