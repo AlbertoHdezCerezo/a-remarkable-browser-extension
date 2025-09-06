@@ -1,4 +1,7 @@
 import * as Schemas from '../../../../../src/lib/remarkableApi/internal/schemas'
+import {
+	UnsupportedHashEntryPayloadError
+} from "../../../../../src/lib/remarkableApi/internal/schemas/HashEntryFactory.js";
 
 describe('HashEntryFactory', () => {
 	describe('.fromPayload', () => {
@@ -17,7 +20,7 @@ describe('HashEntryFactory', () => {
 
 			expect(() => {
 				Schemas.HashEntryFactory.fromPayload(payload)
-			}).toThrow(Schemas.V4.IncompatibleHashEntrySchemaError)
+			}).toThrow(Schemas.UnsupportedHashEntryPayloadError)
 		})
 	})
 })

@@ -1,6 +1,7 @@
 import {CONFIGURATION} from '../../../configuration'
 import {FetchBasedHttpClient} from '../../../../utils/httpClient'
 import {HashEntry as AbstractHashEntry} from '../abstracts/hashEntry'
+import {error} from "shelljs";
 
 export class IncompatibleHashEntrySchemaError extends Error {
 	constructor(
@@ -14,6 +15,7 @@ export class IncompatibleHashEntrySchemaError extends Error {
 	) {
 		super(message)
 		this.name = 'IncompatibleHashEntrySchemaError'
+		this.stack = error.stack
 	}
 }
 
