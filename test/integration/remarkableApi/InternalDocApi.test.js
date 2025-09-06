@@ -4,10 +4,10 @@ import {setupHttpRecording} from '../../helpers/pollyHelper.js'
 import {Upload} from '../../../src/lib/remarkableApi/internal/doc/v2'
 import * as Sync from '../../../src/lib/remarkableApi/internal/sync'
 
-describe('Upload', () => {
+describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 	setupHttpRecording()
 
-	describe('.upload', () => {
+	describe('POST - Upload a new document', () => {
 		let session = global.remarkableApiSession
 		let pdfFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.pdf'))
 		let ePubFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.epub'))
