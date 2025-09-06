@@ -1,6 +1,22 @@
 import {expect, jest} from '@jest/globals'
 import {CONFIGURATION} from '../../src/lib/remarkableApi'
 
+export function mockDeviceRequest(
+	devicePayload,
+	deviceToken = global.remarkableDeviceToken,
+	fetchBasedHttpClientPostMock = jest.fn()
+) {
+	fetchBasedHttpClientPostMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.token.v2.endpoints.device)
+			expect(args[1]).toEqual(devicePayload)
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(deviceToken)})
+		})
+
+	return fetchBasedHttpClientPostMock
+}
+
 export function mockSessionRequest(
 	deviceToken = global.remarkableDeviceToken,
 	sessionToken = global.global.remarkableSessionToken,

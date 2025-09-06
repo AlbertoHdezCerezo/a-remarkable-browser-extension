@@ -3,7 +3,22 @@ import {jwtDecode} from 'jwt-decode'
 import {CONFIGURATION} from '../../configuration.js'
 import {FetchBasedHttpClient} from '../../../utils/httpClient'
 
-export class UnsuccessfulDeviceConnectionPairingError extends Error {}
+export class UnsuccessfulDeviceConnectionPairingError extends Error {
+	constructor(
+		error,
+		message = `
+			Attempt to pair device connection with reMarkable API failed.
+			Possible reasons:
+			- The one-time code is invalid or has already been used.
+			- There are network issues preventing the request from completing.
+			- The reMarkable API is down or unreachable.
+		`
+	) {
+		super(message)
+		this.name = 'UnsuccessfulDeviceConnectionPairingError'
+		this.stack = `${this.stack}\nCaused by: ${error.stack}`
+	}
+}
 
 /**
  * Represents a device connection to the reMarkable API.
@@ -50,9 +65,7 @@ export class Device {
 
 			return new Device(await pairResponse.text())
 		} catch (error) {
-			throw new UnsuccessfulDeviceConnectionPairingError(
-				`Failed to pair device connection: ${error.message}`
-			)
+			throw new UnsuccessfulDeviceConnectionPairingError(error)
 		}
 	}
 

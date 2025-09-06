@@ -1,35 +1,36 @@
+import {jest} from '@jest/globals'
 import {v4 as uuidv4} from 'uuid'
 import {jwtDecode} from 'jwt-decode'
+import {mockDeviceRequest,} from '../../../../helpers/remarkableApiHelper'
 import {
 	Device,
 	UnsuccessfulDeviceConnectionPairingError
 } from '../../../../../src/lib/remarkableApi/internal/token/device.js'
-import {
-	mockFailedFetchBasedHttpRequest,
-	mockSuccessfulFetchBasedHttpRequest
-} from '../../../../helpers/fetchBasedHttpClientHelper.js'
+import {FetchBasedHttpClient} from '../../../../../src/lib/utils/httpClient'
 
 describe('Device', () => {
 	describe('.from', () => {
+		const devicePayload = {
+			code: 'TEST-CODE',
+			deviceID: uuidv4(),
+			deviceDesc: 'browser-chrome',
+		}
+
 		/**
 		 * For whatever reason, Polly.js fails to record this call,
 		 * so for the test to work I need to disable it here.
 		 */
 		it('creates remarkable API connection out of one-time-code', async () => {
-			const oneTimeCode = 'rsxirjhy'
-			const uuid = uuidv4()
-			const description = 'browser-chrome'
-
-			const originalFetch = mockSuccessfulFetchBasedHttpRequest(
-				`https://my.remarkable.com/api/v1/connection/${oneTimeCode}`,
+			const fetchBasedHttpClientPostMock = jest.fn()
+			mockDeviceRequest(
+				devicePayload,
 				global.remarkableDeviceToken,
-				200
+				fetchBasedHttpClientPostMock
 			)
+			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
 			const deviceConnection =
-				await Device.from(oneTimeCode, uuid, description)
-
-			global.fetch = originalFetch
+				await Device.from(devicePayload.code, devicePayload.deviceID, devicePayload.deviceDesc)
 
 			expect(deviceConnection).toBeInstanceOf(Device)
 			expect(deviceConnection.token.replace(/^"(.*)"$/, '$1'))
@@ -37,19 +38,18 @@ describe('Device', () => {
 		})
 
 		it('if pairing fails, throws error', async () => {
-			const oneTimeCode = 'rsxirjhy'
-			const uuid = uuidv4()
-			const description = 'browser-chrome'
+			const fetchBasedHttpClientPostMock = jest.fn()
+			fetchBasedHttpClientPostMock
+				.mockImplementationOnce((...args) => {
+					return Promise.resolve({ok: false, status: 401})
+				})
+			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
-			const originalFetch = mockFailedFetchBasedHttpRequest(
-				`https://my.remarkable.com/api/v1/connection/${oneTimeCode}`,
-			)
-
-			await expect(Device.from(oneTimeCode, uuid, description))
-				.rejects
-				.toThrow(UnsuccessfulDeviceConnectionPairingError)
-
-			global.fetch = originalFetch
+			try {
+				await Device.from(devicePayload.code, devicePayload.id, devicePayload.deviceDesc)
+			} catch (error) {
+				expect(error).toBeInstanceOf(UnsuccessfulDeviceConnectionPairingError)
+			}
 		})
 	})
 
