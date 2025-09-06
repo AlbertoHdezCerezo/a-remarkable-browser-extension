@@ -12,8 +12,8 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 		let pdfFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.pdf'))
 		let ePubFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.epub'))
 
-		it('given a PDF file buffer with a compatible extension, uploads it to the device', async () => {
-			const pdfFile = await Upload.upload("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
+		it('given a PDF file buffer, uploads it to the device', async () => {
+			const pdfFile = await Upload.document("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
 
 			expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
 
@@ -23,8 +23,8 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 			expect(pdfFileRootHashEntry).toBeDefined()
 		}, 1000000000)
 
-		it('given an ePub file buffer with a compatible extension, uploads it to the device', async () => {
-			const ePubFile = await Upload.upload("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
+		it('given an ePub file buffer, uploads it to the device', async () => {
+			const ePubFile = await Upload.document("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
 
 			expect(ePubFile).toBeInstanceOf(Sync.V3.EpubFile)
 
@@ -32,6 +32,17 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 			const ePubFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === ePubFile.rootHashEntry.checksum)
 
 			expect(ePubFileRootHashEntry).toBeDefined()
+		}, 1000000000)
+
+		it('given no buffer, creates a new folder in the device', async () => {
+			const folder = await Upload.folder("a-remarkable-web-browser-sample-folder", session)
+
+			expect(folder).toBeInstanceOf(Sync.V3.Folder)
+
+			const root = await Sync.Root.fromSession(session)
+			const folderRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === folder.rootHashEntry.checksum)
+
+			expect(folderRootHashEntry).toBeDefined()
 		}, 1000000000)
 	})
 })
