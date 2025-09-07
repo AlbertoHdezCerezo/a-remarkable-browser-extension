@@ -1,6 +1,6 @@
 import fs from 'fs'
 import {expect, jest} from '@jest/globals'
-import {mockDocumentRequest, mockUploadRequest} from '../../../../../helpers/remarkableApiHelper.js'
+import {mockDocumentRequest, mockRootRequest, mockUploadRequest} from '../../../../../helpers/remarkableApiHelper.js'
 import {FileBuffer} from '../../../../../../src/lib/remarkableApi/utils'
 import {FetchBasedHttpClient} from '../../../../../../src/lib/utils/httpClient'
 import {Upload} from '../../../../../../src/lib/remarkableApi/internal/doc/v2'
@@ -29,6 +29,13 @@ describe('Upload', () => {
 			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
 			const fetchBasedHttpClientGetMock = jest.fn()
+			mockRootRequest(
+				fetchBasedHttpClientGetMock,
+				session,
+				global.rootMetadata,
+				global.rootHashChecksum,
+				global.rootHashEntriesPayload
+			)
 			mockDocumentRequest(
 				global.folderFileChecksum,
 				global.folderHashEntriesPayload,
@@ -63,6 +70,13 @@ describe('Upload', () => {
 			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
 			const fetchBasedHttpClientGetMock = jest.fn()
+			mockRootRequest(
+				fetchBasedHttpClientGetMock,
+				session,
+				global.rootMetadata,
+				global.rootHashChecksum,
+				global.rootHashEntriesPayload
+			)
 			mockDocumentRequest(
 				global.pdfFileChecksum,
 				global.pdfHashEntriesPayload,
@@ -95,6 +109,13 @@ describe('Upload', () => {
 			FetchBasedHttpClient.post = fetchBasedHttpClientPostMock
 
 			const fetchBasedHttpClientGetMock = jest.fn()
+			mockRootRequest(
+				fetchBasedHttpClientGetMock,
+				session,
+				global.rootMetadata,
+				global.rootHashChecksum,
+				global.rootHashEntriesPayload
+			)
 			mockDocumentRequest(
 				global.ePubFileChecksum,
 				global.ePubHashEntriesPayload,

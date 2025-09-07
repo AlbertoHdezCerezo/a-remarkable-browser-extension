@@ -1,8 +1,6 @@
 import {FetchBasedHttpClient} from '../../../../../utils/httpClient'
 import {CONFIGURATION} from '../../../../configuration.js'
-import * as Schemas from '../../../schemas'
-import {RequestBuffer} from '../utils'
-import {Root} from '../Root.js'
+import * as Sync from '../../../sync'
 
 /**
  * Abstract class representing a file
@@ -150,12 +148,12 @@ export class File {
 		const updatedFileHashEntries =
 			this.hashEntries.replace(currentFileMetadataHashEntry, newFileMetadataHashEntry)
 
-		const updatedFileRootHashEntry = await this.#commitFileHashEntries(updatedFileHashEntries, session)
+		await this.#commitFileHashEntries(updatedFileHashEntries, session)
 
 		const currentRoot = await Root.fromSession(session)
-
+		const updatedFileRootHashEntry = await updatedFileHashEntries.hashEntry()
 		const currentFileRootHashEntry =
-			currentRoot.hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileId === updatedFileRootHashEntry.fileId)
+			currentRoot.hashEntries.hashEntriesList.find(hashEntry => hashEntry.fileId === updatedFileRootHashEntry.fileId)
 
 		if (currentFileRootHashEntry === undefined) throw new Error('File already exists')
 
@@ -163,8 +161,8 @@ export class File {
 			currentRoot.hashEntries.replace(currentFileRootHashEntry, updatedFileRootHashEntry)
 
 		await this.#commitRootHashEntries(newRootHashEntries, session)
-		await this.#setNewDefaultRootGeneration(currentRoot, newRootHashEntries, session)
-		return this.refreshFile(session)
+		await this.#setNewDefaultRootGeneration(newRootHashEntries, session)
+		return this.refresh(session)
 	}
 
 	/**
@@ -226,19 +224,20 @@ export class File {
 
 	/**
 	 *
-	 * @param {Root} currentDefaultRoot - Current default root in reMarkable cloud account.
 	 * @param {HashEntries} newDefaultRootHashEntries - New root hash entries to set as default.
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<Response>}
 	 */
-	async #setNewDefaultRootGeneration(currentDefaultRoot, newDefaultRootHashEntries, session) {
+	async #setNewDefaultRootGeneration(newDefaultRootHashEntries, session) {
+		const currentRoot = await Sync.V3.Root.fromSession(session)
+
 		const newRootGenerationPayload = {
 			broadcast: true,
-			generation: currentDefaultRoot.generation,
+			generation: currentRoot.generation,
 			hash: await newDefaultRootHashEntries.checksum()
 		}
 
-		const newRootBuffer = new RequestBuffer(newRootGenerationPayload)
+		const newRootBuffer = new Sync.V3.RequestBuffer(newRootGenerationPayload)
 
 		const updateRequestHeaders = {
 			'authorization': `Bearer ${session.token}`,
@@ -258,10 +257,26 @@ export class File {
 	 * Updates file attributes to synchronize them with
 	 * the current version available in the reMarkable cloud.
 	 *
-	 * @param session
+	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<File>}
 	 */
-	async refreshFile(session) {
-		throw new Error('Method refreshFile() must be implemented')
+	async refresh(session) {
+		const root = await Sync.V3.Root.fromSession(session)
+
+		const fileRootHashEntry = root.hashEntries.hashEntriesList
+			.find(hashEntry => hashEntry.fileId === this.rootHashEntry.fileId)
+
+		const currentFileIsOutdated =
+			fileRootHashEntry.checksum !== this.rootHashEntry.checksum
+
+		if (currentFileIsOutdated) {
+			const updatedFile = await this.constructor.fromHashEntry(fileRootHashEntry, session)
+
+			this.#rootHashEntry = updatedFile.rootHashEntry
+			this.#hashEntries = updatedFile.hashEntries
+			this.#metadata = updatedFile.metadata
+		}
+
+		return this
 	}
 }

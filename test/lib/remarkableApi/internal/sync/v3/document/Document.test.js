@@ -4,39 +4,31 @@ import {
 	mockDocumentRequest,
 	mockRootRequest
 } from '../../../../../../helpers/remarkableApiHelper.js'
-import {CONFIGURATION} from '../../../../../../../src/lib/remarkableApi/index.js'
 import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync/index.js'
 import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
 import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient/index.js'
 
 describe('Document', () => {
-	const root = global.root
 	const session = global.remarkableApiSession
 	const pdfFileRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
 	const pdfHashEntries = Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload)
+	const folderRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
 	const folderHashEntries = Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload)
 
 	describe('.fromHashEntry', () => {
-		it('returns PDF file from root PDF file hash entry', async () => {
-			FetchBasedHttpClient.get = jest.fn()
-			FetchBasedHttpClient
-				.get
-				.mockImplementationOnce((...args) => {
-					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.pdfFileChecksum)
-					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+		it('returns Document from root Document hash entry', async () => {
+			const fetchBasedHttpClientGetMock = jest.fn()
+			mockDocumentRequest(
+				global.pdfFileChecksum,
+				global.pdfHashEntriesPayload,
+				global.pdfMetadataChecksum,
+				global.pdfMetadata,
+				fetchBasedHttpClientGetMock,
+				session
+			)
+			FetchBasedHttpClient.get = fetchBasedHttpClientGetMock
 
-					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfHashEntriesPayload)})
-				})
-			FetchBasedHttpClient
-				.get
-				.mockImplementationOnce((...args) => {
-					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.pdfMetadataChecksum)
-					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
-
-					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
-				})
-
-			const pdfFile = await Sync.V3.Document.fromHashEntry(root, pdfFileRootHashEntry, session)
+			const pdfFile = await Sync.V3.Document.fromHashEntry(pdfFileRootHashEntry, session)
 
 			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
@@ -48,30 +40,21 @@ describe('Document', () => {
 			mockDocumentMetadataRequest(
 				global.pdfMetadataChecksum,
 				global.pdfMetadata,
+				fetchBasedHttpClientGetMock,
 				session
 			)
 			FetchBasedHttpClient.get = fetchBasedHttpClientGetMock
 
-			const pdfFile = await Sync.V3.Document.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
+			const pdfFile = await Sync.V3.Document.fromHashEntries(pdfFileRootHashEntry, pdfHashEntries, session)
 
 			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it('if provided hash entries do not represent a document, throws an error', async () => {
-			FetchBasedHttpClient.get = jest.fn()
-			FetchBasedHttpClient
-				.get
-				.mockImplementationOnce((...args) => {
-					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + global.ePubMetadataChecksum)
-					expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
-
-					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.ePubMetadata)})
-				})
-
 			try {
-				await Sync.V3.Document.fromHashEntries(root, ePubFileRootHashEntry, epubHashEntries, session)
+				await Sync.V3.Document.fromHashEntries(folderRootHashEntry, folderHashEntries, session)
 			} catch (error) {
-				expect(error instanceof Sync.V3.PdfIncompatibleHashEntriesError).toBe(true)
+				expect(error instanceof Sync.V3.DocumentIncompatibleHashEntriesError).toBe(true)
 			}
 		})
 	})
@@ -142,6 +125,9 @@ describe('Document', () => {
 			 * the refresh of the current PDF file instance, returning
 			 * an ePub file instead.
 			 */
+			jest.spyOn(global.pdfFile.rootHashEntry, 'checksum', 'get')
+				.mockReturnValue(global.ePubFileChecksum)
+
 			const ePubFile = await global.pdfFile.refresh(session)
 
 			expect(ePubFile).toBeInstanceOf(Sync.V3.Document)

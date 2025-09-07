@@ -1,5 +1,6 @@
 import {File} from '../abstracts/file.js'
 import {Metadata} from './Metadata.js'
+import * as Schemas from '../../../schemas'
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
@@ -83,16 +84,5 @@ export class Folder extends File {
 	 */
 	get extension() {
 		return 'folder'
-	}
-
-	/**
-	 * Updates file attributes to synchronize them with
-	 * the current version available in the reMarkable cloud.
-	 *
-	 * @param session
-	 * @returns {Promise<File>}
-	 */
-	async refreshFile(session) {
-		throw new Error('Method refreshFile() must be implemented')
 	}
 }
