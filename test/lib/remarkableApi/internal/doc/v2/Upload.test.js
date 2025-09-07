@@ -75,7 +75,7 @@ describe('Upload', () => {
 
 			const pdfFile = await Upload.document("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
 
-			expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it(`

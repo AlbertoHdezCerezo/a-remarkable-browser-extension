@@ -1,13 +1,13 @@
 import {expect, jest} from '@jest/globals'
-import {CONFIGURATION} from '../../../../../../../../src/lib/remarkableApi'
-import {FetchBasedHttpClient} from '../../../../../../../../src/lib/utils/httpClient'
-import * as Schemas from '../../../../../../../../src/lib/remarkableApi/internal/schemas'
-import * as Sync from '../../../../../../../../src/lib/remarkableApi/internal/sync'
+import {CONFIGURATION} from '../../../../../../../src/lib/remarkableApi/index.js'
+import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient/index.js'
+import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
+import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync/index.js'
 
 describe('FolderMetadata', () => {
 	const session = global.remarkableApiSession
 	const folderRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
-	const folderMetadata = new Sync.V3.FolderMetadata(folderRootHashEntry, global.folderMetadata)
+	const folderMetadata = new Sync.V3.Metadata(folderRootHashEntry, global.folderMetadata)
 
 	describe('#folderRootHashEntry', () => {
 		it('returns the folder root hash entry', () => {

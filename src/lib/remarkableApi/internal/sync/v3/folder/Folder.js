@@ -1,10 +1,10 @@
 import {v4 as uuidv4} from 'uuid'
-import {File} from '../abstracts/file'
-import {RequestBuffer} from '../../utils'
-import * as Schemas from '../../../../schemas'
-import {FolderMetadata} from './folderMetadata'
-import {CONFIGURATION} from '../../../../../configuration'
-import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
+import {File} from '../abstracts/file.js'
+import {RequestBuffer} from '../utils/index.js'
+import * as Schemas from '../../../schemas/index.js'
+import {Metadata} from './Metadata.js'
+import {CONFIGURATION} from '../../../../configuration.js'
+import {FetchBasedHttpClient} from '../../../../../utils/httpClient/index.js'
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
@@ -21,68 +21,6 @@ export class FolderIncompatibleHashEntriesError extends Error {
  * delete, or move folders in the reMarkable cloud.
  */
 export class Folder extends File {
-	/**
-	 * Creates a Folder instance from the provided
-	 * reMarkable Cloud root snapshot and session.
-	 *
-	 * @param {Root} root - reMarkable Cloud root snapshot.
-	 * @param {String} name - The name of the folder.
-	 * @param {Session} session - The session used to authenticate the request.
-	 * @param {String} parentFolderId - The ID of the parent folder.
-	 * @returns {Promise<Folder>}
-	 */
-	static async create(root, name, session, parentFolderId = '') {
-		const newFolderId = uuidv4()
-
-		const folderMetadataPayload = {
-			createdTime: Date.now(),
-			lastModified: Date.now(),
-			visibleName: name,
-			type: 'CollectionType',
-			source: '',
-			new: false,
-			pinned: false,
-			parent: parentFolderId,
-		}
-
-		const createRequestBuffer =
-			new RequestBuffer(JSON.stringify(folderMetadataPayload))
-
-		const newFolderMetadataChecksum = await createRequestBuffer.checksum()
-
-		const updateRequestHeaders = {
-			'authorization': `Bearer ${session.token}`,
-			'content-type': 'application/octet-stream',
-			'rm-filename': `${newFolderId}.metadata`,
-			'rm-batch-number': 1,
-			'x-goog-hash': `crc32c=${createRequestBuffer.crc32Hash}`,
-		}
-
-		await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + newFolderMetadataChecksum,
-			createRequestBuffer.payload,
-			updateRequestHeaders
-		)
-
-		const newFolderHashEntries = Schemas.HashEntriesFactory.fromPayload(`
-			4
-			0:${newFolderId}:1:${createRequestBuffer.sizeInBytes}
-			${newFolderMetadataChecksum}:0:${newFolderId}.metadata:0:${createRequestBuffer.sizeInBytes}
-		`.trim().replace(/\t+/g, '')
-		)
-
-		const newFolderRootHashEntry = await newFolderHashEntries.hashEntry()
-
-		const newFolder = new Folder(
-			root,
-			newFolderRootHashEntry,
-			newFolderHashEntries,
-			new FolderMetadata(newFolderRootHashEntry, folderMetadataPayload)
-		)
-
-		return await newFolder.updateFileHashEntries(newFolderHashEntries, session)
-	}
-
 	/**
 	 * Fetches folder hash entries from foloder root
 	 * hash entry and returns a Folder instance.
@@ -120,7 +58,7 @@ export class Folder extends File {
 				.find(hashEntry => hashEntry.fileExtension === 'metadata')
 				.content(session)
 
-		const folderMetadata = new FolderMetadata(rootHashEntry, folderMetadataPayload)
+		const folderMetadata = new Metadata(rootHashEntry, folderMetadataPayload)
 
 		return new Folder(root, rootHashEntry, hashEntries, folderMetadata)
 	}
@@ -162,7 +100,7 @@ export class Folder extends File {
 	/**
 	 * Folder metadata
 	 *
-	 * @type {FolderMetadata}
+	 * @type {Metadata}
  	 */
 	#metadata
 
@@ -205,7 +143,7 @@ export class Folder extends File {
 	/**
 	 * Returns folder metadata.
 	 *
-	 * @returns {PdfMetadata}
+	 * @returns {Metadata}
 	 */
 	get metadata() {
 		return this.#metadata

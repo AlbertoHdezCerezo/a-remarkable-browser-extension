@@ -1,8 +1,8 @@
 import {expect, jest} from '@jest/globals'
-import {CONFIGURATION} from '../../../../../../../../src/lib/remarkableApi'
-import * as Sync from '../../../../../../../../src/lib/remarkableApi/internal/sync'
-import * as Schemas from '../../../../../../../../src/lib/remarkableApi/internal/schemas'
-import {FetchBasedHttpClient} from '../../../../../../../../src/lib/utils/httpClient'
+import {CONFIGURATION} from '../../../../../../../src/lib/remarkableApi/index.js'
+import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync/index.js'
+import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
+import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient/index.js'
 
 describe('PdfFile', () => {
 	const root = global.root
@@ -32,9 +32,9 @@ describe('PdfFile', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
 				})
 
-			const pdfFile = await Sync.V3.PdfFile.fromHashEntry(root, pdfFileRootHashEntry, session)
+			const pdfFile = await Sync.V3.Document.fromHashEntry(root, pdfFileRootHashEntry, session)
 
-			expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it('if root hash entry does not represent a PDF file, throws an error', async () => {
@@ -49,7 +49,7 @@ describe('PdfFile', () => {
 				})
 
 			try {
-				await Sync.V3.PdfFile.fromHashEntry(root, ePubFileRootHashEntry, session)
+				await Sync.V3.Document.fromHashEntry(root, ePubFileRootHashEntry, session)
 			} catch (error) {
 				expect(error instanceof Sync.V3.PdfIncompatibleHashEntriesError).toBe(true)
 			}
@@ -68,9 +68,9 @@ describe('PdfFile', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
 				})
 
-			const pdfFile = await Sync.V3.PdfFile.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
+			const pdfFile = await Sync.V3.Document.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
 
-			expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it('if provided hash entries do not represent a PDF file, throws an error', async () => {
@@ -85,7 +85,7 @@ describe('PdfFile', () => {
 				})
 
 			try {
-				await Sync.V3.PdfFile.fromHashEntries(root, ePubFileRootHashEntry, epubHashEntries, session)
+				await Sync.V3.Document.fromHashEntries(root, ePubFileRootHashEntry, epubHashEntries, session)
 			} catch (error) {
 				expect(error instanceof Sync.V3.PdfIncompatibleHashEntriesError).toBe(true)
 			}
@@ -94,11 +94,11 @@ describe('PdfFile', () => {
 
 	describe('.compatibleWithHashEntries', () => {
 		it('if given hash entries resemble a reMarkable PDF file, returns true', async () => {
-			expect(Sync.V3.PdfFile.compatibleWithHashEntries(pdfHashEntries)).toBe(true)
+			expect(Sync.V3.Document.compatibleWithHashEntries(pdfHashEntries)).toBe(true)
 		})
 
 		it('if given hash entries do not resemble a reMarkable PDF file, returns false', async () => {
-			expect(Sync.V3.PdfFile.compatibleWithHashEntries(epubHashEntries)).toBe(false)
+			expect(Sync.V3.Document.compatibleWithHashEntries(epubHashEntries)).toBe(false)
 		})
 	})
 })

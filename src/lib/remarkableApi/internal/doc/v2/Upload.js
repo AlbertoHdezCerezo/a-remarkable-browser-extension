@@ -43,7 +43,7 @@ export class Upload {
 	 * @param {string} documentName - The name of the document to upload.
 	 * @param {Buffer} documentBuffer - The buffer containing the document content.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<PdfFile|EpubFile>}
+	 * @returns {Promise<Document|EpubFile>}
 	 */
 	static async document(documentName, documentBuffer, session) {
 		return await this.#upload(documentName, documentBuffer, session)
@@ -55,7 +55,7 @@ export class Upload {
 	 * @param {string} fileName - The name of the file to upload.
 	 * @param {Buffer | Null} fileBuffer - The buffer containing the file content.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<PdfFile | EpubFile | Folder>} - Hash entry representing the uploaded file.
+	 * @returns {Promise<Document | EpubFile | Folder>} - Hash entry representing the uploaded file.
 	 */
 	static async #upload(fileName, fileBuffer, session){
 		try {

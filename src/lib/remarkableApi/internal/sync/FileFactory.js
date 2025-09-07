@@ -34,12 +34,10 @@ export class FileFactory {
 	 * model class instance representing the file.
 	 *
 	 * @param {V3HashEntries | V4HashEntries} hashEntries
-	 * @returns {PdfFile}
+	 * @returns {File}
 	 */
 	static async fileFromHashEntries(root, rootFileHashEntry, hashEntries, session) {
-		const fileClassCandidate = [
-			V3.PdfFile, V3.EpubFile, V3.Folder
-		].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
+		const fileClassCandidate = [V3.Document, V3.Folder].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
 
 		if(!fileClassCandidate) throw new UnsupportedHashFileHashEntriesPayloadError()
 

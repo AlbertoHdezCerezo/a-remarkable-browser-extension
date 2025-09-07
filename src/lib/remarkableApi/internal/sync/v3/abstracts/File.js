@@ -1,7 +1,7 @@
-import {FetchBasedHttpClient} from '../../../../../../utils/httpClient'
-import {CONFIGURATION} from '../../../../../configuration'
-import {RequestBuffer} from '../../utils'
-import {Root} from '../../../root'
+import {FetchBasedHttpClient} from '../../../../../utils/httpClient/index.js'
+import {CONFIGURATION} from '../../../../configuration.js'
+import {RequestBuffer} from '../utils/index.js'
+import {Root} from '../../Root.js'
 
 /**
  * Abstract class representing a file
@@ -70,7 +70,7 @@ export class File {
 	/**
 	 * Returns file/folder metadata.
 	 *
-	 * @returns {PdfMetadata}
+	 * @returns {Metadata}
 	 */
 	get metadata() {
 		throw new Error('Method metadata() must be implemented')

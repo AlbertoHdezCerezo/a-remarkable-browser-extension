@@ -24,7 +24,7 @@ describe('FileFactory', () => {
 			const pdfHashEntries = Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload)
 
 			const pdfFile = await Sync.FileFactory.fileFromHashEntries(root, pdfHashEntry, pdfHashEntries, session)
-			expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it('if given an EPUB file hash entries, returns an EpubFile instance', async () => {

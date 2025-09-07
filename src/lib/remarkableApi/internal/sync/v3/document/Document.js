@@ -1,30 +1,30 @@
-import {File} from '../abstracts'
-import {EpubMetadata} from './epubMetadata'
-import * as Schemas from '../../../../schemas'
+import {File} from '../abstracts/file.js'
+import {Metadata} from './Metadata.js'
+import * as Schemas from '../../../schemas/index.js'
 
-export class EpubIncompatibleHashEntriesError extends Error {
-	constructor(message = 'The provided hash entries are not compatible with a reMarkable ePub file.') {
+export class PdfIncompatibleHashEntriesError extends Error {
+	constructor(message = 'The provided hash entries are not compatible with a reMarkable PDF file.') {
 		super(message)
-		this.name = 'EpubIncompatibleHashEntriesError'
+		this.name = 'PdfIncompatibleHashEntriesError'
 	}
 }
 
 /**
- * Class representing a reMarkable ePub file.
+ * Class representing a reMarkable PDF file.
  *
- * Abstracts the logic for manipulating ePub files
+ * Abstracts the logic for manipulating PDF files
  * on the reMarkable API, allowing us to download,
- * rename, or move ePub files in the reMarkable cloud.
+ * rename, or move PDF files in the reMarkable cloud.
  */
-export class EpubFile extends File {
+export class Document extends File {
 	/**
-	 * Fetches ePub hash entries from ePub root hash entry
-	 * and returns its equivalent EpubFile instance.
+	 * Fetches PDF hash entries from PDF root hash entry
+	 * and returns its equivalent PdfFile instance.
 	 *
 	 * @param {root} root - reMarkable Cloud root snapshot.
-	 * @param {HashEntry} rootHashEntry - The root hash entry representing the ePub file.
+	 * @param {HashEntry} rootHashEntry - The root hash entry representing the PDF file.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<EpubFile>}
+	 * @returns {Promise<Document>}
 	 */
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
@@ -33,27 +33,27 @@ export class EpubFile extends File {
 	}
 
 	/**
-	 * Returns an EpubFile instance from the provided
-	 * hash entries representing the ePub file content.
+	 * Returns a PdfFile instance from the provided
+	 * hash entries representing the PDF file content.
 	 *
 	 * @param {Root} root - reMarkable Cloud root snapshot.
-	 * @param {HashEntry} rootHashEntry - The root hash entry representing the ePub file.
-	 * @param {HashEntries} hashEntries - The hash entries representing the ePub file content.
+	 * @param {HashEntry} rootHashEntry - The root hash entry representing the PDF file.
+	 * @param {HashEntries} hashEntries - The hash entries representing the PDF file content.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<EpubFile>}
+	 * @returns {Promise<Document>}
 	 */
 	static async fromHashEntries(root, rootHashEntry, hashEntries, session) {
 		if (!this.compatibleWithHashEntries(hashEntries))
-			throw new EpubIncompatibleHashEntriesError()
+			throw new PdfIncompatibleHashEntriesError()
 
-		const epubMetadataPayload =
+		const pdfMetadataPayload =
 			await hashEntries.hashEntriesList
 				.find(hashEntry => hashEntry.fileExtension === 'metadata')
 				.content(session)
 
-		const epubMetadata = new EpubMetadata(rootHashEntry, epubMetadataPayload)
+		const pdfMetadata = new Metadata(rootHashEntry, pdfMetadataPayload)
 
-		return new EpubFile(root, rootHashEntry, hashEntries, epubMetadata)
+		return new Document(root, rootHashEntry, hashEntries, pdfMetadata)
 	}
 
 	/**
@@ -66,7 +66,8 @@ export class EpubFile extends File {
 		return 	hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'metadata') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pagedata') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'content') &&
-						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
+						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pdf') &&
+						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
 	}
 
 	/**
@@ -134,7 +135,7 @@ export class EpubFile extends File {
 	/**
 	 * Returns PDF file metadata.
 	 *
-	 * @returns {PdfMetadata}
+	 * @returns {Metadata}
 	 */
 	get metadata() {
 		return this.#metadata
@@ -150,17 +151,17 @@ export class EpubFile extends File {
 	}
 
 	/**
-	 * Renames the ePub file in the reMarkable cloud.
+	 * Renames the PDF file in the reMarkable cloud.
 	 *
 	 * @param {String} newName - The new name for the PDF file.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<EpubFile>}
+	 * @returns {Promise<Document>}
 	 */
 	async rename(newName, session) {
-		const newEpubMetadataHashEntry =
+		const newPdfMetadataHashEntry =
 			await this.metadata.update({ visibleName: newName }, session)
 
-		return await this.updateHashEntryToFileHashEntries(newEpubMetadataHashEntry, session)
+		return await this.updateHashEntryToFileHashEntries(newPdfMetadataHashEntry, session)
 	}
 
 	/**
@@ -168,21 +169,21 @@ export class EpubFile extends File {
 	 *
 	 * @param {String} destinationFolderId - The ID of the destination folder.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<EpubFile>}
+	 * @returns {Promise<Document>}
 	 */
 	async moveToFolder(destinationFolderId, session) {
-		const newEpubMetadataHashEntry =
+		const newPdfMetadataHashEntry =
 			await this.metadata.update({ parent: destinationFolderId }, session)
 
-		return await this.updateHashEntryToFileHashEntries(newEpubMetadataHashEntry, session)
+		return await this.updateHashEntryToFileHashEntries(newPdfMetadataHashEntry, session)
 	}
 
 	/**
-	 * Moves the ePub file to the trash folder in the reMarkable cloud.
+	 * Moves the PDF file to the trash folder in the reMarkable cloud.
 	 * This is the equivalent of removing a file in the reMarkable cloud.
 	 *
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<EpubFile>}
+	 * @returns {Promise<Document>}
 	 */
 	async moveToTrash(session) {
 		return await this.moveToFolder('trash', session)

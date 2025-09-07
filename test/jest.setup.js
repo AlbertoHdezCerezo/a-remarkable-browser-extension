@@ -123,7 +123,7 @@ global.pdfMetadata = {
 	type: "DocumentType",
 	visibleName: "PDF Document.pdf"
 }
-global.pdfFile = new Sync.V3.PdfFile(
+global.pdfFile = new Sync.V3.Document(
 	global.root,
 	global.root.hashEntries.hashEntriesList[0],
 	Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload),

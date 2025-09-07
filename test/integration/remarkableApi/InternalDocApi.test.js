@@ -15,7 +15,7 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 		it('given a PDF file buffer, uploads it to the device', async () => {
 			const pdfFile = await Upload.document("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
 
-			expect(pdfFile).toBeInstanceOf(Sync.V3.PdfFile)
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 
 			const root = await Sync.Root.fromSession(session)
 			const pdfFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === pdfFile.rootHashEntry.checksum)
