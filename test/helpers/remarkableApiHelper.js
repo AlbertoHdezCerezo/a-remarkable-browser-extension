@@ -67,29 +67,21 @@ export function mockDocumentRequest(
 	documentMetadata,
 	fetchBasedHttpClientGetMock = jest.fn(),
 	session = global.remarkableApiSession,
-	rootMetadata = global.rootMetadata,
-	rootHashChecksum = global.rootHashChecksum,
-	rootHashEntriesPayload = global.rootHashEntriesPayload
 ) {
-	mockRootRequest(
-		fetchBasedHttpClientGetMock,
-		session,
-		rootMetadata,
-		rootHashChecksum,
-		rootHashEntriesPayload
-	)
+	fetchBasedHttpClientGetMock
 		.mockImplementationOnce((...args) => {
 			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + documentChecksum)
 			expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
 
 			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(documentHashEntriesPayload)})
 		})
-		.mockImplementationOnce((...args) => {
-			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + documentMetadataChecksum)
-			expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
 
-			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(JSON.stringify(documentMetadata))})
-		})
+	mockDocumentMetadataRequest(
+		documentMetadataChecksum,
+		documentMetadata,
+		fetchBasedHttpClientGetMock,
+		session
+	)
 
 	return fetchBasedHttpClientGetMock
 }

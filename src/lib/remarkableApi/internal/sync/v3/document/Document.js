@@ -72,7 +72,7 @@ export class Document extends File {
 	 * @returns {String}
 	 */
 	get name() {
-		return this.metadata.fileName
+		return this.metadata.documentName
 	}
 
 	/**
@@ -86,16 +86,5 @@ export class Document extends File {
 		} else {
 			return 'pdf'
 		}
-	}
-
-	/**
-	 * Updates file attributes to synchronize them with
-	 * the current version available in the reMarkable cloud.
-	 *
-	 * @param session
-	 * @returns {Promise<File>}
-	 */
-	async refreshFile(session) {
-		throw new Error('Method refreshFile() must be implemented')
 	}
 }

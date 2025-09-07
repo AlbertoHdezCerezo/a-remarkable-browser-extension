@@ -124,10 +124,12 @@ global.pdfMetadata = {
 	visibleName: "PDF Document.pdf"
 }
 global.pdfFile = new Sync.V3.Document(
-	global.root,
 	global.root.hashEntries.hashEntriesList[0],
 	Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload),
-	global.pdfMetadata
+	new Sync.V3.DocumentMetadata(
+		global.root.hashEntries.hashEntriesList[0],
+		global.pdfMetadata
+	)
 )
 global.ePubRootHashEntryPayload = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137'
 global.ePubFileChecksum = '394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162'
@@ -154,10 +156,12 @@ global.ePubMetadata = {
 	"visibleName": "ePub Document.epub"
 }
 global.ePubFile = new Sync.V3.Document(
-	global.root,
 	global.root.hashEntries.hashEntriesList[1],
 	Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload),
-	global.ePubMetadata
+	new Sync.V3.DocumentMetadata(
+		global.root.hashEntries.hashEntriesList[1],
+		global.ePubMetadata
+	)
 )
 global.folderRootHashEntryPayload = 'e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161'
 global.folderFileChecksum = 'e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3'
@@ -178,8 +182,10 @@ global.folderMetadata = {
 	"parent":""
 }
 global.folder = new Sync.V3.Folder(
-	global.root,
 	global.root.hashEntries.hashEntriesList[2],
 	Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload),
-	global.folderMetadata
+	new Sync.V3.FolderMetadata(
+		global.root.hashEntries.hashEntriesList[2],
+		global.folderMetadata
+	)
 )
