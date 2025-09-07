@@ -1,60 +1,51 @@
 import {expect, jest} from '@jest/globals'
-import {CONFIGURATION} from '../../../../../../../src/lib/remarkableApi/index.js'
-import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient/index.js'
-import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
-import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync/index.js'
+import {mockFileMetadataUpdateRequest} from '../../../../../../helpers/remarkableApiHelper.js'
+import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient'
+import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas'
+import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync'
 
-describe('PdfMetadata', () => {
+describe('Metadata', () => {
 	const session = global.remarkableApiSession
 	const pdfFileRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
-	const pdfMetadata = new Sync.V3.PdfMetadata(pdfFileRootHashEntry, global.pdfMetadata)
+	const pdfMetadata = new Sync.V3.Document.Metadata(pdfFileRootHashEntry, global.pdfMetadata)
 
 	describe('#pdfFileHashEntry', () => {
-		it('returns the PDF file root hash entry', () => {
-			expect(pdfMetadata.pdfFileHashEntry).toBe(pdfFileRootHashEntry)
+		it('returns the document root hash entry', () => {
+			expect(pdfMetadata.rootHashEntry).toBe(pdfFileRootHashEntry)
 		})
 	})
 
 	describe('#payload', () => {
-		it('returns the metadata payload of the PDF file', () => {
+		it('returns the metadata payload of the document', () => {
 			expect(pdfMetadata.payload).toEqual(global.pdfMetadata)
 		})
 	})
 
-	describe('#fileName', () => {
-		it('returns PDF file name', () => {
-			expect(pdfMetadata.fileName).toBe('PDF Document.pdf')
+	describe('#documentName', () => {
+		it('returns document name', () => {
+			expect(pdfMetadata.documentName).toBe('PDF Document.pdf')
 		})
 	})
 
 	describe('#folderId', () => {
-		it('returns unique UUID of the folder containing the PDF file', () => {
+		it('returns unique UUID of the document containing the document', () => {
 			expect(pdfMetadata.folderId).toBe('a80ce266-2974-491c-86b6-670453fd0b51')
 		})
 	})
 
 	describe('#update', () => {
-		it('updates PDF file metadata against the reMarkable API', async () => {
+		it('updates document metadata against the reMarkable API', async () => {
 			const expectedPdfMetadataPayload = JSON.stringify({ ...global.pdfMetadata, "visibleName": "Updated-File.pdf" })
 			const expectedRequestBuffer = new Sync.V3.RequestBuffer(expectedPdfMetadataPayload)
 			const expectedPdfMetadataHash = await expectedRequestBuffer.checksum()
 
-			FetchBasedHttpClient.put = jest.fn()
-			FetchBasedHttpClient
-				.put
-				.mockImplementationOnce((...args) => {
-					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + expectedPdfMetadataHash)
-					expect(args[1]).toEqual(expectedRequestBuffer.payload)
-					expect(args[2]).toEqual({
-						'authorization': `Bearer ${session.token}`,
-						'content-type': 'application/octet-stream',
-						'rm-filename': `${pdfFileRootHashEntry.fileId}.metadata`,
-						'rm-parent-hash': pdfFileRootHashEntry.checksum,
-						'x-goog-hash': `crc32c=${expectedRequestBuffer.crc32Hash}`
-					})
-
-					return Promise.resolve({ok: true, status: 200, json: () => Promise.resolve({})})
-				})
+			const fetchBasedHttpClientPutMock = jest.fn()
+			await mockFileMetadataUpdateRequest(
+				pdfFileRootHashEntry,
+				expectedPdfMetadataPayload,
+				fetchBasedHttpClientPutMock
+			)
+			FetchBasedHttpClient.put = fetchBasedHttpClientPutMock
 
 			const newPdfMetadataHasEntry = await pdfMetadata.update({ visibleName: 'Updated-File.pdf' }, session)
 

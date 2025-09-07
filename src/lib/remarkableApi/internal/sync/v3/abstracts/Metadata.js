@@ -66,8 +66,8 @@ export class Metadata {
 		const updateRequestHeaders = {
 			'authorization': `Bearer ${session.token}`,
 			'content-type': 'application/octet-stream',
-			'rm-filename': `${this.folderRootHashEntry.fileId}.metadata`,
-			'rm-parent-hash': this.folderRootHashEntry.checksum,
+			'rm-filename': `${this.rootHashEntry.fileId}.metadata`,
+			'rm-parent-hash': this.rootHashEntry.checksum,
 			'x-goog-hash': `crc32c=${updateRequestBuffer.crc32Hash}`,
 		}
 

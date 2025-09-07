@@ -1,17 +1,17 @@
 import {expect, jest} from '@jest/globals'
-import {CONFIGURATION} from '../../../../../../../src/lib/remarkableApi/index.js'
-import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient/index.js'
-import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
-import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync/index.js'
+import {mockFileMetadataUpdateRequest} from '../../../../../../helpers/remarkableApiHelper'
+import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient'
+import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas'
+import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync'
 
-describe('FolderMetadata', () => {
+describe('Metadata', () => {
 	const session = global.remarkableApiSession
 	const folderRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
-	const folderMetadata = new Sync.V3.Metadata(folderRootHashEntry, global.folderMetadata)
+	const folderMetadata = new Sync.V3.Folder.Metadata(folderRootHashEntry, global.folderMetadata)
 
-	describe('#folderRootHashEntry', () => {
+	describe('#rootHashEntry', () => {
 		it('returns the folder root hash entry', () => {
-			expect(folderMetadata.folderRootHashEntry).toBe(folderRootHashEntry)
+			expect(folderMetadata.rootHashEntry).toBe(folderRootHashEntry)
 		})
 	})
 
@@ -39,22 +39,13 @@ describe('FolderMetadata', () => {
 			const expectedRequestBuffer = new Sync.V3.RequestBuffer(expectedFolderMetadataPayload)
 			const expectedFolderMetadataHash = await expectedRequestBuffer.checksum()
 
-			FetchBasedHttpClient.put = jest.fn()
-			FetchBasedHttpClient
-				.put
-				.mockImplementationOnce((...args) => {
-					expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + expectedFolderMetadataHash)
-					expect(args[1]).toEqual(expectedRequestBuffer.payload)
-					expect(args[2]).toEqual({
-						'authorization': `Bearer ${session.token}`,
-						'content-type': 'application/octet-stream',
-						'rm-filename': `${folderRootHashEntry.fileId}.metadata`,
-						'rm-parent-hash': folderRootHashEntry.checksum,
-						'x-goog-hash': `crc32c=${expectedRequestBuffer.crc32Hash}`
-					})
-
-					return Promise.resolve({ok: true, status: 200, json: () => Promise.resolve({})})
-				})
+			const fetchBasedHttpClientPutMock = jest.fn()
+			await mockFileMetadataUpdateRequest(
+				folderRootHashEntry,
+				expectedFolderMetadataPayload,
+				fetchBasedHttpClientPutMock
+			)
+			FetchBasedHttpClient.put = fetchBasedHttpClientPutMock
 
 			const newFolderMetadataHasEntry = await folderMetadata.update({ visibleName: 'Updated Folder' }, session)
 

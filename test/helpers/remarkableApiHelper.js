@@ -1,5 +1,6 @@
 import {expect, jest} from '@jest/globals'
 import {CONFIGURATION} from '../../src/lib/remarkableApi'
+import * as Sync from '../../src/lib/remarkableApi/internal/sync'
 
 export function mockDeviceRequest(
 	devicePayload,
@@ -132,4 +133,31 @@ export function mockDocumentMetadataRequest(
 		})
 
 	return fetchBasedHttpClientGetMock
+}
+
+export async function mockFileMetadataUpdateRequest(
+	documentRootHashEntry,
+	documentUpdatedMetadata,
+	fetchBasedHttpClientPutMock = jest.fn(),
+	session = global.remarkableApiSession,
+) {
+	const expectedRequestBuffer = new Sync.V3.RequestBuffer(documentUpdatedMetadata)
+	const expectedMetadataChecksum = await expectedRequestBuffer.checksum()
+
+	fetchBasedHttpClientPutMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + expectedMetadataChecksum)
+			expect(args[1]).toEqual(expectedRequestBuffer.payload)
+			expect(args[2]).toEqual({
+				'authorization': `Bearer ${session.token}`,
+				'content-type': 'application/octet-stream',
+				'rm-filename': `${documentRootHashEntry.fileId}.metadata`,
+				'rm-parent-hash': documentRootHashEntry.checksum,
+				'x-goog-hash': `crc32c=${expectedRequestBuffer.crc32Hash}`
+			})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(JSON.stringify(documentUpdatedMetadata))})
+		})
+
+	return fetchBasedHttpClientPutMock
 }

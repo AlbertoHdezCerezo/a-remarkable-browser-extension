@@ -123,7 +123,7 @@ global.pdfMetadata = {
 	type: "DocumentType",
 	visibleName: "PDF Document.pdf"
 }
-global.pdfFile = new Sync.V3.Document(
+global.pdfFile = new Sync.V3.Document.Document(
 	global.root,
 	global.root.hashEntries.hashEntriesList[0],
 	Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload),
@@ -153,7 +153,7 @@ global.ePubMetadata = {
 	"type": "DocumentType",
 	"visibleName": "ePub Document.epub"
 }
-global.ePubFile = new Sync.V3.Document(
+global.ePubFile = new Sync.V3.Document.Document(
 	global.root,
 	global.root.hashEntries.hashEntriesList[1],
 	Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload),
@@ -177,7 +177,7 @@ global.folderMetadata = {
 	"pinned":false,
 	"parent":""
 }
-global.folder = new Sync.V3.Folder(
+global.folder = new Sync.V3.Folder.Folder(
 	global.root,
 	global.root.hashEntries.hashEntriesList[2],
 	Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload),

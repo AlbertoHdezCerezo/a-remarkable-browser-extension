@@ -37,7 +37,7 @@ export class FileFactory {
 	 * @returns {File}
 	 */
 	static async fileFromHashEntries(root, rootFileHashEntry, hashEntries, session) {
-		const fileClassCandidate = [V3.Document, V3.Folder].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
+		const fileClassCandidate = [V3.Document.Document, V3.Folder.Folder].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
 
 		if(!fileClassCandidate) throw new UnsupportedHashFileHashEntriesPayloadError()
 
