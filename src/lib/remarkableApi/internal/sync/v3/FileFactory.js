@@ -39,10 +39,22 @@ export class FileFactory {
 	 * @returns {File}
 	 */
 	static async fileFromHashEntries(rootFileHashEntry, hashEntries, session) {
-		const fileClassCandidate = [V3.Document, V3.Folder].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
+		const fileClassCandidate = this.compatibleFileConstructorForHashEntries(hashEntries)
 
 		if(!fileClassCandidate) throw new UnsupportedHashFileHashEntriesPayloadError()
 
 		return fileClassCandidate.fromHashEntries(rootFileHashEntry, hashEntries, session)
+	}
+
+	/**
+	 * Returns the class constructor of the file model
+	 * compatible with the provided hash entries.
+	 *
+	 * @param {HashEntries} hashEntries - The hash entries representing the file content
+	 * @returns {Document | Folder} - The class constructor
+	 */
+	static compatibleFileConstructorForHashEntries(hashEntries) {
+		return [V3.Document, V3.Folder]
+			.find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
 	}
 }

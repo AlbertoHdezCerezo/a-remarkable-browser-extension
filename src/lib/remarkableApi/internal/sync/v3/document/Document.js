@@ -87,4 +87,37 @@ export class Document extends File {
 			return 'pdf'
 		}
 	}
+
+	/**
+	 * Given a serialized document, returns an instance of the File class.
+	 *
+	 * @param {String} stringifiedDocument - The serialized document.
+	 * @returns {File}
+	 */
+	static deserialize(stringifiedDocument) {
+		const parsedDocument = JSON.parse(stringifiedDocument)
+
+		const hashEntries = Schemas.HashEntriesFactory.fromPayload(parsedDocument.hashEntries)
+		const rootHashEntry = Schemas.HashEntryFactory.fromPayload(parsedDocument.rootHashEntry)
+		const metadata = Metadata.deserialize(parsedDocument.metadata)
+
+		return new this(rootHashEntry, hashEntries, metadata)
+	}
+
+	/**
+	 * Returns a serialized version of the Document instance.
+	 * This serialized version is a JSON string containing
+	 * all the information needed to reconstruct the Document instance.
+	 *
+	 * @returns {String}
+	 */
+	serialize() {
+		return JSON.stringify(
+			{
+				rootHashEntry: this.rootHashEntry.payload,
+				hashEntries: this.hashEntries.payload,
+				metadata: this.metadata.serialize()
+			}
+		)
+	}
 }

@@ -85,4 +85,37 @@ export class Folder extends File {
 	get extension() {
 		return 'folder'
 	}
+
+	/**
+	 * Given a serialized folder, returns an instance of the Folder class.
+	 *
+	 * @param {String} stringifiedFolder - The serialized folder.
+	 * @returns {File}
+	 */
+	static deserialize(stringifiedFolder) {
+		const parsedFolder = JSON.parse(stringifiedFolder)
+
+		const hashEntries = Schemas.HashEntriesFactory.fromPayload(parsedFolder.hashEntries)
+		const rootHashEntry = Schemas.HashEntryFactory.fromPayload(parsedFolder.rootHashEntry)
+		const metadata = Metadata.deserialize(parsedFolder.metadata)
+
+		return new this(rootHashEntry, hashEntries, metadata)
+	}
+
+	/**
+	 * Returns a serialized version of the Folder instance.
+	 * This serialized version is a JSON string containing
+	 * all the information needed to reconstruct the Folder instance.
+	 *
+	 * @returns {String}
+	 */
+	serialize() {
+		return JSON.stringify(
+			{
+				rootHashEntry: this.rootHashEntry.payload,
+				hashEntries: this.hashEntries.payload,
+				metadata: this.metadata.serialize()
+			}
+		)
+	}
 }

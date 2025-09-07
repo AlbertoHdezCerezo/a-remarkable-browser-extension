@@ -134,4 +134,31 @@ describe('Document', () => {
 			expect(ePubFile.extension).toBe('epub')
 		})
 	})
+
+	describe('#serialize', () => {
+		it('coerces document instance to a JSON stringified representation of it', () => {
+			const serializedPdf = global.pdfFile.serialize()
+
+			const parsedSerializedPdf = JSON.parse(serializedPdf)
+
+			expect(parsedSerializedPdf.rootHashEntry).toBe(global.pdfFile.rootHashEntry.payload)
+			expect(parsedSerializedPdf.hashEntries).toEqual(global.pdfFile.hashEntries.payload)
+			expect(parsedSerializedPdf.metadata).toEqual(global.pdfFile.metadata.serialize())
+		})
+	})
+
+	describe('.deserialize', () => {
+		it('coerces string representing a serialized document to a document instance', () => {
+			const expectedDocument = global.pdfFile
+
+			const serializedDocument = global.pdfFile.serialize()
+
+			const deserializedDocument = Sync.V3.Document.deserialize(serializedDocument)
+
+			expect(deserializedDocument.rootHashEntry.payload).toBe(expectedDocument.rootHashEntry.payload)
+			expect(deserializedDocument.hashEntries.payload).toEqual(expectedDocument.hashEntries.payload)
+			expect(deserializedDocument.metadata.rootHashEntry.payload).toEqual(expectedDocument.metadata.rootHashEntry.payload)
+			expect(deserializedDocument.metadata.payload).toEqual(expectedDocument.metadata.payload)
+		})
+	})
 })

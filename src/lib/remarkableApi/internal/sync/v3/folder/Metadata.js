@@ -1,4 +1,5 @@
 import * as Abstracts from '../abstracts'
+import * as Schemas from '../../../schemas'
 
 /**
  * Represents a reMarkable cloud API folder metadata.
@@ -43,5 +44,37 @@ export class Metadata extends Abstracts.Metadata {
 	 */
 	get folderId() {
 		return this.payload.parent
+	}
+
+	/**
+	 * Given a serialized file metadata,
+	 * returns an instance of the File Metadata class.
+	 *
+	 * @param {String} stringifiedFileMetadata
+	 * @returns {Metadata}
+	 */
+	static deserialize(stringifiedFileMetadata) {
+		const parsedDocumentMetadata = JSON.parse(stringifiedFileMetadata)
+
+		const rootHashEntry = Schemas.HashEntryFactory.fromPayload(parsedDocumentMetadata.rootHashEntry)
+		const payload = parsedDocumentMetadata.payload
+
+		return new this(rootHashEntry, payload)
+	}
+
+	/**
+	 * Returns a serialized version of the File Metadata instance.
+	 * This serialized version is a JSON string containing
+	 * all the information needed to reconstruct the File instance.
+	 *
+	 * @returns {String}
+	 */
+	serialize() {
+		return JSON.stringify(
+			{
+				rootHashEntry: this.rootHashEntry.payload,
+				payload: this.payload
+			}
+		)
 	}
 }

@@ -55,4 +55,28 @@ describe('Metadata', () => {
 			expect(newFolderMetadataHasEntry.checksum).toBe(expectedFolderMetadataHash)
 		})
 	})
+
+	describe('#serialize', () => {
+		it('coerces document metadata instance to a JSON stringified representation of it', () => {
+			const serializedPdfMetadata = global.folder.metadata.serialize()
+
+			const parsedSerializedPdfMetadata = JSON.parse(serializedPdfMetadata)
+
+			expect(parsedSerializedPdfMetadata.rootHashEntry).toBe(global.folder.metadata.rootHashEntry.payload)
+			expect(parsedSerializedPdfMetadata.payload).toEqual(global.folder.metadata.payload)
+		})
+	})
+
+	describe('.deserialize', () => {
+		it('coerces string representing a serialized document metadata to a document metadata instance', () => {
+			const expectedMetadata = global.folder.metadata
+
+			const serializedPdfMetadata = global.folder.metadata.serialize()
+
+			const deserializedPdfMetadata = Sync.V3.DocumentMetadata.deserialize(serializedPdfMetadata)
+
+			expect(deserializedPdfMetadata.rootHashEntry.payload).toBe(expectedMetadata.rootHashEntry.payload)
+			expect(deserializedPdfMetadata.payload).toEqual(expectedMetadata.payload)
+		})
+	})
 })

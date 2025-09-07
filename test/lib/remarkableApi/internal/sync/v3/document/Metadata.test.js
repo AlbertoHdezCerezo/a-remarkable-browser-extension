@@ -55,4 +55,28 @@ describe('Metadata', () => {
 			expect(newPdfMetadataHasEntry.checksum).toBe(expectedPdfMetadataHash)
 		})
 	})
+
+	describe('#serialize', () => {
+		it('coerces document metadata instance to a JSON stringified representation of it', () => {
+			const serializedPdfMetadata = global.pdfFile.metadata.serialize()
+
+			const parsedSerializedPdfMetadata = JSON.parse(serializedPdfMetadata)
+
+			expect(parsedSerializedPdfMetadata.rootHashEntry).toBe(global.pdfFile.metadata.rootHashEntry.payload)
+			expect(parsedSerializedPdfMetadata.payload).toEqual(global.pdfFile.metadata.payload)
+		})
+	})
+
+	describe('.deserialize', () => {
+		it('coerces string representing a serialized document metadata to a document metadata instance', () => {
+			const expectedMetadata = global.pdfFile.metadata
+
+			const serializedPdfMetadata = global.pdfFile.metadata.serialize()
+
+			const deserializedPdfMetadata = Sync.V3.DocumentMetadata.deserialize(serializedPdfMetadata)
+
+			expect(deserializedPdfMetadata.rootHashEntry.payload).toBe(expectedMetadata.rootHashEntry.payload)
+			expect(deserializedPdfMetadata.payload).toEqual(expectedMetadata.payload)
+		})
+	})
 })

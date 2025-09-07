@@ -223,6 +223,10 @@ export class File {
 	}
 
 	/**
+	 * Sets a new default root generation in the reMarkable cloud,
+	 * pointing to the provided root hash entries. This makes the
+	 * provided root hash entries the current root, and makes
+	 * the file hash entries reachable via the reMarkable API.
 	 *
 	 * @param {HashEntries} newDefaultRootHashEntries - New root hash entries to set as default.
 	 * @param {Session} session - The session used to authenticate the request.
