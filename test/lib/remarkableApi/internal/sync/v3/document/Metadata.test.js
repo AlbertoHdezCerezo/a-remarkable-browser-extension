@@ -7,7 +7,7 @@ import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync'
 describe('Metadata', () => {
 	const session = global.remarkableApiSession
 	const pdfFileRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
-	const pdfMetadata = new Sync.V3.Document.Metadata(pdfFileRootHashEntry, global.pdfMetadata)
+	const pdfMetadata = new Sync.V3.DocumentMetadata(pdfFileRootHashEntry, global.pdfMetadata)
 
 	describe('#pdfFileHashEntry', () => {
 		it('returns the document root hash entry', () => {

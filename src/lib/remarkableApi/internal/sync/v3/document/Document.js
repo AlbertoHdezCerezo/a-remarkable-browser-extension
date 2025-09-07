@@ -76,41 +76,26 @@ export class Document extends File {
 	}
 
 	/**
-	 * Renames the Document in the reMarkable cloud.
+	 * Document extension based on hash entries file extension.
 	 *
-	 * @param {String} newName - The new name for the PDF file.
-	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {String}
+	 */
+	get extension() {
+		if(this.hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')) {
+			return 'epub'
+		} else {
+			return 'pdf'
+		}
+	}
+
+	/**
+	 * Updates file attributes to synchronize them with
+	 * the current version available in the reMarkable cloud.
+	 *
+	 * @param session
 	 * @returns {Promise<File>}
 	 */
-	async rename(newName, session) {
-		const newDocumentMetadataHashEntry =
-			await this.metadata.update({ visibleName: newName }, session)
-
-		return this.upsertFileHashEntryToNewRootGeneration(newDocumentMetadataHashEntry, session)
-	}
-
-	/**
-	 * Moves the Document to a specified folder in the reMarkable cloud.
-	 *
-	 * @param {String} destinationFolderId - The ID of the destination folder.
-	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<Document>}
-	 */
-	async moveToFolder(destinationFolderId, session) {
-		const newDocumentMetadataHashEntry =
-			await this.metadata.update({ parent: destinationFolderId }, session)
-
-		return this.upsertFileHashEntryToNewRootGeneration(newDocumentMetadataHashEntry, session)
-	}
-
-	/**
-	 * Moves the Document to the trash folder in the reMarkable cloud.
-	 * This is the equivalent of removing a file in the reMarkable cloud.
-	 *
-	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<Document>}
-	 */
-	async moveToTrash(session) {
-		return await this.moveToFolder('trash', session)
+	async refreshFile(session) {
+		throw new Error('Method refreshFile() must be implemented')
 	}
 }

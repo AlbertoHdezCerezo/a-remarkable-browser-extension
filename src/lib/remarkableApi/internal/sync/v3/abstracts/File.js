@@ -1,5 +1,6 @@
 import {FetchBasedHttpClient} from '../../../../../utils/httpClient'
 import {CONFIGURATION} from '../../../../configuration.js'
+import * as Schemas from '../../../schemas'
 import {RequestBuffer} from '../utils'
 import {Root} from '../Root.js'
 
@@ -12,8 +13,16 @@ import {Root} from '../Root.js'
  * the Remarkable API data models.
  */
 export class File {
-	static async fromHashEntry(root, rootHashEntry, session) {
+	static async fromHashEntry(rootHashEntry, session) {
 		throw new Error('Method fromHashEntry() must be implemented')
+	}
+
+	static async fromHashEntries(rootHashEntry, session) {
+		throw new Error('Method fromHashEntry() must be implemented')
+	}
+
+	static compatibleWithHashEntries(hashEntries) {
+		throw new Error('Method compatibleWithHashEntries() must be implemented')
 	}
 
 	/**
@@ -87,113 +96,149 @@ export class File {
 	}
 
 	/**
-	 * Updates reMarkable cloud file hash entries with a new hash entry.
+	 * Renames the Document in the reMarkable cloud.
 	 *
-	 * @param {HashEntry} newFileHashEntry - The new file hash entry, to attach to hash entries.
+	 * @param {String} newName - The new name for the PDF file.
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<File>}
 	 */
-	async upsertFileHashEntryToNewRootGeneration(newFileHashEntry, session) {
-		const newFileHashEntries =
-			this.hashEntries.replace(
-				this.hashEntries.hashEntriesList.find(entry => entry.fileExtension === 'metadata'),
-				newFileHashEntry
-			)
-
-		return await this.updateFileHashEntries(newFileHashEntries, session)
+	async rename(newName, session) {
+		return this.#upsertFileMetadata({ visibleName: newName }, session)
 	}
 
 	/**
-	 * Updates reMarkable cloud file hash entries with the new set of hash entries.
+	 * Moves the Document to a specified folder in the reMarkable cloud.
 	 *
-	 * @param {HashEntries} newFileHashEntries - The new root hash entries.
+	 * @param {String} destinationFolderId - The ID of the destination folder.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<Document>}
+	 */
+	async moveToFolder(destinationFolderId, session) {
+		return this.#upsertFileMetadata({ parent: destinationFolderId }, session)
+	}
+
+	/**
+	 * Moves the Document to the trash folder in the reMarkable cloud.
+	 * This is the equivalent of removing a file in the reMarkable cloud.
+	 *
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<Document>}
+	 */
+	async moveToTrash(session) {
+		return this.moveToFolder('trash', session)
+	}
+
+	/**
+	 * Updates File metadata, already present in the reMarkable cloud
+	 * account, with the new metadata payload. This process has multiple
+	 * steps, in which the file hash entries and the root hash entries
+	 * are updated to reflect the new metadata payload, to then generate
+	 * a new root generation, which will become the new default root,
+	 * containing those new hash entries.
+	 *
+	 * @param {Object} newFileMetadataPayload - The new metadata payload to update the file with.
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<File>}
 	 */
-	async updateFileHashEntries(newFileHashEntries, session) {
-		const newFileHashEntriesRequestBuffer = newFileHashEntries.asRequestBuffer()
-		const newFileHashEntriesChecksum = await newFileHashEntriesRequestBuffer.checksum()
-		const newFileHashEntry = await newFileHashEntries.hashEntry()
+	async #upsertFileMetadata(newFileMetadataPayload, session) {
+		const newFileMetadataHashEntry =
+			await this.metadata.update(newFileMetadataPayload, session)
 
-		const updateRequestHeaders = {
-			'authorization': `Bearer ${session.token}`,
-			'content-type': 'text/plain; charset=UTF-8',
-			'rm-filename': `${this.rootHashEntry.fileId}.docSchema`,
-			'x-goog-hash': `crc32c=${newFileHashEntriesRequestBuffer.crc32Hash}`,
-		}
+		const currentFileMetadataHashEntry =
+			this.hashEntries.hashEntriesList.find(entry => entry.fileExtension === 'metadata')
 
-		await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + newFileHashEntriesChecksum,
-			newFileHashEntriesRequestBuffer.payload,
-			updateRequestHeaders,
-		)
+		const updatedFileHashEntries =
+			this.hashEntries.replace(currentFileMetadataHashEntry, newFileMetadataHashEntry)
+
+		const updatedFileRootHashEntry = await this.#commitFileHashEntries(updatedFileHashEntries, session)
 
 		const currentRoot = await Root.fromSession(session)
 
-		let newRootHashEntries = null
+		const currentFileRootHashEntry =
+			currentRoot.hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileId === updatedFileRootHashEntry.fileId)
 
-		if (currentRoot.hashEntries.hashEntriesList.some(entry => entry.checksum === this.rootHashEntry.checksum)) {
-			newRootHashEntries = currentRoot.hashEntries.replace(
-				currentRoot.hashEntries.hashEntriesList.find(entry => entry.checksum === this.rootHashEntry.checksum),
-				newFileHashEntry
-			)
-		} else {
-			newRootHashEntries = currentRoot.hashEntries.attach(newFileHashEntry)
-		}
+		if (currentFileRootHashEntry === undefined) throw new Error('File already exists')
 
-		const updatedRoot = await this.#updateRootHashEntries(newRootHashEntries, session)
+		const newRootHashEntries =
+			currentRoot.hashEntries.replace(currentFileRootHashEntry, updatedFileRootHashEntry)
 
-		return await this.constructor.fromHashEntry(updatedRoot, newFileHashEntry, session)
+		await this.#commitRootHashEntries(newRootHashEntries, session)
+		await this.#setNewDefaultRootGeneration(currentRoot, newRootHashEntries, session)
+		return this.refreshFile(session)
 	}
 
 	/**
-	 * Updates reMarkable cloud root hash entries with the new set of hash entries.
+	 * Commits the provided file hash entries to the reMarkable cloud.
+	 * To make file hash entries synchronized with current file, the
+	 * root hash entries must be updated to point to the new file hash entry,
+	 * and this new root hash entry must be set as the default root generation.
 	 *
-	 * @param {HashEntries} newRootHashEntries - The new root hash entries.
+	 * @param {HashEntries} fileHashEntries - The file hash entries to commit.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<Root>}
+	 * @returns {Promise<Response>}
 	 */
-	async #updateRootHashEntries(newRootHashEntries, session) {
-		const newRootHashRequestBuffer = newRootHashEntries.asRequestBuffer()
-		const newRootHashEntriesChecksum = await newRootHashRequestBuffer.checksum()
+	async #commitFileHashEntries(fileHashEntries, session) {
+		const fileRootHashEntry = await fileHashEntries.hashEntry()
+		const hashEntriesChecksum = await fileHashEntries.checksum()
+		const hashEntriesBuffer = fileHashEntries.asRequestBuffer()
+
+		const requestHeaders = {
+			'authorization': `Bearer ${session.token}`,
+			'content-type': 'text/plain; charset=UTF-8',
+			'rm-filename': `${fileRootHashEntry.fileId}.docSchema`,
+			'x-goog-hash': `crc32c=${hashEntriesBuffer.crc32Hash}`,
+		}
+
+		return FetchBasedHttpClient.put(
+			CONFIGURATION.endpoints.sync.v3.endpoints.files + hashEntriesChecksum,
+			hashEntriesBuffer.payload,
+			requestHeaders
+		)
+	}
+
+	/**
+	 * Commits the provided root hash entries to the reMarkable cloud.
+	 * This creates a new hash entry in the reMarkable cloud account.
+	 * To make it the default root, a new root generation must be created
+	 * pointing to the new root hash entry.
+	 *
+	 * @param {HashEntries} rootHashEntries - The root hash entries to commit.
+	 * @param {Session} session - The session used to authenticate the request.
+	 * @returns {Promise<Response>}
+	 */
+	async #commitRootHashEntries(rootHashEntries, session) {
+		const hashEntriesBuffer = rootHashEntries.asRequestBuffer()
+		const hashEntriesChecksum = await rootHashEntries.checksum()
 
 		const updateRequestHeaders = {
 			'authorization': `Bearer ${session.token}`,
 			'content-type': 'text/plain; charset=UTF-8',
 			'rm-filename': `root.docSchema`,
-			'x-goog-hash': `crc32c=${newRootHashRequestBuffer.crc32Hash}`,
+			'x-goog-hash': `crc32c=${hashEntriesBuffer.crc32Hash}`,
 		}
 
-		await FetchBasedHttpClient.put(
-			CONFIGURATION.endpoints.sync.v3.endpoints.files + newRootHashEntriesChecksum,
-			newRootHashRequestBuffer.payload,
+		return FetchBasedHttpClient.put(
+			CONFIGURATION.endpoints.sync.v3.endpoints.files + hashEntriesChecksum,
+			hashEntriesBuffer.payload,
 			updateRequestHeaders,
 		)
-
-		return await this.#updateRoot(newRootHashEntriesChecksum, session)
 	}
 
 	/**
-	 * Updates reMarkable cloud root snapshot.
 	 *
-	 * Given a new checksum representing the new root hash
-	 * entries, defines a new generation of the root with
-	 * the new set of hash entries attached to it, becoming
-	 * the new default snapshot root of the reMarkable cloud
-	 * account.
-	 *
-	 * @param {String} newRootHashEntriesChecksum - The new root hash entries checksum.
+	 * @param {Root} currentDefaultRoot - Current default root in reMarkable cloud account.
+	 * @param {HashEntries} newDefaultRootHashEntries - New root hash entries to set as default.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<Root>}
+	 * @returns {Promise<Response>}
 	 */
-	async #updateRoot(newRootHashEntriesChecksum, session) {
-		const newRootPayload = {
+	async #setNewDefaultRootGeneration(currentDefaultRoot, newDefaultRootHashEntries, session) {
+		const newRootGenerationPayload = {
 			broadcast: true,
-			generation: this.root.generation,
-			hash: newRootHashEntriesChecksum
+			generation: currentDefaultRoot.generation,
+			hash: await newDefaultRootHashEntries.checksum()
 		}
 
-		const newRootBuffer = new RequestBuffer(newRootPayload)
+		const newRootBuffer = new RequestBuffer(newRootGenerationPayload)
 
 		const updateRequestHeaders = {
 			'authorization': `Bearer ${session.token}`,
@@ -202,13 +247,21 @@ export class File {
 			'x-goog-hash': `crc32c=${newRootBuffer.crc32Hash}`,
 		}
 
-		await FetchBasedHttpClient.put(
+		return FetchBasedHttpClient.put(
 			CONFIGURATION.endpoints.sync.v3.endpoints.root,
-			newRootPayload,
+			newRootGenerationPayload,
 			updateRequestHeaders
 		)
+	}
 
-		// TODO: I should fetch the root from the checksum present in the response
-		return await Root.fromSession(session)
+	/**
+	 * Updates file attributes to synchronize them with
+	 * the current version available in the reMarkable cloud.
+	 *
+	 * @param session
+	 * @returns {Promise<File>}
+	 */
+	async refreshFile(session) {
+		throw new Error('Method refreshFile() must be implemented')
 	}
 }

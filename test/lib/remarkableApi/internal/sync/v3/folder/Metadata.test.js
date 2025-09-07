@@ -7,7 +7,7 @@ import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync'
 describe('Metadata', () => {
 	const session = global.remarkableApiSession
 	const folderRootHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
-	const folderMetadata = new Sync.V3.Folder.Metadata(folderRootHashEntry, global.folderMetadata)
+	const folderMetadata = new Sync.V3.FolderMetadata(folderRootHashEntry, global.folderMetadata)
 
 	describe('#rootHashEntry', () => {
 		it('returns the folder root hash entry', () => {
