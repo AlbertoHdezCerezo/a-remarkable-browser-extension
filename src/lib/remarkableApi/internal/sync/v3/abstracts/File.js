@@ -150,7 +150,7 @@ export class File {
 
 		await this.#commitFileHashEntries(updatedFileHashEntries, session)
 
-		const currentRoot = await Root.fromSession(session)
+		const currentRoot = await Sync.V3.Root.fromSession(session)
 		const updatedFileRootHashEntry = await updatedFileHashEntries.hashEntry()
 		const currentFileRootHashEntry =
 			currentRoot.hashEntries.hashEntriesList.find(hashEntry => hashEntry.fileId === updatedFileRootHashEntry.fileId)

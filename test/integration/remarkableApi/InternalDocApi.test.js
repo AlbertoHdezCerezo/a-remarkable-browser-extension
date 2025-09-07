@@ -17,7 +17,7 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 
 			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 
-			const root = await Sync.Root.fromSession(session)
+			const root = await Sync.V3.Root.fromSession(session)
 			const pdfFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === pdfFile.rootHashEntry.checksum)
 
 			expect(pdfFileRootHashEntry).toBeDefined()
@@ -28,7 +28,7 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 
 			expect(ePubFile).toBeInstanceOf(Sync.V3.Document)
 
-			const root = await Sync.Root.fromSession(session)
+			const root = await Sync.V3.Root.fromSession(session)
 			const ePubFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === ePubFile.rootHashEntry.checksum)
 
 			expect(ePubFileRootHashEntry).toBeDefined()
@@ -39,7 +39,7 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 
 			expect(folder).toBeInstanceOf(Sync.V3.Folder)
 
-			const root = await Sync.Root.fromSession(session)
+			const root = await Sync.V3.Root.fromSession(session)
 			const folderRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === folder.rootHashEntry.checksum)
 
 			expect(folderRootHashEntry).toBeDefined()

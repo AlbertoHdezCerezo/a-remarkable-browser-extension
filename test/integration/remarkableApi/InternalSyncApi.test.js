@@ -1,8 +1,9 @@
+import fs from 'fs'
+import {expect} from '@jest/globals'
 import {setupHttpRecording} from '../../helpers/pollyHelper.js'
+import {FileBuffer} from '../../../src/lib/remarkableApi'
+import {Upload} from '../../../src/lib/remarkableApi/internal/doc/v2'
 import * as Sync from '../../../src/lib/remarkableApi/internal/sync'
-import {FileBuffer} from "../../../src/lib/remarkableApi/index.js";
-import fs from "fs";
-import {Upload} from "../../../src/lib/remarkableApi/internal/doc/v2/index.js";
 
 describe('eu.tectonic.remarkable.com/sync/v3/root', () => {
 	const session = global.remarkableApiSession
@@ -60,7 +61,32 @@ describe('eu.tectonic.remarkable.com/sync/v3/root', () => {
 		}, 1000000000)
 
 		it('moves document to a folder', async () => {
+			const pdfFile = await Upload.document("test-document-move.pdf", pdfFileBuffer, session)
+			await pdfFile.moveToTrash(session)
 
+			const root = await Sync.V3.Root.fromSession(session)
+
+			const pdfFileRootHashEntry = root.hashEntries.hashEntriesList.find((entry) => entry.checksum === pdfFile.rootHashEntry.checksum)
+			const pdfFileFromRoot = await Sync.V3.Document.fromHashEntry(pdfFileRootHashEntry, session)
+
+			expect(pdfFileFromRoot).toBeInstanceOf(Sync.V3.Document)
+			expect(pdfFileFromRoot.name).toBe('test-document-move.pdf')
+			expect(pdfFileFromRoot.metadata.folderId).toBe('trash')
+		}, 1000000000)
+
+		it('refreshes document', async () => {
+			const pdfFile = await Upload.document("test-document-refresh.pdf", pdfFileBuffer, session)
+			const root = await Sync.V3.Root.fromSession(session)
+			const pdfFileRootHashEntry = root.hashEntries.hashEntriesList.find((entry) => entry.fileId === pdfFile.rootHashEntry.fileId)
+			const pdfFileFromRoot = await Sync.V3.Document.fromHashEntry(pdfFileRootHashEntry, session)
+
+			expect(pdfFileFromRoot).toBeInstanceOf(Sync.V3.Document)
+			expect(pdfFile.name).toBe('test-document-refresh.pdf')
+
+			await pdfFile.rename('test-document-refreshed.pdf', session)
+			await pdfFileFromRoot.refresh(session)
+
+			expect(pdfFileFromRoot.name).toBe('test-document-refreshed.pdf')
 		}, 1000000000)
 	})
 
@@ -100,6 +126,7 @@ describe('eu.tectonic.remarkable.com/sync/v3/root', () => {
 
 			expect(folderFromRoot).toBeInstanceOf(Sync.V3.Folder)
 			expect(folderFromRoot.name).toBe('test-folder-move')
+			expect(folderFromRoot.metadata.folderId).toBe('trash')
 		}, 1000000000)
 	})
 })
