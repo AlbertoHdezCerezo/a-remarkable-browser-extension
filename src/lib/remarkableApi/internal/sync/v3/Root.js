@@ -1,6 +1,6 @@
-import {CONFIGURATION} from '../../configuration'
-import {FetchBasedHttpClient} from '../../../utils/httpClient'
-import {HashEntriesFactory} from '../schemas'
+import {CONFIGURATION} from '../../../configuration.js'
+import {FetchBasedHttpClient} from '../../../../utils/httpClient/index.js'
+import {HashEntriesFactory} from '../../schemas/index.js'
 
 export class UnreachableRootError extends Error {
 	constructor(

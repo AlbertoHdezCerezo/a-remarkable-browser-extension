@@ -95,7 +95,7 @@ e8e5d89278eebfded00982a272393d62fbd7fab1d9b4fc99b001f6ba342260c2:0:00a69f8e-8a4f
 394f0fa23d762f99435888e20690c5d43b9d6d4f3e82ebc67d7a6706c1c58162:0:05d47ac3-2f8d-4a16-a382-c14607305169:5:24849137
 e6ac06a8696c36bb446962ec39df689dfa3765d81cd701f30e133df927df67d3:0:03d93d9b-b6f3-4503-9993-26faf23c22e1:1:161
 `
-global.root = new Sync.Root(
+global.root = new Sync.V3.Root(
 	global.rootMetadata.hash,
 	global.rootMetadata.generation,
 	Schemas.HashEntriesFactory.fromPayload(global.rootHashEntriesPayload)
@@ -123,7 +123,7 @@ global.pdfMetadata = {
 	type: "DocumentType",
 	visibleName: "PDF Document.pdf"
 }
-global.pdfFile = new Sync.V3.Document.Document(
+global.pdfFile = new Sync.V3.Document(
 	global.root,
 	global.root.hashEntries.hashEntriesList[0],
 	Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload),
@@ -153,7 +153,7 @@ global.ePubMetadata = {
 	"type": "DocumentType",
 	"visibleName": "ePub Document.epub"
 }
-global.ePubFile = new Sync.V3.Document.Document(
+global.ePubFile = new Sync.V3.Document(
 	global.root,
 	global.root.hashEntries.hashEntriesList[1],
 	Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload),
@@ -177,7 +177,7 @@ global.folderMetadata = {
 	"pinned":false,
 	"parent":""
 }
-global.folder = new Sync.V3.Folder.Folder(
+global.folder = new Sync.V3.Folder(
 	global.root,
 	global.root.hashEntries.hashEntriesList[2],
 	Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload),

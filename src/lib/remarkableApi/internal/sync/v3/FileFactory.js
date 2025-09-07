@@ -1,4 +1,4 @@
-import * as V3 from './v3'
+import * as V3 from './index.js'
 
 export class UnsupportedHashFileHashEntriesPayloadError extends Error {
 	constructor(
@@ -33,14 +33,16 @@ export class FileFactory {
 	 * reMarkable API file, returns the equivalent
 	 * model class instance representing the file.
 	 *
-	 * @param {V3HashEntries | V4HashEntries} hashEntries
+	 * @param {HashEntry} rootFileHashEntry - The root hash entry of the file
+	 * @param {HashEntries} hashEntries - The hash entries representing the file content
+	 * @param {Session} session - The session used to authenticate requests
 	 * @returns {File}
 	 */
-	static async fileFromHashEntries(root, rootFileHashEntry, hashEntries, session) {
-		const fileClassCandidate = [V3.Document.Document, V3.Folder.Folder].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
+	static async fileFromHashEntries(rootFileHashEntry, hashEntries, session) {
+		const fileClassCandidate = [V3.Document, V3.Folder].find(fileClass => fileClass.compatibleWithHashEntries(hashEntries))
 
 		if(!fileClassCandidate) throw new UnsupportedHashFileHashEntriesPayloadError()
 
-		return await fileClassCandidate.fromHashEntries(root, rootFileHashEntry, hashEntries, session)
+		return fileClassCandidate.fromHashEntries(rootFileHashEntry, hashEntries, session)
 	}
 }

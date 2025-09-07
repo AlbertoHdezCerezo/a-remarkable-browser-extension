@@ -32,7 +32,7 @@ describe('Folder', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.folderMetadata)})
 				})
 
-			const folder = await Sync.V3.Folder.Folder.fromHashEntry(root, folderHashEntry, session)
+			const folder = await Sync.V3.Folder.fromHashEntry(root, folderHashEntry, session)
 
 			expect(folder).toBeInstanceOf(Sync.V3.Folder)
 		})
@@ -49,9 +49,9 @@ describe('Folder', () => {
 				})
 
 			try {
-				await Sync.V3.Folder.Folder.fromHashEntry(root, pdfFileRootHashEntry, session)
+				await Sync.V3.Folder.fromHashEntry(root, pdfFileRootHashEntry, session)
 			} catch (error) {
-				expect(error instanceof Sync.V3.Folder.FolderIncompatibleHashEntriesError).toBe(true)
+				expect(error instanceof Sync.V3.FolderIncompatibleHashEntriesError).toBe(true)
 			}
 		})
 	})
@@ -68,7 +68,7 @@ describe('Folder', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.folderMetadata)})
 				})
 
-			const folder = await Sync.V3.Folder.Folder.fromHashEntries(root, folderHashEntry, folderHashEntries, session)
+			const folder = await Sync.V3.Folder.fromHashEntries(root, folderHashEntry, folderHashEntries, session)
 
 			expect(folder).toBeInstanceOf(Sync.V3.Folder)
 		})
@@ -85,9 +85,9 @@ describe('Folder', () => {
 				})
 
 			try {
-				await Sync.V3.Folder.Folder.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
+				await Sync.V3.Folder.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
 			} catch (error) {
-				expect(error instanceof Sync.V3.Folder.FolderIncompatibleHashEntriesError).toBe(true)
+				expect(error instanceof Sync.V3.FolderIncompatibleHashEntriesError).toBe(true)
 			}
 		})
 	})

@@ -5,7 +5,6 @@ import * as Sync from '../../../../../../src/lib/remarkableApi/internal/sync'
 import * as Schemas from '../../../../../../src/lib/remarkableApi/internal/schemas'
 
 describe('FileFactory', () => {
-	const root = global.root
 	const session = global.remarkableApiSession
 
 	describe('.fileFromHashEntries', () => {
@@ -22,7 +21,7 @@ describe('FileFactory', () => {
 			const pdfHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
 			const pdfHashEntries = Schemas.HashEntriesFactory.fromPayload(global.pdfHashEntriesPayload)
 
-			const pdfDocument = await Sync.FileFactory.fileFromHashEntries(root, pdfHashEntry, pdfHashEntries, session)
+			const pdfDocument = await Sync.V3.FileFactory.fileFromHashEntries(pdfHashEntry, pdfHashEntries, session)
 			expect(pdfDocument).toBeInstanceOf(Sync.V3.Document)
 		})
 
@@ -39,7 +38,7 @@ describe('FileFactory', () => {
 			const ePubHashEntry = Schemas.HashEntryFactory.fromPayload(global.ePubRootHashEntryPayload)
 			const ePubHashEntries = Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload)
 
-			const epubDocument = await Sync.FileFactory.fileFromHashEntries(root, ePubHashEntry, ePubHashEntries, session)
+			const epubDocument = await Sync.V3.FileFactory.fileFromHashEntries(ePubHashEntry, ePubHashEntries, session)
 			expect(epubDocument).toBeInstanceOf(Sync.V3.Document)
 		})
 
@@ -56,7 +55,7 @@ describe('FileFactory', () => {
 			const folderHashEntry = Schemas.HashEntryFactory.fromPayload(global.folderRootHashEntryPayload)
 			const folderHashEntries = Schemas.HashEntriesFactory.fromPayload(global.folderHashEntriesPayload)
 
-			const folderFile = await Sync.FileFactory.fileFromHashEntries(root, folderHashEntry, folderHashEntries, session)
+			const folderFile = await Sync.V3.FileFactory.fileFromHashEntries(folderHashEntry, folderHashEntries, session)
 			expect(folderFile).toBeInstanceOf(Sync.V3.Folder)
 		})
 	})

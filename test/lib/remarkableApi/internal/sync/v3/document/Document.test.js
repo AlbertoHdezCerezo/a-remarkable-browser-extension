@@ -32,7 +32,7 @@ describe('PdfFile', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
 				})
 
-			const pdfFile = await Sync.V3.Document.Document.fromHashEntry(root, pdfFileRootHashEntry, session)
+			const pdfFile = await Sync.V3.Document.fromHashEntry(root, pdfFileRootHashEntry, session)
 
 			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
@@ -49,7 +49,7 @@ describe('PdfFile', () => {
 				})
 
 			try {
-				await Sync.V3.Document.Document.fromHashEntry(root, ePubFileRootHashEntry, session)
+				await Sync.V3.Document.fromHashEntry(root, ePubFileRootHashEntry, session)
 			} catch (error) {
 				expect(error instanceof Sync.V3.PdfIncompatibleHashEntriesError).toBe(true)
 			}
@@ -68,9 +68,9 @@ describe('PdfFile', () => {
 					return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(global.pdfMetadata)})
 				})
 
-			const pdfFile = await Sync.V3.Document.Document.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
+			const pdfFile = await Sync.V3.Document.fromHashEntries(root, pdfFileRootHashEntry, pdfHashEntries, session)
 
-			expect(pdfFile).toBeInstanceOf(Sync.V3.Document.Document)
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it('if provided hash entries do not represent a PDF file, throws an error', async () => {
@@ -85,7 +85,7 @@ describe('PdfFile', () => {
 				})
 
 			try {
-				await Sync.V3.Document.Document.fromHashEntries(root, ePubFileRootHashEntry, epubHashEntries, session)
+				await Sync.V3.Document.fromHashEntries(root, ePubFileRootHashEntry, epubHashEntries, session)
 			} catch (error) {
 				expect(error instanceof Sync.V3.PdfIncompatibleHashEntriesError).toBe(true)
 			}

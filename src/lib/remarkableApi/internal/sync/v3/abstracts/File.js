@@ -1,7 +1,7 @@
-import {FetchBasedHttpClient} from '../../../../../utils/httpClient/index.js'
+import {FetchBasedHttpClient} from '../../../../../utils/httpClient'
 import {CONFIGURATION} from '../../../../configuration.js'
-import {RequestBuffer} from '../utils/index.js'
-import {Root} from '../../Root.js'
+import {RequestBuffer} from '../utils'
+import {Root} from '../Root.js'
 
 /**
  * Abstract class representing a file
@@ -12,14 +12,60 @@ import {Root} from '../../Root.js'
  * the Remarkable API data models.
  */
 export class File {
-	static fromHashEntry(root, rootHashEntry, session) {
+	static async fromHashEntry(root, rootHashEntry, session) {
 		throw new Error('Method fromHashEntry() must be implemented')
 	}
 
-	constructor() {
-		if (new.target === File) {
-			throw new Error('Cannot instantiate abstract class File directly')
-		}
+	/**
+	 * Hash entry from root hash entries representing the Document.
+	 *
+	 * @type {HashEntry}
+	 */
+	#rootHashEntry
+
+	/**
+	 * Hash entries representing the Document content.
+	 *
+	 * @type {HashEntries}
+	 */
+	#hashEntries
+
+	/**
+	 * PDF file metadata
+	 */
+	#metadata
+
+	constructor(rootHashEntry, hashEntries, metadata) {
+		this.#rootHashEntry = rootHashEntry
+		this.#hashEntries = hashEntries
+		this.#metadata = metadata
+	}
+
+	/**
+	 * Returns root hash entry representing the Document.
+	 *
+	 * @returns {HashEntry}
+	 */
+	get rootHashEntry() {
+		return this.#rootHashEntry
+	}
+
+	/**
+	 * Returns hash entries representing the Document content.
+	 *
+	 * @returns {HashEntries}
+	 */
+	get hashEntries() {
+		return this.#hashEntries
+	}
+
+	/**
+	 * Returns Document metadata.
+	 *
+	 * @returns {Metadata}
+	 */
+	get metadata() {
+		return this.#metadata
 	}
 
 	/**
@@ -28,52 +74,7 @@ export class File {
 	 * @returns {String}
 	 */
 	get extension() {
-		switch (this.constructor.name) {
-			case 'PdfFile':
-				return 'pdf'
-			case 'EpubFile':
-				return 'epub'
-			case 'Folder':
-				return 'folder'
-			default:
-				throw new Error(`Unknown file type: ${this.constructor.name}`)
-		}
-	}
-
-	/**
-	 * Returns root hash entry representing the file/folder.
-	 *
-	 * @returns {HashEntry}
-	 */
-	get root() {
-		throw new Error('Method root() must be implemented')
-	}
-
-	/**
-	 * Returns root hash entry representing the file/folder.
-	 *
-	 * @returns {HashEntry}
-	 */
-	get rootHashEntry() {
-		throw new Error('Method rootHashEntry() must be implemented')
-	}
-
-	/**
-	 * Returns hash entries representing the file/folder content.
-	 *
-	 * @returns {HashEntries}
-	 */
-	get hashEntries() {
-		throw new Error('Method hashEntries() must be implemented')
-	}
-
-	/**
-	 * Returns file/folder metadata.
-	 *
-	 * @returns {Metadata}
-	 */
-	get metadata() {
-		throw new Error('Method metadata() must be implemented')
+		throw new Error('Method name() must be implemented')
 	}
 
 	/**
@@ -92,7 +93,7 @@ export class File {
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<File>}
 	 */
-	async updateHashEntryToFileHashEntries(newFileHashEntry, session) {
+	async upsertFileHashEntryToNewRootGeneration(newFileHashEntry, session) {
 		const newFileHashEntries =
 			this.hashEntries.replace(
 				this.hashEntries.hashEntriesList.find(entry => entry.fileExtension === 'metadata'),
@@ -127,20 +128,22 @@ export class File {
 			updateRequestHeaders,
 		)
 
+		const currentRoot = await Root.fromSession(session)
+
 		let newRootHashEntries = null
 
-		if (this.root.hashEntries.hashEntriesList.some(entry => entry.checksum === this.rootHashEntry.checksum)) {
-			newRootHashEntries = this.root.hashEntries.replace(
-				this.root.hashEntries.hashEntriesList.find(entry => entry.checksum === this.rootHashEntry.checksum),
+		if (currentRoot.hashEntries.hashEntriesList.some(entry => entry.checksum === this.rootHashEntry.checksum)) {
+			newRootHashEntries = currentRoot.hashEntries.replace(
+				currentRoot.hashEntries.hashEntriesList.find(entry => entry.checksum === this.rootHashEntry.checksum),
 				newFileHashEntry
 			)
 		} else {
-			newRootHashEntries = this.root.hashEntries.attach(newFileHashEntry)
+			newRootHashEntries = currentRoot.hashEntries.attach(newFileHashEntry)
 		}
 
 		const updatedRoot = await this.#updateRootHashEntries(newRootHashEntries, session)
 
-		return this.constructor.fromHashEntry(updatedRoot, newFileHashEntry, session)
+		return await this.constructor.fromHashEntry(updatedRoot, newFileHashEntry, session)
 	}
 
 	/**
@@ -148,7 +151,7 @@ export class File {
 	 *
 	 * @param {HashEntries} newRootHashEntries - The new root hash entries.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<HashEntry>}
+	 * @returns {Promise<Root>}
 	 */
 	async #updateRootHashEntries(newRootHashEntries, session) {
 		const newRootHashRequestBuffer = newRootHashEntries.asRequestBuffer()

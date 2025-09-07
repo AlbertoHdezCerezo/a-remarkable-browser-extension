@@ -55,7 +55,7 @@ export class Upload {
 	 * @param {string} fileName - The name of the file to upload.
 	 * @param {Buffer | Null} fileBuffer - The buffer containing the file content.
 	 * @param {Session} session - The session used to authenticate the request.
-	 * @returns {Promise<Document | Folder>} - Hash entry representing the uploaded file.
+	 * @returns {Document | Folder} - Hash entry representing the uploaded file.
 	 */
 	static async #upload(fileName, fileBuffer, session){
 		try {
@@ -72,12 +72,12 @@ export class Upload {
 
 			const uploadResponseJson = await uploadResponse.json()
 
-			const root = await Sync.Root.fromSession(session)
+			const root = await Sync.V3.Root.fromSession(session)
 			const uploadedFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === uploadResponseJson.hash)
 			const uploadedFileHashEntriesPayload = await uploadedFileRootHashEntry.content(session)
 			const uploadedFileHashEntries = Schemas.HashEntriesFactory.fromPayload(uploadedFileHashEntriesPayload)
 
-			return await Sync.FileFactory.fileFromHashEntries(root, uploadedFileRootHashEntry, uploadedFileHashEntries, session)
+			return await Sync.V3.FileFactory.fileFromHashEntries(uploadedFileRootHashEntry, uploadedFileHashEntries, session)
 		} catch (error) {
 			throw new UploadError(error)
 		}

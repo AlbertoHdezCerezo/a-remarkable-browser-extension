@@ -5,7 +5,7 @@ import {
 	Root,
 	UnreachableRootError,
 	UnreachableRootHashEntriesError
-} from '../../../../../../src/lib/remarkableApi/internal/sync/root'
+} from '../../../../../../src/lib/remarkableApi/internal/sync/v3/Root.js'
 
 describe('Root', () => {
 	const session = global.remarkableApiSession

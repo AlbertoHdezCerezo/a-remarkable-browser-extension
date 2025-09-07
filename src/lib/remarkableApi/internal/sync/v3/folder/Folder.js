@@ -1,10 +1,6 @@
-import {v4 as uuidv4} from 'uuid'
 import {File} from '../abstracts/file.js'
-import {RequestBuffer} from '../utils/index.js'
-import * as Schemas from '../../../schemas/index.js'
 import {Metadata} from './Metadata.js'
-import {CONFIGURATION} from '../../../../configuration.js'
-import {FetchBasedHttpClient} from '../../../../../utils/httpClient/index.js'
+import * as Schemas from '../../../schemas'
 
 export class FolderIncompatibleHashEntriesError extends Error {
 	constructor(message = 'The provided hash entries are not compatible with a reMarkable folder.') {
@@ -25,7 +21,6 @@ export class Folder extends File {
 	 * Fetches folder hash entries from foloder root
 	 * hash entry and returns a Folder instance.
 	 *
-	 * @param {root} root - reMarkable Cloud root snapshot.
 	 * @param {HashEntry} rootHashEntry - The root hash entry representing the folder.
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<Folder>}
@@ -33,22 +28,19 @@ export class Folder extends File {
 	static async fromHashEntry(root, rootHashEntry, session) {
 		const hashEntriesPayload = await rootHashEntry.content(session)
 
-		const hashEntries = Schemas.HashEntriesFactory.fromPayload(hashEntriesPayload)
-
-		return await this.fromHashEntries(root, rootHashEntry, hashEntries, session)
+		return await this.fromHashEntries(rootHashEntry, Schemas.HashEntriesFactory.fromPayload(hashEntriesPayload), session)
 	}
 
 	/**
 	 * Returns a Folder instance from the provided
 	 * hash entries representing the folder content.
 	 *
-	 * @param {Root} root - reMarkable Cloud root snapshot.
 	 * @param {HashEntry} rootHashEntry - The root hash entry representing the folder.
 	 * @param {HashEntries} hashEntries - The hash entries representing the folder content.
 	 * @param {Session} session - The session used to authenticate the request.
 	 * @returns {Promise<Folder>}
 	 */
-	static async fromHashEntries(root, rootHashEntry, hashEntries, session) {
+	static async fromHashEntries(rootHashEntry, hashEntries, session) {
 		if (!this.compatibleWithHashEntries(hashEntries)) {
 			throw new FolderIncompatibleHashEntriesError()
 		}
@@ -60,7 +52,7 @@ export class Folder extends File {
 
 		const folderMetadata = new Metadata(rootHashEntry, folderMetadataPayload)
 
-		return new Folder(root, rootHashEntry, hashEntries, folderMetadata)
+		return new Folder(rootHashEntry, hashEntries, folderMetadata)
 	}
 
 	/**
@@ -74,79 +66,6 @@ export class Folder extends File {
 						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pagedata') &&
 						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pdf') &&
 						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
-	}
-
-	/**
-	 * reMarkable Cloud root snapshot.
-	 *
-	 * @type {Root}
-	 */
-	#root
-
-	/**
-	 * Hash entry from root hash entries representing the folder.
-	 *
-	 * @type {HashEntry}
-	 */
-	#rootHashEntry
-
-	/**
-	 * Hash entries representing the folder content.
-	 *
-	 * @type {HashEntries}
-	 */
-	#hashEntries
-
-	/**
-	 * Folder metadata
-	 *
-	 * @type {Metadata}
- 	 */
-	#metadata
-
-	constructor(root, rootHashEntry, hashEntries, metadata) {
-		super()
-
-		this.#root = root
-		this.#rootHashEntry = rootHashEntry
-		this.#hashEntries = hashEntries
-		this.#metadata = metadata
-	}
-
-	/**
-	 * Returns the reMarkable Cloud root snapshot.
-	 *
-	 * @returns {Root}
-	 */
-	get root() {
-		return this.#root
-	}
-
-	/**
-	 * Returns root hash entry representing the folder.
-	 *
-	 * @returns {HashEntry}
-	 */
-	get rootHashEntry() {
-		return this.#rootHashEntry
-	}
-
-	/**
-	 * Returns hash entries representing the folder content.
-	 *
-	 * @returns {HashEntries}
-	 */
-	get hashEntries() {
-		return this.#hashEntries
-	}
-
-	/**
-	 * Returns folder metadata.
-	 *
-	 * @returns {Metadata}
-	 */
-	get metadata() {
-		return this.#metadata
 	}
 
 	/**
@@ -169,7 +88,7 @@ export class Folder extends File {
 		const newFolderMetadataHashEntry =
 			await this.metadata.update({ visibleName: newName }, session)
 
-		return await this.updateHashEntryToFileHashEntries(newFolderMetadataHashEntry, session)
+		return await this.upsertFileHashEntryToNewRootGeneration(newFolderMetadataHashEntry, session)
 	}
 
 	/**
@@ -183,7 +102,7 @@ export class Folder extends File {
 		const newFolderMetadataHashEntry =
 			await this.metadata.update({ parent: destinationFolderId }, session)
 
-		return await this.updateHashEntryToFileHashEntries(newFolderMetadataHashEntry, session)
+		return await this.upsertFileHashEntryToNewRootGeneration(newFolderMetadataHashEntry, session)
 	}
 
 	/**
