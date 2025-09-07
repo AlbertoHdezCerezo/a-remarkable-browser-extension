@@ -42,7 +42,7 @@ describe('FileFactory', () => {
 			const ePubHashEntries = Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload)
 
 			const epubFile = await Sync.FileFactory.fileFromHashEntries(root, ePubHashEntry, ePubHashEntries, session)
-			expect(epubFile).toBeInstanceOf(Sync.V3.EpubFile)
+			expect(epubFile).toBeInstanceOf(Sync.V3.Document)
 		})
 
 		it('if given a folder hash entries, returns a Folder instance', async () => {

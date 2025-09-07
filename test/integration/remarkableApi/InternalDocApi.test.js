@@ -26,7 +26,7 @@ describe('internal.cloud.remarkable.com/doc/v2/files', () => {
 		it('given an ePub file buffer, uploads it to the device', async () => {
 			const ePubFile = await Upload.document("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
 
-			expect(ePubFile).toBeInstanceOf(Sync.V3.EpubFile)
+			expect(ePubFile).toBeInstanceOf(Sync.V3.Document)
 
 			const root = await Sync.Root.fromSession(session)
 			const ePubFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === ePubFile.rootHashEntry.checksum)

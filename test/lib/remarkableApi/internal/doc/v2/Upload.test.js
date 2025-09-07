@@ -49,7 +49,7 @@ describe('Upload', () => {
 		it(`
 			given a PDF file buffer,
 				requests upload endpoint to upload the file to the device
-				and returns the newly uploaded PDF file
+				and returns the newly uploaded document
 		`.trim(), async () => {
 			const fetchBasedHttpClientPostMock = jest.fn()
 			mockUploadRequest(
@@ -81,7 +81,7 @@ describe('Upload', () => {
 		it(`
 			given an ePub file buffer,
 				requests upload endpoint to upload the file to the device
-				and returns the newly uploaded ePub file
+				and returns the newly uploaded document
 		`.trim(), async () => {
 			const fetchBasedHttpClientPostMock = jest.fn()
 			mockUploadRequest(
@@ -107,7 +107,7 @@ describe('Upload', () => {
 
 			const ePubFile = await Upload.document("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
 
-			expect(ePubFile).toBeInstanceOf(Sync.V3.EpubFile)
+			expect(ePubFile).toBeInstanceOf(Sync.V3.Document)
 		})
 	})
 })

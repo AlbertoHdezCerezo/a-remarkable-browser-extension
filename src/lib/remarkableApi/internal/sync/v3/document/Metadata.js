@@ -33,7 +33,7 @@ export class Metadata extends Abstracts.Metadata {
 	 * @returns {String}
 	 */
 	get documentName() {
-		return this.#payload.visibleName
+		return this.payload.visibleName
 	}
 
 	/**
@@ -44,6 +44,6 @@ export class Metadata extends Abstracts.Metadata {
 	 * @returns {String}
 	 */
 	get folderId() {
-		return this.#payload.parent
+		return this.payload.parent
 	}
 }

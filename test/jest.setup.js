@@ -153,7 +153,7 @@ global.ePubMetadata = {
 	"type": "DocumentType",
 	"visibleName": "ePub Document.epub"
 }
-global.ePubFile = new Sync.V3.EpubFile(
+global.ePubFile = new Sync.V3.Document(
 	global.root,
 	global.root.hashEntries.hashEntriesList[1],
 	Schemas.HashEntriesFactory.fromPayload(global.ePubHashEntriesPayload),
