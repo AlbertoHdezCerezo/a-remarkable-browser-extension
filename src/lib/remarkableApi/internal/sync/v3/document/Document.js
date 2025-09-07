@@ -65,9 +65,7 @@ export class Document extends File {
 	static compatibleWithHashEntries(hashEntries) {
 		return 	hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'metadata') &&
 						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pagedata') &&
-						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'content') &&
-						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'pdf') &&
-						!hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'epub')
+						hashEntries.hashEntriesList.some(hashEntry => hashEntry.fileExtension === 'content')
 	}
 
 	/**
