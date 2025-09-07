@@ -11,15 +11,15 @@ import * as Sync from '../../../sync'
  * the Remarkable API data models.
  */
 export class File {
-	static async fromHashEntry(rootHashEntry, session) {
+	static async fromHashEntry() {
 		throw new Error('Method fromHashEntry() must be implemented')
 	}
 
-	static async fromHashEntries(rootHashEntry, session) {
+	static async fromHashEntries() {
 		throw new Error('Method fromHashEntry() must be implemented')
 	}
 
-	static compatibleWithHashEntries(hashEntries) {
+	static compatibleWithHashEntries() {
 		throw new Error('Method compatibleWithHashEntries() must be implemented')
 	}
 
