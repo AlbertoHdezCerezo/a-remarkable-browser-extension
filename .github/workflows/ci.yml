@@ -29,6 +29,9 @@ jobs:
 
       - name: Run Jest tests and generate coverage report
         run: yarn test --coverage
+        env:
+          REMARKABLE_DEVICE_TOKEN: ${{ secrets.REMARKABLE_DEVICE_TOKEN }}
+          REMARKABLE_SESSION_TOKEN: ${{ secrets.REMARKABLE_SESSION_TOKEN }}
   lint:
     environment: test
     runs-on: ubuntu-latest
