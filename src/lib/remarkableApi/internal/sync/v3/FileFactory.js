@@ -1,4 +1,5 @@
 import * as V3 from './index.js'
+import * as Schemas from '../../schemas'
 
 export class UnsupportedHashFileHashEntriesPayloadError extends Error {
 	constructor(
@@ -28,6 +29,13 @@ export class UnsupportedHashFileHashEntriesPayloadError extends Error {
  * correct model based on the hash entries.
  */
 export class FileFactory {
+	static async fileFromHashEntry(rootFileHashEntry, session) {
+		const fileHashEntriesPayload = await rootFileHashEntry.content(session)
+		const fileHashEntries = Schemas.HashEntriesFactory.fromPayload(fileHashEntriesPayload)
+
+		return this.fileFromHashEntries(rootFileHashEntry, fileHashEntries, session)
+	}
+
 	/**
 	 * Given a set of hash entries belonging to a
 	 * reMarkable API file, returns the equivalent

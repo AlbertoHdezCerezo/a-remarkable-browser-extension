@@ -1,11 +1,31 @@
 import {expect, jest} from '@jest/globals'
-import {mockDocumentMetadataRequest} from '../../../../../helpers/remarkableApiHelper'
+import {mockDocumentMetadataRequest, mockDocumentRequest} from '../../../../../helpers/remarkableApiHelper'
 import {FetchBasedHttpClient} from '../../../../../../src/lib/utils/httpClient'
 import * as Sync from '../../../../../../src/lib/remarkableApi/internal/sync'
 import * as Schemas from '../../../../../../src/lib/remarkableApi/internal/schemas'
 
 describe('FileFactory', () => {
 	const session = global.remarkableApiSession
+
+	describe('.fileFromHashEntry', () => {
+		it('fetches file hash entries and fetches correspoinding File instance', async () => {
+			const fetchBasedHttpClientGetMock = jest.fn()
+			mockDocumentRequest(
+				global.pdfFileChecksum,
+				global.pdfHashEntriesPayload,
+				global.pdfMetadataChecksum,
+				global.pdfMetadata,
+				fetchBasedHttpClientGetMock,
+				session,
+			)
+			FetchBasedHttpClient.get = fetchBasedHttpClientGetMock
+
+			const pdfHashEntry = Schemas.HashEntryFactory.fromPayload(global.pdfRootHashEntryPayload)
+
+			const pdfDocument = await Sync.V3.FileFactory.fileFromHashEntry(pdfHashEntry, session)
+			expect(pdfDocument).toBeInstanceOf(Sync.V3.Document)
+		})
+	})
 
 	describe('.fileFromHashEntries', () => {
 		it('if given a PDF file hash entries, returns a PDF Document instance', async () => {

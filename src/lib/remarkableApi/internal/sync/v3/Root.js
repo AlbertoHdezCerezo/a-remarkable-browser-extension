@@ -1,6 +1,7 @@
 import {CONFIGURATION} from '../../../configuration.js'
 import {FetchBasedHttpClient} from '../../../../utils/httpClient/index.js'
 import {HashEntriesFactory} from '../../schemas/index.js'
+import * as Schemas from '../../schemas'
 
 export class UnreachableRootError extends Error {
 	constructor(
@@ -171,5 +172,38 @@ export class Root {
 	 */
 	get hashEntries() {
 		return this.#hashEntries
+	}
+
+	/**
+	 * Given a serialized root, returns an instance of the Root class.
+	 *
+	 * @param {String} stringifiedRoot - The serialized root.
+	 * @returns {Root}
+	 */
+	static deserialize(stringifiedRoot) {
+		const parsedRoot = JSON.parse(stringifiedRoot)
+
+		const hashEntries = Schemas.HashEntriesFactory.fromPayload(parsedRoot.hashEntries)
+		const generation = Number(parsedRoot.generation)
+		const checksum = parsedRoot.checksum
+
+		return new this(checksum, generation, hashEntries)
+	}
+
+	/**
+	 * Returns a serialized version of the Root instance.
+	 * This serialized version is a JSON string containing
+	 * all the information needed to reconstruct the Root instance.
+	 *
+	 * @returns {String}
+	 */
+	serialize() {
+		return JSON.stringify(
+			{
+				checksum: this.checksum,
+				generation: this.generation,
+				hashEntries: this.hashEntries.payload,
+			}
+		)
 	}
 }
