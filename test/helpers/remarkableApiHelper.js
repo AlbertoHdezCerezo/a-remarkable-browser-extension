@@ -1,0 +1,171 @@
+import {expect, jest} from '@jest/globals'
+import {CONFIGURATION} from '../../src/lib/remarkableApi'
+import * as Sync from '../../src/lib/remarkableApi/internal/sync'
+
+export function mockDeviceRequest(
+	devicePayload,
+	deviceToken = global.remarkableDeviceToken,
+	fetchBasedHttpClientPostMock = jest.fn()
+) {
+	fetchBasedHttpClientPostMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.token.v2.endpoints.device)
+			expect(args[1]).toEqual(devicePayload)
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(deviceToken)})
+		})
+
+	return fetchBasedHttpClientPostMock
+}
+
+export function mockSessionRequest(
+	deviceToken = global.remarkableDeviceToken,
+	sessionToken = global.global.remarkableSessionToken,
+	fetchBasedHttpClientPostMock = jest.fn()
+) {
+	fetchBasedHttpClientPostMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.token.v2.endpoints.user)
+			expect(args[1]).toEqual(null)
+			expect(args[2]).toEqual({'Authorization': `Bearer ${deviceToken}`})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(sessionToken)})
+		})
+
+	return fetchBasedHttpClientPostMock
+}
+
+export function mockUploadRequest(
+	uploadBuffer,
+	uploadContentType,
+	uploadRmMetaHeader,
+	uploadDocumentChecksum,
+	fetchBasedHttpClientPostMock = jest.fn(),
+	session = global.remarkableApiSession
+) {
+	fetchBasedHttpClientPostMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.doc.v2.endpoints.files)
+			expect(args[1]).toEqual(uploadBuffer)
+			expect(args[2]).toEqual({
+				'Authorization': `Bearer ${session.token}`,
+				'content-type': uploadContentType,
+				'rm-meta': uploadRmMetaHeader,
+				'rm-source': 'RoR-Browser'
+			})
+
+			return Promise.resolve({ok: true, status: 200, json: () => Promise.resolve({ hash: uploadDocumentChecksum })})
+		})
+
+	return fetchBasedHttpClientPostMock
+}
+
+export function mockDocumentRequest(
+	documentChecksum,
+	documentHashEntriesPayload,
+	documentMetadataChecksum,
+	documentMetadata,
+	fetchBasedHttpClientGetMock = jest.fn(),
+	session = global.remarkableApiSession,
+) {
+	mockDocumentHashEntriesRequest(
+		documentChecksum,
+		documentHashEntriesPayload,
+		fetchBasedHttpClientGetMock,
+		session
+	)
+
+	mockDocumentMetadataRequest(
+		documentMetadataChecksum,
+		documentMetadata,
+		fetchBasedHttpClientGetMock,
+		session
+	)
+
+	return fetchBasedHttpClientGetMock
+}
+
+export function mockRootRequest(
+	fetchBasedHttpClientGetMock = jest.fn(),
+	session = global.remarkableApiSession,
+	rootMetadata = global.rootMetadata,
+	rootHashChecksum = global.rootHashChecksum,
+	rootHashEntriesPayload = global.rootHashEntriesPayload
+) {
+	fetchBasedHttpClientGetMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.root)
+			expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+			return Promise.resolve({ok: true, status: 200, json: () => Promise.resolve(rootMetadata)})
+		})
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + rootHashChecksum)
+			expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(rootHashEntriesPayload)})
+		})
+
+	return fetchBasedHttpClientGetMock
+}
+
+export function mockDocumentHashEntriesRequest(
+	documentChecksum,
+	documentHashEntriesPayload,
+	fetchBasedHttpClientGetMock = jest.fn(),
+	session = global.remarkableApiSession,
+) {
+	fetchBasedHttpClientGetMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + documentChecksum)
+			expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(documentHashEntriesPayload)})
+		})
+
+	return fetchBasedHttpClientGetMock
+}
+
+export function mockDocumentMetadataRequest(
+	documentMetadataChecksum,
+	documentMetadata,
+	fetchBasedHttpClientGetMock = jest.fn(),
+	session = global.remarkableApiSession,
+) {
+	fetchBasedHttpClientGetMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + documentMetadataChecksum)
+			expect(args[1]).toEqual({'Authorization': `Bearer ${session.token}`})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(JSON.stringify(documentMetadata))})
+		})
+
+	return fetchBasedHttpClientGetMock
+}
+
+export async function mockFileMetadataUpdateRequest(
+	documentRootHashEntry,
+	documentUpdatedMetadata,
+	fetchBasedHttpClientPutMock = jest.fn(),
+	session = global.remarkableApiSession,
+) {
+	const expectedRequestBuffer = new Sync.V3.RequestBuffer(documentUpdatedMetadata)
+	const expectedMetadataChecksum = await expectedRequestBuffer.checksum()
+
+	fetchBasedHttpClientPutMock
+		.mockImplementationOnce((...args) => {
+			expect(args[0]).toEqual(CONFIGURATION.endpoints.sync.v3.endpoints.files + expectedMetadataChecksum)
+			expect(args[1]).toEqual(expectedRequestBuffer.payload)
+			expect(args[2]).toEqual({
+				'authorization': `Bearer ${session.token}`,
+				'content-type': 'application/octet-stream',
+				'rm-filename': `${documentRootHashEntry.fileId}.metadata`,
+				'rm-parent-hash': documentRootHashEntry.checksum,
+				'x-goog-hash': `crc32c=${expectedRequestBuffer.crc32Hash}`
+			})
+
+			return Promise.resolve({ok: true, status: 200, text: () => Promise.resolve(JSON.stringify(documentUpdatedMetadata))})
+		})
+
+	return fetchBasedHttpClientPutMock
+}

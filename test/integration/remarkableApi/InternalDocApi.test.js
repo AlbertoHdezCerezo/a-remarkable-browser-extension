@@ -1,0 +1,49 @@
+import fs from 'fs'
+import {FileBuffer} from '../../../src/lib/remarkableApi/utils'
+import {setupHttpRecording} from '../../helpers/pollyHelper.js'
+import {Upload} from '../../../src/lib/remarkableApi/internal/doc/v2'
+import * as Sync from '../../../src/lib/remarkableApi/internal/sync'
+
+describe('internal.cloud.remarkable.com/doc/v2/files', () => {
+	setupHttpRecording()
+
+	describe('POST - Upload a new document', () => {
+		let session = global.remarkableApiSession
+		let pdfFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.pdf'))
+		let ePubFileBuffer = new FileBuffer(fs.readFileSync('./test/fixtures/documents/sample.epub'))
+
+		it('given a PDF file buffer, uploads it to the device', async () => {
+			const pdfFile = await Upload.document("a-remarkable-web-browser-sample.pdf", pdfFileBuffer, session)
+
+			expect(pdfFile).toBeInstanceOf(Sync.V3.Document)
+
+			const root = await Sync.V3.Root.fromSession(session)
+			const pdfFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === pdfFile.rootHashEntry.checksum)
+
+			expect(pdfFileRootHashEntry).toBeDefined()
+		}, 1000000000)
+
+		it('given an ePub file buffer, uploads it to the device', async () => {
+			const ePubFile = await Upload.document("a-remarkable-web-browser-sample.epub", ePubFileBuffer, session)
+
+			expect(ePubFile).toBeInstanceOf(Sync.V3.Document)
+
+			const root = await Sync.V3.Root.fromSession(session)
+			const ePubFileRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === ePubFile.rootHashEntry.checksum)
+
+			expect(ePubFileRootHashEntry).toBeDefined()
+		}, 1000000000)
+
+		it('given no buffer, creates a new folder in the device', async () => {
+			const folder = await Upload.folder("a-remarkable-web-browser-sample-folder", session)
+
+			expect(folder).toBeInstanceOf(Sync.V3.Folder)
+
+			const root = await Sync.V3.Root.fromSession(session)
+			const folderRootHashEntry = root.hashEntries.hashEntriesList.find(entry => entry.checksum === folder.rootHashEntry.checksum)
+
+			expect(folderRootHashEntry).toBeDefined()
+		}, 1000000000)
+	})
+})
+

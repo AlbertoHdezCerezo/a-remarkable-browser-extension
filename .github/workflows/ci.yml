@@ -11,6 +11,27 @@ on:
   pull_request:
     branches: [ "main" ]
 jobs:
+  test:
+    environment: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.17.0'
+          cache: 'yarn'
+
+      - name: Install Dependencies
+        run: yarn install --pure-lockfile
+
+      - name: Run Jest tests and generate coverage report
+        run: yarn test --coverage
+        env:
+          REMARKABLE_DEVICE_TOKEN: ${{ secrets.REMARKABLE_DEVICE_TOKEN }}
+          REMARKABLE_SESSION_TOKEN: ${{ secrets.REMARKABLE_SESSION_TOKEN }}
   lint:
     environment: test
     runs-on: ubuntu-latest
@@ -21,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '23.11.0'
+          node-version: '22.17.0'
           cache: 'yarn'
 
       - name: Install Dependencies
