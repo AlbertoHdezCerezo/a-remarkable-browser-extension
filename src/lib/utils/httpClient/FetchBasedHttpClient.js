@@ -1,5 +1,5 @@
-import {Request} from './request.js'
-import {HttpClientError} from './httpClientError.js'
+import {Request} from './Request.js'
+import {HttpClientError} from './HttpClientError.js'
 
 /**
  * HTTP client for JS web-browser environments.

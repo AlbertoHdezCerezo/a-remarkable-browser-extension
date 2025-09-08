@@ -1,6 +1,6 @@
 import {RequestBuffer} from '../../sync/v3/utils'
-import {HashEntries as AbstractHashEntries} from '../abstracts/hashEntries'
-import {HashEntry} from './hashEntry'
+import {HashEntries as AbstractHashEntries} from '../abstracts/HashEntries.js'
+import {HashEntry} from './HashEntry.js'
 
 export class MissingHashEntryForReplacementError extends Error {
 	constructor() {

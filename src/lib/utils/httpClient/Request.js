@@ -1,4 +1,4 @@
-import {Body} from './body.js'
+import {Body} from './Body.js'
 
 /**
  * Represents an HTTP request
