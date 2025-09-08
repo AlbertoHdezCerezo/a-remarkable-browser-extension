@@ -1,4 +1,4 @@
-import {File} from '../abstracts/file.js'
+import {File} from '../abstracts/File.js'
 import {Metadata} from './Metadata.js'
 import * as Schemas from '../../../schemas'
 
