@@ -1,16 +1,7 @@
-import { jest } from '@jest/globals'
-
 /**
  * Script to set up test environment
  * before test suite run starts.
  */
-
-/**
- * Set-Up logic: designed to easily set development
- * environment variables and run test suite
- * to regenerate text fixtures.
- */
-import {spinner, intro, outro, text, confirm, cancel, select, tasks, log} from '@clack/prompts'
 
 /**
  * Due to Polly.js deprecations, we use NodeHTTPAdapter instead of FetchAdapter.
@@ -45,8 +36,8 @@ dotenv.config({ path: '.env.test' })
 import fs from 'fs'
 import * as Sync from '../src/lib/remarkableApi/internal/sync'
 import * as Schemas from '../src/lib/remarkableApi/internal/schemas'
-import {Device} from '../src/lib/remarkableApi/internal/token/device.js'
-import {Session} from '../src/lib/remarkableApi/internal/token/session.js'
+import {Device} from '../src/lib/remarkableApi/internal/token/Device.js'
+import {Session} from '../src/lib/remarkableApi/internal/token/Session.js'
 
 /**
  * Global credentials
