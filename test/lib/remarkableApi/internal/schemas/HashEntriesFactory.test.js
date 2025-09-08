@@ -1,7 +1,7 @@
 import {
 	HashEntriesFactory,
 	UnsupportedHashEntriesPayloadError
-} from '../../../../../src/lib/remarkableApi/internal/schemas/hashEntriesFactory'
+} from '../../../../../src/lib/remarkableApi/internal/schemas/HashEntriesFactory.js'
 import {HashEntries as V3HashEntries} from '../../../../../src/lib/remarkableApi/internal/schemas/v3/HashEntries.js'
 import {HashEntries as V4HashEntries} from '../../../../../src/lib/remarkableApi/internal/schemas/v4/HashEntries.js'
 
