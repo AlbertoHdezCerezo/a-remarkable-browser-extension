@@ -5,7 +5,7 @@ import {mockDeviceRequest,} from '../../../../helpers/remarkableApiHelper'
 import {
 	Device,
 	UnsuccessfulDeviceConnectionPairingError
-} from '../../../../../src/lib/remarkableApi/internal/token/device.js'
+} from '../../../../../src/lib/remarkableApi/internal/token/Device.js'
 import {FetchBasedHttpClient} from '../../../../../src/lib/utils/httpClient'
 
 describe('Device', () => {

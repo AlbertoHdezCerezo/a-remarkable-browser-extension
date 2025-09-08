@@ -6,7 +6,7 @@ import {
 	UnreachableRootError,
 	UnreachableRootHashEntriesError
 } from '../../../../../../src/lib/remarkableApi/internal/sync/v3/Root.js'
-import * as Sync from "../../../../../../src/lib/remarkableApi/internal/sync/index.js";
+import * as Sync from '../../../../../../src/lib/remarkableApi/internal/sync'
 
 describe('Root', () => {
 	const session = global.remarkableApiSession

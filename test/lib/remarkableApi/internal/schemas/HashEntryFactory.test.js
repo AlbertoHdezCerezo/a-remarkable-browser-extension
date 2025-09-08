@@ -1,7 +1,4 @@
 import * as Schemas from '../../../../../src/lib/remarkableApi/internal/schemas'
-import {
-	UnsupportedHashEntryPayloadError
-} from "../../../../../src/lib/remarkableApi/internal/schemas/HashEntryFactory.js";
 
 describe('HashEntryFactory', () => {
 	describe('.fromPayload', () => {

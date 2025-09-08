@@ -1,13 +1,11 @@
 import {expect, jest} from '@jest/globals'
-import {CONFIGURATION} from '../../../../../../../src/lib/remarkableApi/index.js'
 import {
 	mockDocumentMetadataRequest,
-	mockDocumentRequest,
-	mockRootRequest
+	mockDocumentRequest
 } from '../../../../../../helpers/remarkableApiHelper.js'
-import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync/index.js'
-import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas/index.js'
-import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient/index.js'
+import * as Sync from '../../../../../../../src/lib/remarkableApi/internal/sync'
+import * as Schemas from '../../../../../../../src/lib/remarkableApi/internal/schemas'
+import {FetchBasedHttpClient} from '../../../../../../../src/lib/utils/httpClient'
 
 describe('Folder', () => {
 	const session = global.remarkableApiSession
