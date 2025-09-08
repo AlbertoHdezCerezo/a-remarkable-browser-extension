@@ -3,9 +3,9 @@ export {
 	IncompatibleSchemaVersionError,
 	IncompatibleHashEntriesSchemaError,
 	HashEntries
-} from './hashEntries.js'
+} from './HashEntries.js'
 export {
 	IncompatibleHashEntrySchemaError,
 	UnreachableHashEntryContentError,
 	HashEntry
-} from './hashEntry.js'
+} from './HashEntry.js'

@@ -1,1 +1,1 @@
-export {UploadError, Upload} from './upload.js'
+export {UploadError, Upload} from './Upload.js'

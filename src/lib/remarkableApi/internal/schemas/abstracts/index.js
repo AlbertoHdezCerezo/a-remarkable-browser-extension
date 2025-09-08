@@ -1,2 +1,2 @@
-export {HashEntries} from './hashEntries.js'
-export {HashEntry} from './hashEntry.js'
+export {HashEntries} from './HashEntries.js'
+export {HashEntry} from './HashEntry.js'

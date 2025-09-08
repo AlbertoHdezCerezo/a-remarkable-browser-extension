@@ -1,1 +1,1 @@
-export {UnsupportedFileExtensionError, FileBuffer} from './fileBuffer.js'
+export {UnsupportedFileExtensionError, FileBuffer} from './FileBuffer.js'

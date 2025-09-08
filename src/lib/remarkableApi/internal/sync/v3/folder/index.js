@@ -1,2 +1,2 @@
-export {FolderIncompatibleHashEntriesError, Folder} from './folder.js'
+export {FolderIncompatibleHashEntriesError, Folder} from './Folder.js'
 export {Metadata} from './Metadata.js'
