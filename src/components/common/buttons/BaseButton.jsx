@@ -1,4 +1,5 @@
 import React from 'react'
+import Base from '../Base.jsx'
 
 export const CONFIGURATION = {
 	base: {
@@ -24,31 +25,31 @@ export const CONFIGURATION = {
 	}
 }
 
-const Button = ({
-	as = 'button',
-	size = 'medium',
-	variant = 'default',
-	inactive = false,
-	content = 'I\'m a button',
-	...props
-}) => {
-	const Component = as ?? 'button'
-
+const BaseButton = (
+	{
+		as = 'button',
+		size = 'medium',
+		variant = 'default',
+		inactive = false,
+		children,
+		...props
+	}
+) => {
 	const className = [
 		CONFIGURATION.base.className,
-		CONFIGURATION.variant[variant],
+		CONFIGURATION.variant[variant ?? 'default'],
 		CONFIGURATION.size[size]
 	].join(' ')
 
-  return (
-    <Component  type="button"
-		            className={className}
-		            data-size={size}
-		            data-variant={variant}
-		            disabled={inactive}>
-			{content}
-		</Component>
-  )
+	return (
+		<Base as="button"
+		      classNames={className}
+		      data-size={size}
+		      data-variant={variant}
+		      disabled={inactive}>
+			{children}
+		</Base>
+	)
 }
 
-export default Button
+export default BaseButton
