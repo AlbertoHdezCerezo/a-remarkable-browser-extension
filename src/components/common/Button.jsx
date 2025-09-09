@@ -2,24 +2,30 @@ import React from 'react'
 
 export const CONFIGURATION = {
 	base: {
-		className: 'cursor-pointer'
+		className: 'cursor-pointer font-monospace-body'
 	},
 	variant: {
-		default: 'bg-white text-lg',
-		primary: '',
-		secondary: '',
-		invisible: ''
+		default: `
+			bg-white border-1 rounded-sm border-neutral-900
+			hover:bg-neutral-900 hover:border-neutral-900 hover:text-white
+			active:bg-neutral-700 active:border-neutral-700 active:text-white
+		`,
+		primary: `
+		`,
+		secondary: `
+		`,
+		invisible: `
+		`
 	},
 	size: {
-		small: '',
-		medium: '',
-		large: ''
+		small: 'px-3 py-1 text-sm',
+		medium: 'px-3.5 py-1 text-base',
+		large: 'px-4 py-2 text-xl'
 	}
 }
 
 const Button = ({
 	as = 'button',
-	instanceClassName = '',
 	size = 'medium',
 	variant = 'default',
 	inactive = false,
@@ -31,8 +37,7 @@ const Button = ({
 	const className = [
 		CONFIGURATION.base.className,
 		CONFIGURATION.variant[variant],
-		CONFIGURATION.size[size],
-		instanceClassName
+		CONFIGURATION.size[size]
 	].join(' ')
 
   return (
