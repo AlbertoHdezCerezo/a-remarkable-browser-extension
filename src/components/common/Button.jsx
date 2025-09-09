@@ -2,7 +2,7 @@ import React from 'react'
 
 export const CONFIGURATION = {
 	base: {
-		className: ''
+		className: 'cursor-pointer'
 	},
 	variant: {
 		default: 'bg-white text-lg',
@@ -18,28 +18,31 @@ export const CONFIGURATION = {
 }
 
 const Button = ({
-	className = '',
+	as = 'button',
+	instanceClassName = '',
 	size = 'medium',
 	variant = 'default',
 	inactive = false,
 	content = 'I\'m a button',
 	...props
 }) => {
-	const classes = [
+	const Component = as ?? 'button'
+
+	const className = [
 		CONFIGURATION.base.className,
 		CONFIGURATION.variant[variant],
 		CONFIGURATION.size[size],
-		className
+		instanceClassName
 	].join(' ')
 
   return (
-    <button type='button'
-            className="w-full bg-white text-black"
-            data-size={size}
-            data-variant={variant}
-            disabled={inactive}>
+    <Component  type="button"
+		            className={className}
+		            data-size={size}
+		            data-variant={variant}
+		            disabled={inactive}>
 			{content}
-		</button>
+		</Component>
   )
 }
 
