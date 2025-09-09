@@ -5,7 +5,7 @@ function IndexPopup() {
 
   return (
     <div
-      className={"bg-black flex flex-col gap-4 h-full w-full"}
+      className={"bg-white flex flex-col gap-4 h-full w-full"}
       style={{
         padding: 16
       }}>

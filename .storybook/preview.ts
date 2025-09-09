@@ -1,5 +1,7 @@
 import type { Preview } from '@storybook/react-webpack5'
 
+import '../assets/css/style.css'
+
 const preview: Preview = {
   parameters: {
     controls: {
@@ -9,6 +11,6 @@ const preview: Preview = {
       },
     },
   },
-};
+}
 
-export default preview;
+export default preview

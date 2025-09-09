@@ -10,7 +10,7 @@ module.exports = {
     // https://github.com/postcss/postcss-import
     require('postcss-import'),
     // Imports TailwindCSS
-    require('tailwindcss')('./config/tailwind.config.js'),
+    require('@tailwindcss/postcss'),
     // Fixes bugs associated to flexboxes in different web browsers
     // https://www.npmjs.com/package/postcss-flexbugs-fixes
     require('postcss-flexbugs-fixes'),
