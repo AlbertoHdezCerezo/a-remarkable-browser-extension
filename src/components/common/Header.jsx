@@ -3,7 +3,9 @@ import Base from './Base.jsx'
 
 export const CONFIGURATION = {
 	base: {
-		className: 'font-heading font-semibold'
+		className: `
+			font-heading font-bold
+		`
 	},
 	size: {
 		small: `
