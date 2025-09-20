@@ -3,19 +3,18 @@ import Base from '../Base.jsx'
 
 export const CONFIGURATION = {
 	base: {
-		className: 'cursor-pointer font-monospace-body'
+		className: 'cursor-pointer font-monospace-body rounded-sm'
 	},
 	variant: {
 		default: `
-			bg-white border-1 rounded-sm border-neutral-900
+			bg-white border-1 border-neutral-900
 			hover:bg-neutral-900 hover:border-neutral-900 hover:text-white
 			active:bg-neutral-700 active:border-neutral-700 active:text-white
 		`,
-		primary: `
-		`,
-		secondary: `
-		`,
 		invisible: `
+			bg-transparent border-0 text-neutral-900
+			hover:bg-neutral-100
+			active:bg-neutral-200
 		`
 	},
 	size: {
