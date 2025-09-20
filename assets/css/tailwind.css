@@ -72,13 +72,8 @@
     --text-heading-1--line-height: 36px;
 
     /* Font families */
-    --font-caption: Manrope;
-    --font-caption-bold: Manrope;
     --font-body: Manrope;
-    --font-body-bold: Manrope;
-    --font-heading-3: Newsreader;
-    --font-heading-2: Newsreader;
-    --font-heading-1: Newsreader;
+    --font-heading: Newsreader;
 
     /* Border radiuses */
     --radius-sm: 4px;
