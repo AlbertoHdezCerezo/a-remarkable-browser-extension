@@ -28,7 +28,7 @@ export const CONFIGURATION = {
 		`,
 		large: `
 			px-4 h-9 text-base
-		`,
+		`
 	}
 }
 
@@ -45,6 +45,7 @@ const BaseInput = (
 		value = '',
 		onChange = null,
 		classNames = '',
+		maxLength = null,
 		...props
 	}
 ) => {
@@ -73,6 +74,8 @@ const BaseInput = (
 		      name={name}
 		      value={inputValue}
 					placeholder={placeholder}
+          maxLength={maxLength}
+          size={maxLength}
 					onChange={onInputChange}/>
 	)
 }
