@@ -13,8 +13,8 @@ export const CONFIGURATION = {
 		`,
 		invisible: `
 			bg-transparent border-0 text-neutral-900
-			hover:bg-neutral-100
-			active:bg-neutral-200
+			hover:bg-neutral-200
+			active:bg-neutral-300
 		`
 	},
 	size: {
