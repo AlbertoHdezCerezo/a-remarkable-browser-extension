@@ -1,11 +1,10 @@
 import React from 'react'
 import * as Icons from '@heroicons/react/24/outline'
-import ActionBar, {ActionBarIconButton} from "./ActionBar.jsx";
 
 const ACTION_LIST_ITEM_CONFIGURATION = {
 	base: {
 		className: `
-			flex flex-row items-center gap-3 px-4 py-2 cursor-pointer
+			flex flex-row items-center gap-3 px-4 h-10 cursor-pointer
 			text-sm
 			hover:bg-gray-50 cursor-pointer
 			active:bg-gray-500 active:text-white
