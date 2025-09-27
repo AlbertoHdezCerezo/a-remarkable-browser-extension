@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Icons from '@heroicons/react/24/outline'
+import Base from "./Base.jsx";
 
 const ACTION_LIST_ITEM_CONFIGURATION = {
 	base: {
@@ -14,6 +15,7 @@ const ACTION_LIST_ITEM_CONFIGURATION = {
 
 const ActionListItem = (
 	{
+		as = 'li',
 		leadingIconName = null,
 		leadingSlot = null,
 		trailingSlot = null,
@@ -46,12 +48,12 @@ const ActionListItem = (
 	].join(' ')
 
 	return (
-		<li className={actionListItemClassNames}>
+		<Base as={as} className={actionListItemClassNames}>
 			{leadingItem()}
 			{children}
 			<div className="flex-grow"/>
 			{trailingItem()}
-		</li>
+		</Base>
 	)
 }
 
@@ -66,6 +68,7 @@ const ACTION_LIST_CONFIGURATION = {
 const ActionList = (
 	{
 		children,
+		as = 'ul',
 		divider = true,
 		...props
 	}
@@ -77,9 +80,10 @@ const ActionList = (
 	].join(' ')
 
 	return (
-		<ul className={actionListClassNames}>
+		<Base as={as}
+					className={actionListClassNames}>
 			{children}
-		</ul>
+		</Base>
 	)
 }
 
