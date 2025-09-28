@@ -80,7 +80,7 @@ export class FetchBasedHttpClient {
 
     return await new Promise( (resolve, reject) => {
       if (response.ok) {
-        resolve(new Response(responseData, { status: response.status, statusText: response.statusText }))
+        resolve(new Response(responseData, { headers: response.headers, status: response.status, statusText: response.statusText }))
       } else {
 				reject(
 					new HttpClientError(
