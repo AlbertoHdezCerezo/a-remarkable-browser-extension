@@ -41,8 +41,8 @@ const BaseInput = (
 		inactive = false,
 		placeholder = '',
 		type = 'text',
-		id = '',
-		name = '',
+		id = 'id',
+		name = 'name',
 		value = '',
 		onChange = null,
 		classNames = '',
@@ -79,7 +79,8 @@ const BaseInput = (
 						placeholder={placeholder}
 	          maxLength={maxLength}
 	          size={maxLength}
-						onChange={onInputChange}/>
+						onChange={onInputChange}
+						{...props}/>
 		</Base>
 	)
 }

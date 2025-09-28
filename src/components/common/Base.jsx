@@ -15,7 +15,7 @@ const Base = (
 	const baseClassNames = classNamesSanitizer(classNames)
 
 	return (
-		<Tag class={baseClassNames} {...props}></Tag>
+		<Tag className={baseClassNames} {...props}></Tag>
 	)
 }
 
