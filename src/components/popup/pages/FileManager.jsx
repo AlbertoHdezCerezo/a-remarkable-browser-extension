@@ -1,8 +1,8 @@
 import React from 'react'
 import Header from '../../common/Header.jsx'
-import ActionList, {ActionListItem} from "../../common/ActionList.jsx";
-import ActionBar, {ActionBarIconButton} from "../../common/ActionBar.jsx";
-import Breadcrumbs, {BreadcrumbsItem} from "../../common/Breadcrumbs.jsx";
+import ActionList, {ActionListItem} from '../../common/ActionList.jsx'
+import ActionBar, {ActionBarIconButton} from '../../common/ActionBar.jsx'
+import Breadcrumbs, {BreadcrumbsItem} from '../../common/Breadcrumbs.jsx'
 
 const FileNavigator = (
 	{
@@ -17,7 +17,7 @@ const FileNavigator = (
 		</ActionBar>
 	}
 
-	return <div className="space-y-4">
+	return <div className="space-y-2">
 		<Breadcrumbs>
 			<BreadcrumbsItem href="#">root</BreadcrumbsItem>
 			<BreadcrumbsItem href="#">apuntes</BreadcrumbsItem>
@@ -47,10 +47,10 @@ const FileManager = (
 	}
 ) => {
 	return (
-		<div className="space-y-6">
+		<div className="space-y-3">
 			<Header as="h1" size="small">File Manager</Header>
 
-			<div className="space-y-4">
+			<div className="space-y-2">
 				<FileNavigator/>
 
 				<div className="flex items-center justify-end">
