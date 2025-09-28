@@ -5,7 +5,7 @@ import * as Icons from "@heroicons/react/24/outline/index.js";
 export const CONFIGURATION = {
 	base: {
 		className: `
-			relative text-gray-700 underline
+			relative text-gray-700 underline font-medium
 			hover:text-gray-900
 		`
 	}
@@ -44,7 +44,8 @@ const Link = (
 	return (
 		<Base as={as}
 		      href={href}
-		      classNames={linkClassNames}>
+		      classNames={linkClassNames}
+					{...props}>
 			{children}
 			{trailingItem()}
 		</Base>
