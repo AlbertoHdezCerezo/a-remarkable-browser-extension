@@ -13,7 +13,6 @@ const CodeInput = (
 	}
 ) => {
 	const inputsWrapperRef = useRef(null)
-	const inputRefs = useRef([])
 
 	const codeInputs = () => {
 		return [...inputsWrapperRef.current.querySelectorAll('input')]
@@ -82,7 +81,7 @@ const CodeInput = (
 	}
 
 	const refreshInputs = () => {
-		codeInputs().forEach((input, index) => { input.value = code[index] || '' })
+		codeInputs().forEach((input, index) => { input.value = code?.[index] || '' })
 	}
 
 	useEffect(refreshInputs, [code])
@@ -92,8 +91,8 @@ const CodeInput = (
 	`
 
 	const textInputClassNames = `
-		!w-12 !h-12 !p-0
-		[&>input]:text-center [&>input]:text-xl [&>input]:font-semibold
+		!w-10 !h-10 !p-0
+		[&>input]:text-center [&>input]:text-large [&>input]:font-semibold
 		[&>input]:font-heading [&>input]:uppercase
 	`
 

@@ -11,6 +11,22 @@ const meta = {
 
 export default meta;
 
-const Template = (args) => <ConnectDevice {...args} />
+const pairDeviceCallback = async (code) => {
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			if (code === '123456') {
+				resolve(true)
+			} else {
+				reject(new Error('Invalid pairing code'))
+			}
+		}, 5000)
+	})
+}
+
+const Template = (args) => (
+	<ConnectDevice
+		pairDeviceCallback={pairDeviceCallback}
+		{...args}/>
+)
 
 export const Playground = Template.bind({})

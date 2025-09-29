@@ -15,7 +15,7 @@ export const CONFIGURATION = {
 	},
 	size: {
 		small: `
-			px-5 py-4 text-xs gap-2
+			px-4 py-3 text-xs gap-2
 		`
 	}
 }
