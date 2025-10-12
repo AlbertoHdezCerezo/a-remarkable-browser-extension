@@ -1,10 +1,11 @@
 import React from 'react'
 import Base from '../Base.jsx'
+import * as Icons from '@heroicons/react/24/outline'
 
 export const CONFIGURATION = {
 	base: {
 		className: `
-			flex items-center justify-center font-monospace-body
+			flex items-center justify-center gap-2 font-monospace-body
 			disabled:cursor-not-allowed
 			[&>input]:focus:outline-none
 		`
@@ -25,11 +26,16 @@ export const CONFIGURATION = {
 	},
 	size: {
 		medium: `
-			px-3 h-8 text-sm
+			px-2 h-8 text-sm
 		`,
 		large: `
-			px-4 h-9 text-base
+			px-3 h-9 text-base
 		`
+	},
+	iconSize: {
+		small: 'size-3',
+		medium: 'size-5',
+		large: 'size-5'
 	}
 }
 
@@ -47,6 +53,8 @@ const BaseInput = (
 		onChange = null,
 		classNames = '',
 		maxLength = null,
+		leadingIconName = null,
+		trailingIconName = null,
 		...props
 	}
 ) => {
@@ -64,12 +72,26 @@ const BaseInput = (
 		classNames
 	].join(' ')
 
+	const LeadingIconElement = leadingIconName ? Icons[leadingIconName] : null
+	const TrailingIconElement = trailingIconName ? Icons[trailingIconName] : null
+
+	const iconClassName = [
+		CONFIGURATION.iconSize[size],
+		''
+	].join(' ')
+
+	const inputClassNames = [
+		'w-full text-neutral-900'
+	].join(' ')
+
 	return (
 		<Base as="div"
 		      data-size={size}
 		      data-variant={variant}
 		      disabled={inactive}
 		      classNames={baseInputClassNames}>
+			{ LeadingIconElement && <LeadingIconElement className={iconClassName} /> }
+
 			<Base as={as}
 			      disabled={inactive}
 			      type={type}
@@ -80,7 +102,10 @@ const BaseInput = (
 	          maxLength={maxLength}
 	          size={maxLength}
 						onChange={onInputChange}
+            classNames={inputClassNames}
 						{...props}/>
+
+			{ TrailingIconElement && <TrailingIconElement className={iconClassName} /> }
 		</Base>
 	)
 }
