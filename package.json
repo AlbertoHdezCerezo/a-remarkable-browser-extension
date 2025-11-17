@@ -22,7 +22,7 @@
   "dependencies": {
     "@polkadot/x-textencoder": "^13.5.3",
     "@tailwindcss/postcss": "^4.1.12",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.22",
     "base64-js": "^1.5.1",
     "crc-32": "^1.2.2",
     "jwt-decode": "^4.0.0",
@@ -31,11 +31,11 @@
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-import": "^16.1.1",
     "postcss-nested": "^7.0.2",
-    "postcss-preset-env": "^10.3.1",
+    "postcss-preset-env": "^10.4.0",
     "postcss-scss": "^4.0.9",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "^4.1.17",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
